@@ -1,0 +1,1385 @@
+#usda 1.0
+(
+    defaultPrim = "lead"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "lead" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "test_set"
+        {
+            token outputs:surface.connect = </lead/Looks/test_set/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.72, 0.1)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "panel"
+        {
+            token outputs:surface.connect = </lead/Looks/panel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.15, 0.15, 0.16)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lead"
+        {
+            token outputs:surface.connect = </lead/Looks/lead/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.08)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "red"
+        {
+            token outputs:surface.connect = </lead/Looks/red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.06, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </lead/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "copper"
+        {
+            token outputs:surface.connect = </lead/Looks/copper/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.45, 0.2)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </lead/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "test_set" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 2
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "case" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/test_set>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.2, 0.15, 0.1)
+            double3 xformOp:translate = (0.36, 0.46, 0.0475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "panel" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/panel>
+            double size = 1
+            float3 xformOp:scale = (0.18, 0.13, 0.001)
+            double3 xformOp:translate = (0.36, 0.46, 0.098)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "socket" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.008
+            rel material:binding = </lead/Looks/black>
+            double radius = 0.006
+            double3 xformOp:translate = (0.32, 0.387, 0.025)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </lead/test_set>
+        }
+
+        def PhysicsRevoluteJoint "lead_j00" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/test_set>
+            rel physics:body1 = </lead/lead_00>
+            point3f physics:localPos0 = (0.32, 0.383, 0.025)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7032488, 0.073763914, 0.073763914, -0.7032488)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j01" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_00>
+            rel physics:body1 = </lead/lead_01>
+            point3f physics:localPos0 = (0.025, -1.4974913e-18, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9974748, 2.5766423e-19, 4.2928217e-18, 0.07102159)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j02" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_01>
+            rel physics:body1 = </lead/lead_02>
+            point3f physics:localPos0 = (0.025, -1.523304e-17, -2.6020852e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9845419, 0.1751491, -9.401707e-18, 8.270311e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j03" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_02>
+            rel physics:body1 = </lead/lead_03>
+            point3f physics:localPos0 = (0.025, -1.5395671e-17, 2.6020852e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99785024, 2.6517198e-18, -0.06553544, -3.0018064e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j04" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_03>
+            rel physics:body1 = </lead/lead_04>
+            point3f physics:localPos0 = (0.025, -1.4419889e-17, 7.372575e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9977986, 4.9822846e-18, 3.9599655e-18, -0.06631661)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j05" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_04>
+            rel physics:body1 = </lead/lead_05>
+            point3f physics:localPos0 = (0.025, -1.5612511e-17, 8.2399365e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.98274636, 0.18495849, 2.2815823e-18, 8.72722e-19)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j06" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_05>
+            rel physics:body1 = </lead/lead_06>
+            point3f physics:localPos0 = (0.025, -1.474515e-17, 1.1275703e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9831909, -8.884935e-18, -0.18258065, 8.582944e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j07" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_06>
+            rel physics:body1 = </lead/lead_07>
+            point3f physics:localPos0 = (0.025, 1.5612511e-17, -1.3010426e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9877828, -1.1654307e-17, 9.362857e-18, -0.15583706)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j08" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_07>
+            rel physics:body1 = </lead/lead_08>
+            point3f physics:localPos0 = (0.025, -1.474515e-17, 1.3660947e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97873133, 0.20514636, -1.921279e-19, 1.7125744e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j09" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_08>
+            rel physics:body1 = </lead/lead_09>
+            point3f physics:localPos0 = (0.025, -8.456777e-18, 1.7997756e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9587974, -1.32923085e-17, -0.2840908, 1.23168e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j10" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_09>
+            rel physics:body1 = </lead/lead_10>
+            point3f physics:localPos0 = (0.025, 5.6378513e-18, -3.469447e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99356323, 7.890816e-18, 6.3747758e-18, -0.11327873)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j11" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_10>
+            rel physics:body1 = </lead/lead_11>
+            point3f physics:localPos0 = (0.025, -1.0625181e-17, 2.1141942e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97798455, 0.20867732, 1.5476293e-18, -1.4592606e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j12" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_11>
+            rel physics:body1 = </lead/lead_12>
+            point3f physics:localPos0 = (0.025, -2.3852448e-18, 1.2847796e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.96215576, -9.53176e-18, -0.2725002, 1.806267e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j13" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_12>
+            rel physics:body1 = </lead/lead_13>
+            point3f physics:localPos0 = (0.025, -1.3010426e-18, -2.2819068e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9993534, -3.0102573e-18, 2.691578e-19, 0.03595584)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j14" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_13>
+            rel physics:body1 = </lead/lead_14>
+            point3f physics:localPos0 = (0.025, -6.505213e-19, -4.411136e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97600454, 0.21775006, 6.6782303e-19, -1.9538954e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j15" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_14>
+            rel physics:body1 = </lead/lead_15>
+            point3f physics:localPos0 = (0.025, -2.2768246e-18, -3.523657e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9992235, -5.57381e-18, -0.039401583, -1.3672832e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j16" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_15>
+            rel physics:body1 = </lead/lead_16>
+            point3f physics:localPos0 = (0.025, 4.445229e-18, 1.2305695e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9453845, -2.044822e-17, 2.7874448e-17, 0.32595736)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j17" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_16>
+            rel physics:body1 = </lead/lead_17>
+            point3f physics:localPos0 = (0.025, 1.0408341e-17, 1.1275703e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97238845, 0.23336828, -3.7513402e-17, -2.0939827e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j18" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_17>
+            rel physics:body1 = </lead/lead_18>
+            point3f physics:localPos0 = (0.025, 1.474515e-17, 6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9162225, -8.301127e-17, 0.40066978, 3.0299285e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j19" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_18>
+            rel physics:body1 = </lead/lead_19>
+            point3f physics:localPos0 = (0.025, 6.938894e-18, 2.6020852e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.92480165, 3.0615103e-17, -2.6264116e-18, 0.38044962)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j20" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_19>
+            rel physics:body1 = </lead/lead_20>
+            point3f physics:localPos0 = (0.025, -8.6736174e-19, -9.107298e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9720884, 0.2346149, 1.9122712e-17, 1.30607766e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j21" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_20>
+            rel physics:body1 = </lead/lead_21>
+            point3f physics:localPos0 = (0.025, -6.938894e-18, -8.2399365e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.91785294, 5.829432e-17, 0.3969206, -2.7768265e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j22" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lead/lead_21>
+            rel physics:body1 = </lead/lead_22>
+            point3f physics:localPos0 = (0.025, -1.3010426e-17, 6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9978443, 2.0020228e-18, -5.160488e-18, 0.065626465)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j23" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lead/lead_22>
+            rel physics:body1 = </lead/lead_23>
+            point3f physics:localPos0 = (0.025, 6.071532e-18, 6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9707883, 0.23993757, 4.0496787e-17, -4.2239644e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "lead_j24" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lead/lead_23>
+            rel physics:body1 = </lead/plug>
+            point3f physics:localPos0 = (0.025, 8.271806e-18, 3.469447e-18)
+            point3f physics:localPos1 = (3.9708905e-18, 2.3752167e-17, 0.12448)
+            quatf physics:localRot0 = (0.95625657, 3.7325513e-17, 0.29252926, -9.373231e-18)
+            quatf physics:localRot1 = (0.70710677, 9.335858e-17, 0.70710677, -8.43226e-17)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+    }
+
+    def Xform "lead_00" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.7032488, 0.073763914, 0.073763914, -0.7032488)
+        double3 xformOp:translate = (0.32, 0.383, 0.025)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_01" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.75141877, 0.07881647, 0.06833881, -0.6515271)
+        double3 xformOp:translate = (0.32, 0.35854411151645577, 0.019812561472128263)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_02" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.72599864, 0.20920846, -0.04683196, -0.6534252)
+        double3 xformOp:translate = (0.3235421120467447, 0.33433493724941077, 0.014677454505749494)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_03" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.7213688, 0.16593619, -0.094309926, -0.6657311)
+        double3 xformOp:translate = (0.3270842240934894, 0.31012576298236577, 0.009542347539370725)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_04" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.67563176, -0.17182522, 0.08309799, 0.7121043)
+        double3 xformOp:translate = (0.3294796118703137, 0.2853314098925433, 0.007420515251970887)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_05" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.6321941, -0.29382443, 0.21337397, 0.68444824)
+        double3 xformOp:translate = (0.3287797210118785, 0.2605614791069451, 0.004109823230209468)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_06" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.58260953, -0.1639185, 0.32521376, 0.7265899)
+        double3 xformOp:translate = (0.32807983015344333, 0.23579154832134694, 0.0007991312084480494)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_07" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.462262, -0.21259622, 0.295696, 0.8085051)
+        double3 xformOp:translate = (0.32139498633259117, 0.21196021112275043, 0.004317686368965597)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_08" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.40881696, -0.30290595, 0.4552688, 0.73064834)
+        double3 xformOp:translate = (0.3093391527338028, 0.19012995784270073, 0.002557880138948948)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_09" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.26263496, -0.08285497, 0.55265164, 0.78659654)
+        double3 xformOp:translate = (0.29728331913501443, 0.16829970456265103, 0.0007980739089322993)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_10" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.1718398, -0.14492534, 0.5397087, 0.81128436)
+        double3 xformOp:translate = (0.2760754230129532, 0.1556808198238165, 0.004796684920754646)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_11" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.13781404, -0.17759381, 0.6971234, 0.6807986)
+        double3 xformOp:translate = (0.2536020366118165, 0.14479939962888794, 0.0035550737873451224)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_12" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.05736767, 0.014644834, 0.7082956, 0.7034286)
+        double3 xformOp:translate = (0.23112865021067988, 0.13391797943395936, 0.002313462653935599)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_13" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.03203821, 0.040102728, 0.70731103, 0.70503646)
+        double3 xformOp:translate = (0.20630392624898344, 0.13645432604487298, 0.0007968789619220069)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_14" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.02253707, 0.046116766, 0.84386057, 0.5341018)
+        double3 xformOp:translate = (0.1814356600269545, 0.139001986418901, 0.0010775241630219914)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_15" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.055769008, 0.06712541, 0.8423172, 0.53186995)
+        double3 xformOp:translate = (0.15656739380492554, 0.141549646792929, 0.0013581693641219758)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_16" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.120643765, 0.3380188, 0.7744336, 0.5209999)
+        double3 xformOp:translate = (0.13194819395452048, 0.14585978433522745, 0.0007945089235334073)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_17" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.19619547, 0.30053115, 0.87463516, 0.32588604)
+        double3 xformOp:translate = (0.11338877576812899, 0.15580567157734995, 0.014271427100536086)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_18" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.5301986, 0.14478073, 0.72275084, 0.41899788)
+        double3 xformOp:translate = (0.0948293575817375, 0.16575155881947246, 0.027748345277538763)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_19" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.6497361, -0.40886372, -0.6133194, -0.1857761)
+        double3 xformOp:translate = (0.08493295700327896, 0.15987597395175523, 0.04994155951191541)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_20" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.7275264, -0.24501392, -0.6397865, -0.03669692)
+        double3 xformOp:translate = (0.08939928525954421, 0.16637890510151737, 0.07366420266921851)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_21" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.92170674, -0.210321, -0.2984597, -0.13093345)
+        double3 xformOp:translate = (0.09386561351580947, 0.1728818362512795, 0.09738684582652161)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_22" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9283125, -0.22945444, -0.2840137, -0.07016283)
+        double3 xformOp:translate = (0.11355452543760058, 0.16998634120481695, 0.11251836444732971)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "lead_23" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (2e-8, 2e-7, 2e-7)
+        float physics:mass = 0.002
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.95624965, -0.000014659443, -0.29255185, 0.000032293767)
+        double3 xformOp:translate = (0.13427519585398318, 0.16998809968240178, 0.12650599521180883)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </lead/Looks/lead>
+            rel material:binding:physics = </lead/PhysicsMaterials/lead_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double radius = 0.003
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "plug" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+    )
+    {
+        float physics:mass = 0.06
+        custom float physxRigidBody:angularDamping = 2
+        custom float physxRigidBody:linearDamping = 0.5
+        quatf xformOp:orient = (-0.7070901, -0.0000022116546, 0.7071235, -0.00003539626)
+        double3 xformOp:translate = (0.2794758659550587, 0.16999647884464275, 0.1404995137070601)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "probe" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/copper>
+            rel material:binding:physics = </lead/PhysicsMaterials/brass> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.003302, 0.03048)
+            double3 xformOp:translate = (0, 0, 0.015239999999999998)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/copper>
+            rel material:binding:physics = </lead/PhysicsMaterials/brass> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.002286, 0.009652, 0.02748)
+            double3 xformOp:translate = (0, 0, 0.016739999999999998)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/black>
+            double size = 1
+            float3 xformOp:scale = (0.0006, 0.003702, 0.02648)
+            double3 xformOp:translate = (0, 0, 0.01724)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "guard" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/red>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.024, 0.014, 0.004)
+            double3 xformOp:translate = (0, 0, 0.032479999999999995)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "handle" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lead/Looks/red>
+            rel material:binding:physics = </lead/PhysicsMaterials/rubber> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.022, 0.014, 0.09)
+            double3 xformOp:translate = (0, 0, 0.07948)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "boot" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.008
+            rel material:binding = </lead/Looks/black>
+            double radius = 0.0045000000000000005
+            double3 xformOp:translate = (0, 0, 0.12847999999999998)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "rubber" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1.2
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "brass" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1
+            custom token physxMaterial:frictionCombineMode = "average"
+        }
+
+        def Material "lead_pvc" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.5
+            float physics:staticFriction = 0.6
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+    }
+}
+
