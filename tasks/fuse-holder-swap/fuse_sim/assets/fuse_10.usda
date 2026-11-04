@@ -1,0 +1,188 @@
+#usda 1.0
+(
+    defaultPrim = "fuse"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "fuse" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+)
+{
+    rel material:binding:physics = </fuse/PhysicsMaterials/nickel> (
+        bindMaterialAs = "weakerThanDescendants"
+    )
+    float physics:mass = 0.009
+    custom float physxRigidBody:maxDepenetrationVelocity = 0.3
+    custom int physxRigidBody:solverPositionIterationCount = 32
+
+    def "Looks"
+    {
+        def Material "fuse_tube"
+        {
+            token outputs:surface.connect = </fuse/Looks/fuse_tube/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.88, 0.87, 0.82)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "fuse_cap"
+        {
+            token outputs:surface.connect = </fuse/Looks/fuse_cap/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.79, 0.81)
+                float inputs:metallic = 0.6
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "tex_print"
+        {
+            token outputs:surface.connect = </fuse/Looks/tex_print/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </fuse/Looks/tex_print/tex.outputs:rgb>
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+
+            def Shader "st"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+
+            def Shader "tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @./textures/fuse_10.png@
+                float2 inputs:st.connect = </fuse/Looks/tex_print/st.outputs:result>
+                token inputs:wrapS = "clamp"
+                token inputs:wrapT = "clamp"
+                float3 outputs:rgb
+            }
+        }
+    }
+
+    def Mesh "cap_lo" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        int[] faceVertexCounts = [16, 16, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 1, 17, 16, 1, 2, 18, 17, 2, 3, 19, 18, 3, 4, 20, 19, 4, 5, 21, 20, 5, 6, 22, 21, 6, 7, 23, 22, 7, 8, 24, 23, 8, 9, 25, 24, 9, 10, 26, 25, 10, 11, 27, 26, 11, 12, 28, 27, 12, 13, 29, 28, 13, 14, 30, 29, 14, 15, 31, 30, 15, 0, 16, 31]
+        rel material:binding = </fuse/Looks/fuse_cap>
+        uniform token physics:approximation = "convexHull"
+        custom float physxCollision:contactOffset = 0.001
+        custom float physxCollision:restOffset = 0
+        point3f[] points = [(0.0050510443, 0.0010047151, -0.01905), (0.0042820685, 0.0028611866, -0.01905), (0.0028611866, 0.0042820685, -0.01905), (0.0010047151, 0.0050510443, -0.01905), (-0.0010047151, 0.0050510443, -0.01905), (-0.0028611866, 0.0042820685, -0.01905), (-0.0042820685, 0.0028611866, -0.01905), (-0.0050510443, 0.0010047151, -0.01905), (-0.0050510443, -0.0010047151, -0.01905), (-0.0042820685, -0.0028611866, -0.01905), (-0.0028611866, -0.0042820685, -0.01905), (-0.0010047151, -0.0050510443, -0.01905), (0.0010047151, -0.0050510443, -0.01905), (0.0028611866, -0.0042820685, -0.01905), (0.0042820685, -0.0028611866, -0.01905), (0.0050510443, -0.0010047151, -0.01905), (0.0050510443, 0.0010047151, -0.00905), (0.0042820685, 0.0028611866, -0.00905), (0.0028611866, 0.0042820685, -0.00905), (0.0010047151, 0.0050510443, -0.00905), (-0.0010047151, 0.0050510443, -0.00905), (-0.0028611866, 0.0042820685, -0.00905), (-0.0042820685, 0.0028611866, -0.00905), (-0.0050510443, 0.0010047151, -0.00905), (-0.0050510443, -0.0010047151, -0.00905), (-0.0042820685, -0.0028611866, -0.00905), (-0.0028611866, -0.0042820685, -0.00905), (-0.0010047151, -0.0050510443, -0.00905), (0.0010047151, -0.0050510443, -0.00905), (0.0028611866, -0.0042820685, -0.00905), (0.0042820685, -0.0028611866, -0.00905), (0.0050510443, -0.0010047151, -0.00905)]
+        uniform token subdivisionScheme = "none"
+    }
+
+    def Mesh "tube" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        int[] faceVertexCounts = [16, 16, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 1, 17, 16, 1, 2, 18, 17, 2, 3, 19, 18, 3, 4, 20, 19, 4, 5, 21, 20, 5, 6, 22, 21, 6, 7, 23, 22, 7, 8, 24, 23, 8, 9, 25, 24, 9, 10, 26, 25, 10, 11, 27, 26, 11, 12, 28, 27, 12, 13, 29, 28, 13, 14, 30, 29, 14, 15, 31, 30, 15, 0, 16, 31]
+        rel material:binding = </fuse/Looks/fuse_tube>
+        uniform token physics:approximation = "convexHull"
+        custom float physxCollision:contactOffset = 0.001
+        custom float physxCollision:restOffset = 0
+        point3f[] points = [(0.0043154554, 0.0008583974, -0.00905), (0.0036584663, 0.002444509, -0.00905), (0.002444509, 0.0036584663, -0.00905), (0.0008583974, 0.0043154554, -0.00905), (-0.0008583974, 0.0043154554, -0.00905), (-0.002444509, 0.0036584663, -0.00905), (-0.0036584663, 0.002444509, -0.00905), (-0.0043154554, 0.0008583974, -0.00905), (-0.0043154554, -0.0008583974, -0.00905), (-0.0036584663, -0.002444509, -0.00905), (-0.002444509, -0.0036584663, -0.00905), (-0.0008583974, -0.0043154554, -0.00905), (0.0008583974, -0.0043154554, -0.00905), (0.002444509, -0.0036584663, -0.00905), (0.0036584663, -0.002444509, -0.00905), (0.0043154554, -0.0008583974, -0.00905), (0.0043154554, 0.0008583974, 0.00905), (0.0036584663, 0.002444509, 0.00905), (0.002444509, 0.0036584663, 0.00905), (0.0008583974, 0.0043154554, 0.00905), (-0.0008583974, 0.0043154554, 0.00905), (-0.002444509, 0.0036584663, 0.00905), (-0.0036584663, 0.002444509, 0.00905), (-0.0043154554, 0.0008583974, 0.00905), (-0.0043154554, -0.0008583974, 0.00905), (-0.0036584663, -0.002444509, 0.00905), (-0.002444509, -0.0036584663, 0.00905), (-0.0008583974, -0.0043154554, 0.00905), (0.0008583974, -0.0043154554, 0.00905), (0.002444509, -0.0036584663, 0.00905), (0.0036584663, -0.002444509, 0.00905), (0.0043154554, -0.0008583974, 0.00905)]
+        uniform token subdivisionScheme = "none"
+    }
+
+    def Mesh "cap_hi" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        int[] faceVertexCounts = [16, 16, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0, 1, 17, 16, 1, 2, 18, 17, 2, 3, 19, 18, 3, 4, 20, 19, 4, 5, 21, 20, 5, 6, 22, 21, 6, 7, 23, 22, 7, 8, 24, 23, 8, 9, 25, 24, 9, 10, 26, 25, 10, 11, 27, 26, 11, 12, 28, 27, 12, 13, 29, 28, 13, 14, 30, 29, 14, 15, 31, 30, 15, 0, 16, 31]
+        rel material:binding = </fuse/Looks/fuse_cap>
+        uniform token physics:approximation = "convexHull"
+        custom float physxCollision:contactOffset = 0.001
+        custom float physxCollision:restOffset = 0
+        point3f[] points = [(0.0050510443, 0.0010047151, 0.00905), (0.0042820685, 0.0028611866, 0.00905), (0.0028611866, 0.0042820685, 0.00905), (0.0010047151, 0.0050510443, 0.00905), (-0.0010047151, 0.0050510443, 0.00905), (-0.0028611866, 0.0042820685, 0.00905), (-0.0042820685, 0.0028611866, 0.00905), (-0.0050510443, 0.0010047151, 0.00905), (-0.0050510443, -0.0010047151, 0.00905), (-0.0042820685, -0.0028611866, 0.00905), (-0.0028611866, -0.0042820685, 0.00905), (-0.0010047151, -0.0050510443, 0.00905), (0.0010047151, -0.0050510443, 0.00905), (0.0028611866, -0.0042820685, 0.00905), (0.0042820685, -0.0028611866, 0.00905), (0.0050510443, -0.0010047151, 0.00905), (0.0050510443, 0.0010047151, 0.01905), (0.0042820685, 0.0028611866, 0.01905), (0.0028611866, 0.0042820685, 0.01905), (0.0010047151, 0.0050510443, 0.01905), (-0.0010047151, 0.0050510443, 0.01905), (-0.0028611866, 0.0042820685, 0.01905), (-0.0042820685, 0.0028611866, 0.01905), (-0.0050510443, 0.0010047151, 0.01905), (-0.0050510443, -0.0010047151, 0.01905), (-0.0042820685, -0.0028611866, 0.01905), (-0.0028611866, -0.0042820685, 0.01905), (-0.0010047151, -0.0050510443, 0.01905), (0.0010047151, -0.0050510443, 0.01905), (0.0028611866, -0.0042820685, 0.01905), (0.0042820685, -0.0028611866, 0.01905), (0.0050510443, -0.0010047151, 0.01905)]
+        uniform token subdivisionScheme = "none"
+    }
+
+    def Mesh "print0" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform bool doubleSided = 1
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </fuse/Looks/tex_print>
+        point3f[] points = [(0.00455, 0.0026, -0.00855), (0.00455, 0.0026, 0.00855), (0.00455, -0.0026, 0.00855), (0.00455, -0.0026, -0.00855)]
+        texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+            interpolation = "faceVarying"
+        )
+    }
+
+    def Mesh "print1" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform bool doubleSided = 1
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </fuse/Looks/tex_print>
+        point3f[] points = [(-0.0026, 0.00455, -0.00855), (-0.0026, 0.00455, 0.00855), (0.0026, 0.00455, 0.00855), (0.0026, 0.00455, -0.00855)]
+        texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+            interpolation = "faceVarying"
+        )
+    }
+
+    def Mesh "print2" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform bool doubleSided = 1
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </fuse/Looks/tex_print>
+        point3f[] points = [(-0.00455, -0.0026, -0.00855), (-0.00455, -0.0026, 0.00855), (-0.00455, 0.0026, 0.00855), (-0.00455, 0.0026, -0.00855)]
+        texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+            interpolation = "faceVarying"
+        )
+    }
+
+    def Mesh "print3" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform bool doubleSided = 1
+        int[] faceVertexCounts = [4]
+        int[] faceVertexIndices = [0, 1, 2, 3]
+        rel material:binding = </fuse/Looks/tex_print>
+        point3f[] points = [(0.0026, -0.00455, -0.00855), (0.0026, -0.00455, 0.00855), (-0.0026, -0.00455, 0.00855), (-0.0026, -0.00455, -0.00855)]
+        texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+            interpolation = "faceVarying"
+        )
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "nickel" (
+            prepend apiSchemas = ["PhysicsMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.6
+            float physics:staticFriction = 0.6
+        }
+    }
+}
+
