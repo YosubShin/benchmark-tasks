@@ -1,0 +1,103 @@
+#usda 1.0
+(
+    defaultPrim = "pedestal"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "pedestal"
+{
+    def "Looks"
+    {
+        def Material "stand"
+        {
+            token outputs:surface.connect = </pedestal/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.06, 0.01)
+        double3 xformOp:translate = (0.13, 0.09, 0.005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.012, 0.038, 0.138)
+        double3 xformOp:translate = (0.13, 0.09, 0.069)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holder_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.07, 0.05, 0.01)
+        double3 xformOp:translate = (0.262, 0.075, 0.005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holder_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.021, 0.121)
+        double3 xformOp:translate = (0.262, 0.075, 0.0605)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holder_wall0" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.007, 0.015)
+        double3 xformOp:translate = (0.262, 0.06799999999999999, 0.1285)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holder_wall1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.007, 0.015)
+        double3 xformOp:translate = (0.262, 0.082, 0.1285)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "park_shelf" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </pedestal/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.12, 0.6, 0.01)
+        double3 xformOp:translate = (0.3, 0, -0.305)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
