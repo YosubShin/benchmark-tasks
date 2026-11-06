@@ -1,0 +1,189 @@
+#usda 1.0
+(
+    defaultPrim = "cradle"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "cradle"
+{
+    def "Looks"
+    {
+        def Material "cap_black"
+        {
+            token outputs:surface.connect = </cradle/Looks/cap_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.06, 0.06, 0.06)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "cap_white"
+        {
+            token outputs:surface.connect = </cradle/Looks/cap_white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.88, 0.87, 0.82)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "brass"
+        {
+            token outputs:surface.connect = </cradle/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.66, 0.36)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "face_black"
+        {
+            token outputs:surface.connect = </cradle/Looks/face_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.07, 0.07, 0.07)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "plate"
+        {
+            token outputs:surface.connect = </cradle/Looks/plate/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.6, 0.62)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "enclosure"
+        {
+            token outputs:surface.connect = </cradle/Looks/enclosure/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.65, 0.66)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "screw"
+        {
+            token outputs:surface.connect = </cradle/Looks/screw/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.75, 0.78)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "cradle"
+        {
+            token outputs:surface.connect = </cradle/Looks/cradle/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "cord"
+        {
+            token outputs:surface.connect = </cradle/Looks/cord/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.025, 0.025, 0.025)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "clamp"
+        {
+            token outputs:surface.connect = </cradle/Looks/clamp/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.7, 0.71, 0.72)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "mark"
+        {
+            token outputs:surface.connect = </cradle/Looks/mark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "rail_0" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </cradle/Looks/cradle>
+        double size = 1
+        float3 xformOp:scale = (0.036, 0.004, 0.006)
+        double3 xformOp:translate = (0.19, -0.043, 0.11085701850408185)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "rail_1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </cradle/Looks/cradle>
+        double size = 1
+        float3 xformOp:scale = (0.036, 0.004, 0.006)
+        double3 xformOp:translate = (0.19, -0.017, 0.11085701850408185)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "post" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </cradle/Looks/cradle>
+        double size = 1
+        float3 xformOp:scale = (0.036, 0.03, 0.11035702)
+        double3 xformOp:translate = (0.19, -0.03, 0.05267850925204092)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
