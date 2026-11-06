@@ -223,3 +223,7 @@ aiming 5 cm and capped at 3 times the cover's weight (17.7 N here), for 3 s:
 - seed 1: it must rise less than 5 mm.
 
 Real crews lift the cover by its pin with a cover hook; the robot does not lift it here.
+
+## Full title
+
+Sample a utility handhole's air through its cover's pick slot before unbolting it, and leave it shut if the monitor alarms
