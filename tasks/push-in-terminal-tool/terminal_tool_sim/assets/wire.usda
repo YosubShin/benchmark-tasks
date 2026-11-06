@@ -1,0 +1,1618 @@
+#usda 1.0
+(
+    defaultPrim = "wire"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "wire" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "grey"
+        {
+            token outputs:surface.connect = </wire/Looks/grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.63, 0.64)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "blue"
+        {
+            token outputs:surface.connect = </wire/Looks/blue/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.32, 0.72)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "green_yellow"
+        {
+            token outputs:surface.connect = </wire/Looks/green_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.55, 0.15)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "yellow_stripe"
+        {
+            token outputs:surface.connect = </wire/Looks/yellow_stripe/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.92, 0.8, 0.1)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </wire/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.06, 0.06, 0.07)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "plate"
+        {
+            token outputs:surface.connect = </wire/Looks/plate/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.7)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "rail"
+        {
+            token outputs:surface.connect = </wire/Looks/rail/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.81, 0.83)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "tin"
+        {
+            token outputs:surface.connect = </wire/Looks/tin/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.81, 0.83)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "copper"
+        {
+            token outputs:surface.connect = </wire/Looks/copper/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.45, 0.2)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "collar_blue"
+        {
+            token outputs:surface.connect = </wire/Looks/collar_blue/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.22, 0.8)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "wire_blue"
+        {
+            token outputs:surface.connect = </wire/Looks/wire_blue/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.3, 0.55, 0.85)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "duct"
+        {
+            token outputs:surface.connect = </wire/Looks/duct/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.57, 0.58)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "holder"
+        {
+            token outputs:surface.connect = </wire/Looks/holder/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.25, 0.25, 0.27)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </wire/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.93)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </wire/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.65, 0.67, 0.7)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "brown"
+        {
+            token outputs:surface.connect = </wire/Looks/brown/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.36, 0.2, 0.1)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </wire/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.04, 0.04, 0.04)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "wire_grey"
+        {
+            token outputs:surface.connect = </wire/Looks/wire_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.45, 0.46, 0.47)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "tool_green"
+        {
+            token outputs:surface.connect = </wire/Looks/tool_green/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.42, 0.74, 0.22)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "tool_grey"
+        {
+            token outputs:surface.connect = </wire/Looks/tool_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.3, 0.31, 0.33)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "anchor" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.2924, -0.14, 0.0275)
+        float3 physics:diagonalInertia = (0.000001, 0.000001, 0.000001)
+        float physics:mass = 0.01
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cylinder "inside" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.03
+            rel material:binding = </wire/Looks/wire_blue>
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.2924, -0.14, 0.042499999999999996)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </wire/anchor>
+        }
+
+        def PhysicsRevoluteJoint "cable_j00" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/anchor>
+            rel physics:body1 = </wire/cable_00>
+            point3f physics:localPos0 = (0.2924, -0.14, 0.0275)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.21647197, 0, 0.97628886, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j01" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_00>
+            rel physics:body1 = </wire/cable_01>
+            point3f physics:localPos0 = (0.025, 0, -6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9522954, 7.657538e-18, -7.118253e-18, 0.3051777)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j02" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/cable_01>
+            rel physics:body1 = </wire/cable_02>
+            point3f physics:localPos0 = (0.025, -2.471981e-17, -1.1275703e-17)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9448632, 0.3274653, 7.138135e-18, -1.0736747e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j03" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/cable_02>
+            rel physics:body1 = </wire/cable_03>
+            point3f physics:localPos0 = (0.025, 2.6020852e-18, -8.6736174e-19)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9792603, -9.732973e-20, 0.20260611, 2.4018655e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j04" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_03>
+            rel physics:body1 = </wire/cable_04>
+            point3f physics:localPos0 = (0.025, 7.047314e-19, -3.2526065e-19)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99966484, -1.1555709e-18, -5.2040654e-18, -0.025887867)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j05" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/cable_04>
+            rel physics:body1 = </wire/cable_05>
+            point3f physics:localPos0 = (0.025, 2.6020852e-18, -1.7347235e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.94112074, 0.3380707, -2.5290392e-18, -1.3999825e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j06" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/cable_05>
+            rel physics:body1 = </wire/cable_06>
+            point3f physics:localPos0 = (0.025, 2.6020852e-18, -5.7462715e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.98430175, 1.0745063e-17, -0.1764937, 4.596761e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j07" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_06>
+            rel physics:body1 = </wire/cable_07>
+            point3f physics:localPos0 = (0.025, -8.6736174e-19, 2.8189256e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99013734, 1.37084375e-17, 1.2299012e-17, -0.14010002)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j08" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/cable_07>
+            rel physics:body1 = </wire/cable_08>
+            point3f physics:localPos0 = (0.025, -1.7347235e-18, 7.155734e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9255234, 0.3786904, 6.8520883e-18, 1.8019987e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j09" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/cable_08>
+            rel physics:body1 = </wire/cable_09>
+            point3f physics:localPos0 = (0.025, 4.3368087e-19, 3.7947076e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8533051, 3.4363202e-18, -0.5214119, 4.382388e-19)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j10" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_09>
+            rel physics:body1 = </wire/cable_10>
+            point3f physics:localPos0 = (0.025, -2.6020852e-18, -1.3552527e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.96489364, -6.7082487e-18, -5.165381e-18, -0.26264086)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j11" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/cable_10>
+            rel physics:body1 = </wire/cable_11>
+            point3f physics:localPos0 = (0.025, -3.469447e-18, -1.4094628e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8378436, 0.5459103, 7.3022644e-17, -3.1138605e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j12" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/cable_11>
+            rel physics:body1 = </wire/cable_12>
+            point3f physics:localPos0 = (0.025, -8.6736174e-19, -1.7347235e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9391542, -2.867436e-17, -0.34349576, 2.4332603e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j13" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_12>
+            rel physics:body1 = </wire/cable_13>
+            point3f physics:localPos0 = (0.025, 5.2041704e-18, 4.2825986e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9723577, -2.4393692e-17, -2.2678856e-17, 0.23349638)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j14" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/cable_13>
+            rel physics:body1 = </wire/cable_14>
+            point3f physics:localPos0 = (0.025, -5.2041704e-18, 7.34547e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8283308, 0.5602393, -5.7483717e-18, -4.1529142e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j15" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/cable_14>
+            rel physics:body1 = </wire/cable_15>
+            point3f physics:localPos0 = (0.025, 5.2041704e-18, 6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8941505, -5.5491524e-17, 0.4477665, 2.194264e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cable_j16" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/cable_15>
+            rel physics:body1 = </wire/wire_end>
+            point3f physics:localPos0 = (0.025, 1.0408341e-17, -1.3010426e-18)
+            point3f physics:localPos1 = (-0.08, 1.6567117e-17, -1.0408341e-17)
+            quatf physics:localRot0 = (0.76604444, -4.1617852e-17, 1.5955818e-18, 0.64278764)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsPrismaticJoint "strand_slide" (
+            prepend apiSchemas = ["PhysicsDriveAPI:linear"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </wire/wire_end>
+            rel physics:body1 = </wire/strand_00>
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -0.006
+            float physics:upperLimit = 0
+        }
+
+        def PhysicsRevoluteJoint "strand_j01" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/strand_00>
+            rel physics:body1 = </wire/strand_01>
+            point3f physics:localPos0 = (0.0025, 3.495599e-19, -5.2041704e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -45
+            float physics:upperLimit = 45
+        }
+
+        def PhysicsRevoluteJoint "strand_j02" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </wire/strand_01>
+            rel physics:body1 = </wire/strand_02>
+            point3f physics:localPos0 = (0.0025, 3.5073781e-19, 1.951564e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -45
+            float physics:upperLimit = 45
+        }
+
+        def PhysicsRevoluteJoint "strand_j03" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </wire/strand_02>
+            rel physics:body1 = </wire/strand_03>
+            point3f physics:localPos0 = (0.0025, 3.479982e-19, 8.131516e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -45
+            float physics:upperLimit = 45
+        }
+    }
+
+    def Xform "cable_00" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.21647197, 0, 0.97628886, 0)
+        double3 xformOp:translate = (0.2924, -0.14, 0.0275)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_01" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.20614527, 0.29794157, 0.9297154, 0.06606241)
+        double3 xformOp:translate = (0.26974300574709414, -0.14, 0.016933041524459732)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_02" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.09721356, 0.34901944, 0.900087, -0.24202958)
+        double3 xformOp:translate = (0.2513062583237007, -0.12546903410085308, 0.00833435706206525)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_03" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.08716575, 0.39081755, 0.90111554, -0.16629648)
+        double3 xformOp:translate = (0.23286951090030725, -0.11093806820170614, -0.00026432740032923327)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_04" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.091441594, 0.36735862, 0.910931, -0.16398422)
+        double3 xformOp:translate = (0.21588632281451883, -0.09260471091789056, 0.00041341380891012774)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_05" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.21025077, 0.31481507, 0.80185777, -0.46228802)
+        double3 xformOp:translate = (0.1980520190693883, -0.07512304435428112, 0.0015662121803535559)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_06" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.06542736, 0.22828212, 0.8263779, -0.5105938)
+        double3 xformOp:translate = (0.18021771532425776, -0.057641377790671675, 0.002719010551796984)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_07" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.13631628, 0.11025509, 0.85021, -0.49639162)
+        double3 xformOp:translate = (0.15803738876000378, -0.046538671805962696, -0.00040557475191245126)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_08" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.16791645, -0.050422, -0.5989105, 0.7813884)
+        double3 xformOp:translate = (0.13457430442199608, -0.038468359776587316, 0.002652813237871955)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_09" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.1689951, 0.36439988, -0.59860706, 0.69305336)
+        double3 xformOp:translate = (0.1111112200839884, -0.030398047747211936, 0.005711201227656362)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_10" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.01896184, 0.5088258, -0.48188585, 0.7131078)
+        double3 xformOp:translate = (0.09417855029021584, -0.04716079532102739, 0.013280546472233753)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_11" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.26188618, 0.43666792, -0.014452073, 0.8605393)
+        double3 xformOp:translate = (0.08214171207000849, -0.058744501071822844, 0.031879801477194145)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_12" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.25091574, 0.7056901, 0.07638407, 0.65818554)
+        double3 xformOp:translate = (0.07010487384980114, -0.0703282068226183, 0.05047905648215453)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_13" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.3976638, 0.7040186, -0.090503454, 0.58140385)
+        double3 xformOp:translate = (0.07315273586680363, -0.07589048885973482, 0.07466110676050944)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_14" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.7238161, -0.36037338, -0.2507585, -0.5322983)
+        double3 xformOp:translate = (0.08084166972602409, -0.09063645808415363, 0.09332756565717826)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cable_15" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (5e-8, 2.5e-7, 2.5e-7)
+        float physics:mass = 0.003
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.7594818, -0.08388269, 0.09988474, -0.63731796)
+        double3 xformOp:translate = (0.08853060358524456, -0.10538242730857245, 0.11199402455384708)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.025
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/cable_pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0018000000000000002
+            double3 xformOp:translate = (0.0125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "wire_end" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+    )
+    {
+        float physics:mass = 0.03
+        custom float physxRigidBody:angularDamping = 0.5
+        quatf xformOp:orient = (0.99145687, -0.0000531923, 0.1304349, -0.000028386205)
+        double3 xformOp:translate = (0.17000092544650075, -0.13000853864244477, 0.09018269705956632)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "insulation" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </wire/Looks/wire_blue>
+            rel material:binding:physics = </wire/PhysicsMaterials/pvc> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.08, 0.0036, 0.0036)
+            double3 xformOp:translate = (-0.04, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "strand_00" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.00125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
+        float physics:mass = 0.001
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.99145687, -0.0000531923, 0.1304349, -0.000028386205)
+        double3 xformOp:translate = (0.17000092544650075, -0.13000853864244477, 0.09018269705956632)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "copper" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </wire/Looks/copper>
+            rel material:binding:physics = </wire/PhysicsMaterials/copper> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0025, 0.002, 0.002)
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "look" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/copper>
+            double radius = 0.00098
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0008, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.00040000000000000013, 0.0006928203230275509)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.00039999999999999986, 0.000692820323027551)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0008, 9.797174393178826e-20)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0004000000000000004, -0.0006928203230275507)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.00040000000000000013, -0.0006928203230275509)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "strand_01" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.00125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
+        float physics:mass = 0.001
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.99145687, -0.0000531923, 0.1304349, -0.000028386205)
+        double3 xformOp:translate = (0.1724158591248498, -0.13000871405159398, 0.0895360941687538)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "copper" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </wire/Looks/copper>
+            rel material:binding:physics = </wire/PhysicsMaterials/copper> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0025, 0.002, 0.002)
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "look" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/copper>
+            double radius = 0.00098
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0007020660495122982, 0.00038354043088336244)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.000018877268232727675, 0.000799777249453915)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0006831887812795705, 0.00041623681857055265)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0007020660495122982, -0.00038354043088336233)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.00001887726823272795, -0.000799777249453915)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0006831887812795707, -0.0004162368185705525)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "strand_02" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.00125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
+        float physics:mass = 0.001
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.99145687, -0.0000531923, 0.1304349, -0.000028386205)
+        double3 xformOp:translate = (0.17483079280319888, -0.13000888946074318, 0.08888949127794128)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "copper" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </wire/Looks/copper>
+            rel material:binding:physics = </wire/PhysicsMaterials/copper> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0025, 0.002, 0.002)
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "look" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/copper>
+            double radius = 0.00098
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.00043224184469451186, 0.0006731767878463172)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.00036686727716566216, 0.000710920812007254)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0007991091218601742, 0.000037744024160936764)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.00043224184469451186, -0.0006731767878463171)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.00036686727716566205, -0.000710920812007254)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0007991091218601742, -0.000037744024160936506)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "strand_03" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.00125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
+        float physics:mass = 0.001
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.99145687, -0.0000531923, 0.1304349, -0.000028386205)
+        double3 xformOp:translate = (0.17724572648154793, -0.1300090648698924, 0.08824288838712878)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "copper" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </wire/Looks/copper>
+            rel material:binding:physics = </wire/PhysicsMaterials/copper> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0004
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0025, 0.002, 0.002)
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "look" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/copper>
+            double radius = 0.00098
+            double3 xformOp:translate = (0.00125, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.00005658976133416233, 0.0007979959892832436)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0006627899181703023, 0.0004480061655511049)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.0007193796795044648, -0.0003499898237321387)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, -0.00005658976133416243, -0.0007979959892832436)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0006627899181703022, -0.00044800616555110503)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "s5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0027
+            rel material:binding = </wire/Looks/tin>
+            double radius = 0.0003
+            double3 xformOp:translate = (0.00125, 0.0007193796795044648, 0.0003499898237321389)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "copper" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.8
+            float physics:staticFriction = 0.8
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "pvc" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 2.5
+            float physics:staticFriction = 2.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "cable_pvc" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.4
+            float physics:staticFriction = 0.5
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+    }
+}
+
