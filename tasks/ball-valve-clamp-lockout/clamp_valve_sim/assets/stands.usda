@@ -1,0 +1,70 @@
+#usda 1.0
+(
+    defaultPrim = "stands"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "stands"
+{
+    def "Looks"
+    {
+        def Material "stand"
+        {
+            token outputs:surface.connect = </stands/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "cradle" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.04, 0.06)
+        double3 xformOp:translate = (0.2, -0.17, 0.03)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "cradle_lip0" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.006, 0.04, 0.01)
+        double3 xformOp:translate = (0.186, -0.17, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "cradle_lip1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.006, 0.04, 0.01)
+        double3 xformOp:translate = (0.21400000000000002, -0.17, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "rest" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.03, 0.05, 0.0706)
+        double3 xformOp:translate = (0.08, 0.15, 0.035300000000000005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
