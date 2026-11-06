@@ -1,0 +1,119 @@
+#usda 1.0
+(
+    defaultPrim = "probe_l1"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "probe_l1" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    float physics:mass = 0.06
+
+    def "Looks"
+    {
+        def Material "steel"
+        {
+            token outputs:surface.connect = </probe_l1/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "probe_black"
+        {
+            token outputs:surface.connect = </probe_l1/Looks/probe_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.06, 0.06, 0.07)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "tip" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </probe_l1/Looks/steel>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.002, 0.002, 0.004)
+        double3 xformOp:translate = (0, 0, 0.002)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "nose" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </probe_l1/Looks/probe_black>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.005, 0.015)
+        double3 xformOp:translate = (0, 0, 0.0115)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "shaft" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </probe_l1/Looks/probe_black>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.01, 0.01, 0.076)
+        double3 xformOp:translate = (0, 0, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "body" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </probe_l1/Looks/probe_black>
+        rel material:binding:physics = </probe_l1/PhysicsMaterials/rubber> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        double size = 1
+        float3 xformOp:scale = (0.022, 0.026, 0.101)
+        double3 xformOp:translate = (0, 0, 0.15549999999999997)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "rubber" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+
+    def Cube "guard" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </probe_l1/Looks/probe_black>
+        double size = 1
+        float3 xformOp:scale = (0.026, 0.03, 0.008)
+        double3 xformOp:translate = (0, 0, 0.10099999999999998)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+

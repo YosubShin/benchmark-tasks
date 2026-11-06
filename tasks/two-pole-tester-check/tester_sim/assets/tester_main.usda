@@ -1,0 +1,406 @@
+#usda 1.0
+(
+    defaultPrim = "tester_main"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "tester_main" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    float physics:mass = 0.21
+
+    def "Looks"
+    {
+        def Material "steel"
+        {
+            token outputs:surface.connect = </tester_main/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "probe_red"
+        {
+            token outputs:surface.connect = </tester_main/Looks/probe_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.07, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "fluke_yellow"
+        {
+            token outputs:surface.connect = </tester_main/Looks/fluke_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.75, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "probe_black"
+        {
+            token outputs:surface.connect = </tester_main/Looks/probe_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.06, 0.06, 0.07)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "display_grey"
+        {
+            token outputs:surface.connect = </tester_main/Looks/display_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.28, 0.29, 0.31)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lcd"
+        {
+            token outputs:surface.connect = </tester_main/Looks/lcd/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.66, 0.58)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "led_off"
+        {
+            token outputs:surface.connect = </tester_main/Looks/led_off/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.13, 0.12)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "led_red"
+        {
+            token outputs:surface.connect = </tester_main/Looks/led_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 0.05, 0.02)
+                color3f inputs:emissiveColor = (1, 0.05, 0.02)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "led_yellow"
+        {
+            token outputs:surface.connect = </tester_main/Looks/led_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 0.8, 0.05)
+                color3f inputs:emissiveColor = (1, 0.8, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "tip" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/steel>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.002, 0.002, 0.004)
+        double3 xformOp:translate = (0, 0, 0.002)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "nose" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/probe_red>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.005, 0.015)
+        double3 xformOp:translate = (0, 0, 0.0115)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "shaft" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/probe_red>
+        custom float physxCollision:contactOffset = 0.0005
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.009, 0.009, 0.025)
+        double3 xformOp:translate = (0, 0, 0.0315)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "body" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/fluke_yellow>
+        rel material:binding:physics = </tester_main/PhysicsMaterials/rubber> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        double size = 1
+        float3 xformOp:scale = (0.032, 0.043, 0.216)
+        double3 xformOp:translate = (0, -0.0137, 0.15200000000000002)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "rubber" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+
+    def Cube "boot" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/probe_black>
+        double size = 1
+        float3 xformOp:scale = (0.028, 0.031, 0.026)
+        double3 xformOp:translate = (0, -0.0137, 0.248)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "display" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/display_grey>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.035, 0.05)
+        double3 xformOp:translate = (0.0164, -0.0137, 0.082)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "lcd" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/lcd>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.029, 0.024)
+        double3 xformOp:translate = (0.0164, -0.0137, 0.124)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_12_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.101)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_12_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_yellow>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.101)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_24_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.0945)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_24_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_yellow>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.0945)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_50_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.08800000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_50_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_red>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.08800000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_120_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.0815)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_120_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_red>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.0815)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_230_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.07500000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_230_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_red>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.07500000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_400_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.0685)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_400_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_red>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.0685)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_690_off" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_off>
+        double size = 1
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.016900000000000002, -0.0217, 0.062000000000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "led_690_on" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/led_red>
+        double size = 1
+        token visibility = "invisible"
+        float3 xformOp:scale = (0.0008, 0.01, 0.0045)
+        double3 xformOp:translate = (0.0173, -0.0217, 0.062000000000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "collar" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </tester_main/Looks/fluke_yellow>
+        double size = 1
+        float3 xformOp:scale = (0.012, 0.012, 0.006)
+        double3 xformOp:translate = (0, 0, 0.040999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
