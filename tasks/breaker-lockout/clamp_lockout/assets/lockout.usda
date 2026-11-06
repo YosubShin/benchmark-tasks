@@ -1,0 +1,614 @@
+#usda 1.0
+(
+    defaultPrim = "lockout"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "lockout" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 64
+    custom int physxArticulation:solverVelocityIterationCount = 8
+
+    def Xform "body" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </lockout/PhysicsMaterials/serrated> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.03
+
+        def Cube "plate_top_a" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0183, 0.021, 0.0015)
+            double3 xformOp:translate = (-0.00915, -0.0135, 0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "plate_top_b" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0123, 0.017, 0.0015)
+            double3 xformOp:translate = (-0.012150000000000001, 0.0055, 0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "plate_top_c" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0183, 0.0145, 0.0015)
+            double3 xformOp:translate = (-0.00915, 0.02125, 0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "plate_bot" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0183, 0.0525, 0.0015)
+            double3 xformOp:translate = (-0.00915, 0.0022500000000000003, -0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "spine" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0025, 0.012, 0.00305)
+            double3 xformOp:translate = (-0.00125, 0.0335, -0.009475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "loop_a" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00365, 0.0125, 0.00305)
+            double3 xformOp:translate = (-0.016475, 0.04475, -0.009475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "loop_b" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00635, 0.0125, 0.00305)
+            double3 xformOp:translate = (-0.0031750000000000003, 0.04475, -0.009475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "loop_c" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0083, 0.00185, 0.00305)
+            double3 xformOp:translate = (-0.0105, 0.039425, -0.009475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "loop_d" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0083, 0.00235, 0.00305)
+            double3 xformOp:translate = (-0.0105, 0.049825, -0.009475)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "hinge_block" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0183, 0.0045, 0.0159)
+            double3 xformOp:translate = (-0.00915, -0.02175, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "fixed_jaw" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/zinc>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = -159
+            float3 xformOp:scale = (0.007498015, 0.003, 0.0159)
+            double3 xformOp:translate = (-0.0082081602522735, -0.001117068193987165, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "jaw_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0063, 0.0195, 0.0159)
+            double3 xformOp:translate = (-0.01515, -0.00975, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "nut_wall" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.005, 0.002, 0.0159)
+            double3 xformOp:translate = (-0.0055, 0.0275, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "Looks"
+    {
+        def Material "lockout_red"
+        {
+            token outputs:surface.connect = </lockout/Looks/lockout_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.07, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "zinc"
+        {
+            token outputs:surface.connect = </lockout/Looks/zinc/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.86, 0.87, 0.88)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </lockout/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "knob"
+        {
+            token outputs:surface.connect = </lockout/Looks/knob/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.04, 0.04, 0.04)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "window"
+        {
+            token outputs:surface.connect = </lockout/Looks/window/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.2, 0.21)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lockout_red2"
+        {
+            token outputs:surface.connect = </lockout/Looks/lockout_red2/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.15, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "serrated" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "serrated_jaw" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "knurl" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+
+    def Xform "jaw" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </lockout/PhysicsMaterials/serrated_jaw> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.008
+        double3 xformOp:translate = (0, 0.0084699575363453, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "block" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/zinc>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = -159
+            float3 xformOp:scale = (0.007498015, 0.003, 0.015)
+            double3 xformOp:translate = (-0.011791839747726504, 0.00024877853463955296, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "carrier" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/zinc>
+            double size = 1
+            float3 xformOp:scale = (0.0053, 0.003, 0.015)
+            double3 xformOp:translate = (-0.01465, 0.0015, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "screw" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.018030042463654705
+            rel material:binding = </lockout/Looks/steel>
+            double radius = 0.003
+            double3 xformOp:translate = (-0.0105, 0.012015021231827353, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsPrismaticJoint "jaw_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:linear"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lockout/body>
+            rel physics:body1 = </lockout/jaw>
+            point3f physics:localPos0 = (0, 0.008469958, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -0.0074699577
+            float physics:upperLimit = 0.002
+        }
+
+        def PhysicsRevoluteJoint "knob_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </lockout/body>
+            rel physics:body1 = </lockout/knob>
+            point3f physics:localPos0 = (-0.0105, 0.0335, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -1000000
+            float physics:upperLimit = 1000000
+        }
+
+        def PhysicsRevoluteJoint "lever_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </lockout/body>
+            rel physics:body1 = </lockout/lever>
+            point3f physics:localPos0 = (-0.0198, -0.0228, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 178
+        }
+    }
+
+    def Xform "knob" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </lockout/PhysicsMaterials/knurl> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.008
+        double3 xformOp:translate = (-0.0105, 0.0335, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cylinder "wheel" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.007999999999999997
+            rel material:binding = </lockout/Looks/knob>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double radius = 0.0075
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "knurl_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (0.0075, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "knurl_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (0.0037500000000000007, 0, 0.006495190528383289)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "knurl_2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (-0.003749999999999998, 0, 0.00649519052838329)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "knurl_3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (-0.0075, 0, 9.184850993605148e-19)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "knurl_4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (-0.0037500000000000033, 0, -0.006495190528383287)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "knurl_5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0012, 0.007, 0.0012)
+            double3 xformOp:translate = (0.0037500000000000007, 0, -0.006495190528383289)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "lever" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.01
+        double3 xformOp:translate = (-0.0198, -0.0228, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "plate" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.075, 0.0189)
+            double3 xformOp:translate = (0, 0.0363, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "tab_a" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00365, 0.0113, 0.004)
+            double3 xformOp:translate = (0.0033250000000000007, 0.06815, -0.005900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "tab_b" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00435, 0.0113, 0.004)
+            double3 xformOp:translate = (0.015625, 0.06815, -0.005900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "tab_c" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0083, 0.00065, 0.004)
+            double3 xformOp:translate = (0.009300000000000001, 0.06282499999999999, -0.005900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "tab_d" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0083, 0.00235, 0.004)
+            double3 xformOp:translate = (0.009300000000000001, 0.072625, -0.005900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cover_top" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0153, 0.0112, 0.0015)
+            double3 xformOp:translate = (0.009150000000000002, 0.0569, 0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cover_bot" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0153, 0.0097, 0.0015)
+            double3 xformOp:translate = (0.009150000000000002, 0.056150000000000005, -0.0087)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cover_end" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0153, 0.0015, 0.01585)
+            double3 xformOp:translate = (0.009150000000000002, 0.06175, 0.00002499999999999985)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "emboss" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockout/Looks/lockout_red2>
+            double size = 1
+            float3 xformOp:scale = (0.0003, 0.045, 0.006)
+            double3 xformOp:translate = (-0.00165, 0.0275, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+}
+
