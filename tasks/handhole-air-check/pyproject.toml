@@ -1,0 +1,18 @@
+[project]
+name = "handhole-sim"
+version = "0.1.0"
+description = "Sample a handhole's air through its cover's pull slot and open it only on a clean reading, in yam-isaac-lab-arena's station (task file, props, mechanism, scripted demo)"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+# Isaac Sim, Isaac Lab-Arena 0.3.1 and yam-arena come from the launchable; install with --no-deps.
+dependencies = ["inspect-robots>=0.60", "yam-arena"]
+
+[project.entry-points."inspect_robots.policies"]
+handhole-demo = "handhole_sim.policy:handhole_demo"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["handhole_sim"]

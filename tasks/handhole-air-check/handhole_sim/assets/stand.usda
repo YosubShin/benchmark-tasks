@@ -1,0 +1,48 @@
+#usda 1.0
+(
+    defaultPrim = "stand"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "stand"
+{
+    def "Looks"
+    {
+        def Material "stand"
+        {
+            token outputs:surface.connect = </stand/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "meter_block" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.12, 0.09, 0.014)
+        double3 xformOp:translate = (0.5045000000000001, 0.28, 0.007000000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "pad" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.05, 0.03)
+        double3 xformOp:translate = (0.35, 0.38, 0.015)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+

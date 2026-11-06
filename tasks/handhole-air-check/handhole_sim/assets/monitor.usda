@@ -1,0 +1,2052 @@
+#usda 1.0
+(
+    defaultPrim = "monitor"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "monitor" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+
+    def "Looks"
+    {
+        def Material "meter_black"
+        {
+            token outputs:surface.connect = </monitor/Looks/meter_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.09)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "meter_yellow"
+        {
+            token outputs:surface.connect = </monitor/Looks/meter_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.75, 0.08)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "hose"
+        {
+            token outputs:surface.connect = </monitor/Looks/hose/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.86, 0.88)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "filter"
+        {
+            token outputs:surface.connect = </monitor/Looks/filter/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.92, 0.92, 0.9)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </monitor/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "lcd_bg"
+        {
+            token outputs:surface.connect = </monitor/Looks/lcd_bg/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.66, 0.72, 0.58)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "lcd_alarm"
+        {
+            token outputs:surface.connect = </monitor/Looks/lcd_alarm/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.3, 0.25)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "lcd_seg"
+        {
+            token outputs:surface.connect = </monitor/Looks/lcd_seg/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.03, 0.03, 0.03)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "alarm_off"
+        {
+            token outputs:surface.connect = </monitor/Looks/alarm_off/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.22, 0.22, 0.24)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
+        def Material "alarm_on"
+        {
+            token outputs:surface.connect = </monitor/Looks/alarm_on/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 0.08, 0.05)
+                color3f inputs:emissiveColor = (1, 0.08, 0.05)
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "meter" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/rubber> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.328
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.5045000000000001, 0.28, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "case" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/meter_yellow>
+            double size = 1
+            float3 xformOp:scale = (0.131, 0.07, 0.052)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "bezel" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/meter_black>
+            double size = 1
+            float3 xformOp:scale = (0.076, 0.064, 0.0004)
+            double3 xformOp:translate = (0.012, 0, 0.026199999999999998)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "alarm_off_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/alarm_off>
+            double size = 1
+            float3 xformOp:scale = (0.028, 0.026, 0.0008)
+            double3 xformOp:translate = (-0.0475, -0.015, 0.026799999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "alarm_on_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/alarm_on>
+            double size = 1
+            float3 xformOp:scale = (0.028, 0.026, 0.0008)
+            double3 xformOp:translate = (-0.0475, -0.015, 0.0272)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "alarm_off_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/alarm_off>
+            double size = 1
+            float3 xformOp:scale = (0.028, 0.026, 0.0008)
+            double3 xformOp:translate = (-0.0475, 0.015, 0.026799999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "alarm_on_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/alarm_on>
+            double size = 1
+            float3 xformOp:scale = (0.028, 0.026, 0.0008)
+            double3 xformOp:translate = (-0.0475, 0.015, 0.0272)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "inlet" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/black>
+            double size = 1
+            float3 xformOp:scale = (0.008, 0.012, 0.012)
+            double3 xformOp:translate = (0.0695, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "lcd_panel" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/lcd_bg>
+            double size = 1
+            float3 xformOp:scale = (0.064, 0.054, 0.0008)
+            double3 xformOp:translate = (0.012, 0, 0.0264)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "lcd_div_x" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/lcd_seg>
+            double size = 1
+            float3 xformOp:scale = (0.0008, 0.05, 0.0004)
+            double3 xformOp:translate = (0.012, 0, 0.0269)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "lcd_div_y" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/lcd_seg>
+            double size = 1
+            float3 xformOp:scale = (0.06, 0.0008, 0.0004)
+            double3 xformOp:translate = (0.012, -0.004, 0.0269)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Xform "lcd_room"
+        {
+            double3 xformOp:translate = (0, 0, 0.0271)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+
+            def Cube "v0_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.003012500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_16" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.0010625000000000022, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_17" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "lcd_go"
+        {
+            double3 xformOp:translate = (0, 0, 0.0271)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+
+            def Cube "v0_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.003012500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_16" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.0010625000000000022, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_17" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "lcd_nogo"
+        {
+            double3 xformOp:translate = (0, 0, 0.0271)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+
+            def Cube "alarm_band" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_alarm>
+                double size = 1
+                float3 xformOp:scale = (0.062, 0.006, 0.0005)
+                double3 xformOp:translate = (0.012, 0.023, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "alarm_h2s" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_alarm>
+                double size = 1
+                float3 xformOp:scale = (0.03, 0.0135, 0.0004)
+                double3 xformOp:translate = (-0.004, 0.011, -0.0002)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v0_8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, 0.01075, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.014012499999999999, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, 0.008875000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.0074875, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, 0.012625, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v1_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, 0.01075, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.013362500000000001, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.016512500000000003, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.014937500000000001, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.006612500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.008187500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.009762500000000002, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.000975, 0.0006)
+                double3 xformOp:translate = (-0.003012500000000002, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0020874999999999978, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (-0.0010625000000000022, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v2_15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0005124999999999978, -0.013250000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.009987500000000002, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0186375, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.004125, 0.000975, 0.0006)
+                double3 xformOp:translate = (0.0170625, -0.016512500000000003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.015125000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "v3_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </monitor/Looks/lcd_seg>
+                double size = 1
+                float3 xformOp:scale = (0.000975, 0.00375, 0.0006)
+                double3 xformOp:translate = (0.0154875, -0.011375000000000001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Xform "hose_00" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.5700000000000001, 0.28, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_01" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.6200000000000001, 0.28, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_02" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
+        double3 xformOp:translate = (0.6700000000000002, 0.28, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_03" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
+        double3 xformOp:translate = (0.6700000000000002, 0.33, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_04" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.6700000000000002, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_05" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.6200000000000001, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_06" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.5700000000000001, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_07" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.52, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_08" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.47, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "hose_09" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.004
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.42, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.05
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.025, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "filter" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/grip> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.015
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.37, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "can" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/filter>
+            double size = 1
+            float3 xformOp:scale = (0.04, 0.02, 0.02)
+            double3 xformOp:translate = (0.02, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Capsule "stub" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.030000000000000006
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.05500000000000001, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "tail_gimbal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
+        float physics:mass = 0.001
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.3, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+    }
+
+    def Xform "tail_0" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.003
+        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
+        double3 xformOp:translate = (0.3, 0.38, 0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.1
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.05, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsRevoluteJoint "hose_j00" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/meter>
+            rel physics:body1 = </monitor/hose_00>
+            point3f physics:localPos0 = (0.0655, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j01" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/hose_00>
+            rel physics:body1 = </monitor/hose_01>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j02" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/hose_01>
+            rel physics:body1 = </monitor/hose_02>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j03" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/hose_02>
+            rel physics:body1 = </monitor/hose_03>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j04" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/hose_03>
+            rel physics:body1 = </monitor/hose_04>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j05" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/hose_04>
+            rel physics:body1 = </monitor/hose_05>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j06" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/hose_05>
+            rel physics:body1 = </monitor/hose_06>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j07" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/hose_06>
+            rel physics:body1 = </monitor/hose_07>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j08" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/hose_07>
+            rel physics:body1 = </monitor/hose_08>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "hose_j09" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/hose_08>
+            rel physics:body1 = </monitor/hose_09>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "filter_j" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/hose_09>
+            rel physics:body1 = </monitor/filter>
+            point3f physics:localPos0 = (0.05, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -110
+            float physics:upperLimit = 110
+        }
+
+        def PhysicsRevoluteJoint "tail_j0" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </monitor/filter>
+            rel physics:body1 = </monitor/tail_gimbal>
+            point3f physics:localPos0 = (0.07, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -175
+            float physics:upperLimit = 175
+        }
+
+        def PhysicsRevoluteJoint "tail_j1" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </monitor/tail_gimbal>
+            rel physics:body1 = </monitor/tail_0>
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -175
+            float physics:upperLimit = 175
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "tygon" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.12
+            float physics:staticFriction = 0.15
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+
+        def Material "grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1.2
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "rubber" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.8
+            float physics:staticFriction = 0.9
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+}
+
