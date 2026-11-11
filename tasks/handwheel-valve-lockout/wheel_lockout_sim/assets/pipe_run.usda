@@ -1,0 +1,1533 @@
+#usda 1.0
+(
+    defaultPrim = "pipe_run"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "pipe_run" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "red"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.06, 0.05)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "dark_red"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/dark_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.04, 0.03)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "blue"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/blue/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.3, 0.85)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "green"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/green/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.62, 0.2)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "yellow"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.78, 0.1)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "orange"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/orange/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.92, 0.45, 0.08)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "purple"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/purple/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.45, 0.2, 0.6)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.12, 0.12, 0.13)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "grey"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.57, 0.6)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "light_grey"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/light_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.79, 0.8)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "enclosure"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/enclosure/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.8, 0.76)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "copper"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/copper/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.45, 0.2)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "bronze"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/bronze/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.52, 0.25)
+                float inputs:metallic = 0.6
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "zinc"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/zinc/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.7, 0.7, 0.66)
+                float inputs:metallic = 0.6
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "wheel"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/wheel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.22, 0.23, 0.25)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "pipe"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/pipe/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.3, 0.31, 0.33)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "tag_plastic"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/tag_plastic/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.12, 0.12, 0.12)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "tex_wheelvalve_tag_V21"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/tex_wheelvalve_tag_V21/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </pipe_run/Looks/tex_wheelvalve_tag_V21/tex.outputs:rgb>
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+
+            def Shader "st"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+
+            def Shader "tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @./wheelvalve_tag_V21.png@
+                float2 inputs:st.connect = </pipe_run/Looks/tex_wheelvalve_tag_V21/st.outputs:result>
+                token inputs:wrapS = "clamp"
+                token inputs:wrapT = "clamp"
+                float3 outputs:rgb
+            }
+        }
+
+        def Material "tex_wheelvalve_tag_V23"
+        {
+            token outputs:surface.connect = </pipe_run/Looks/tex_wheelvalve_tag_V23/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </pipe_run/Looks/tex_wheelvalve_tag_V23/tex.outputs:rgb>
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+
+            def Shader "st"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+
+            def Shader "tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @./wheelvalve_tag_V23.png@
+                float2 inputs:st.connect = </pipe_run/Looks/tex_wheelvalve_tag_V23/st.outputs:result>
+                token inputs:wrapS = "clamp"
+                token inputs:wrapT = "clamp"
+                float3 outputs:rgb
+            }
+        }
+    }
+
+    def Xform "base" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 5
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "pipe_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/pipe>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0214, 0.48, 0.0214)
+            double3 xformOp:translate = (0.26, 0.12, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "pipe" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.48
+            rel material:binding = </pipe_run/Looks/pipe>
+            double radius = 0.0107
+            double3 xformOp:translate = (0.26, 0.12, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "stand0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/stand>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.03, 0.02, 0.0443)
+            double3 xformOp:translate = (0.26, -0.09, 0.022150000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stand_foot0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/stand>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.08, 0.05, 0.008)
+            double3 xformOp:translate = (0.26, -0.09, 0.004)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stand1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/stand>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.03, 0.02, 0.0443)
+            double3 xformOp:translate = (0.26, 0.32999999999999996, 0.022150000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stand_foot1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/stand>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.08, 0.05, 0.008)
+            double3 xformOp:translate = (0.26, 0.32999999999999996, 0.004)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "body0_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.03, 0.0508, 0.038)
+            double3 xformOp:translate = (0.26, 0, 0.05900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "body0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.0348
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.015
+            double3 xformOp:translate = (0.26, 0, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "dome0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.022
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.017
+            double3 xformOp:translate = (0.26, 0, 0.063)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "end0_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.014
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0155
+            double3 xformOp:translate = (0.26, -0.0184, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "end0_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.014
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0155
+            double3 xformOp:translate = (0.26, 0.0184, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "bonnet0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.022, 0.022, 0.036)
+            double3 xformOp:translate = (0.26, 0, 0.092)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stuff_nut0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.016, 0.016, 0.007)
+            double3 xformOp:translate = (0.26, 0, 0.11349999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stem0_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0084, 0.0084, 0.033)
+            double3 xformOp:translate = (0.26, 0, 0.1335)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "stem0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.033
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0042
+            double3 xformOp:translate = (0.26, 0, 0.1335)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "tag0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/tag_plastic>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateY = -30
+            float3 xformOp:scale = (0.051, 0.102, 0.0016)
+            double3 xformOp:translate = (0.355, 0.02, 0.14)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Mesh "tag0_face" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform bool doubleSided = 1
+            int[] faceVertexCounts = [4]
+            int[] faceVertexIndices = [0, 1, 2, 3]
+            rel material:binding = </pipe_run/Looks/tex_wheelvalve_tag_V21>
+            point3f[] points = [(0.33236635, 0.071, 0.12820263), (0.33236635, -0.031, 0.12820263), (0.37653366, -0.031, 0.15370263), (0.37653366, 0.071, 0.15370263)]
+            texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                interpolation = "faceVarying"
+            )
+        }
+
+        def Cube "tag_strap0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/zinc>
+            double size = 1
+            float xformOp:rotateY = -39.706364
+            float3 xformOp:scale = (0.0987792, 0.008, 0.002)
+            double3 xformOp:translate = (0.2964581761017484, 0.075, 0.096975)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Cylinder "tag_clamp0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.008
+            rel material:binding = </pipe_run/Looks/zinc>
+            double radius = 0.012199999999999999
+            double3 xformOp:translate = (0.26, 0.075, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "body1_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.03, 0.0508, 0.038)
+            double3 xformOp:translate = (0.26, 0.25, 0.05900000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "body1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.0348
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.015
+            double3 xformOp:translate = (0.26, 0.25, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "dome1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.022
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.017
+            double3 xformOp:translate = (0.26, 0.25, 0.063)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "end1_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.014
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0155
+            double3 xformOp:translate = (0.26, 0.2316, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "end1_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.014
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0155
+            double3 xformOp:translate = (0.26, 0.26839999999999997, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "bonnet1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.022, 0.022, 0.036)
+            double3 xformOp:translate = (0.26, 0.25, 0.092)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stuff_nut1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.016, 0.016, 0.007)
+            double3 xformOp:translate = (0.26, 0.25, 0.11349999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "stem1_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/bronze>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0084, 0.0084, 0.033)
+            double3 xformOp:translate = (0.26, 0.25, 0.1335)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "stem1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.033
+            rel material:binding = </pipe_run/Looks/bronze>
+            double radius = 0.0042
+            double3 xformOp:translate = (0.26, 0.25, 0.1335)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "tag1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/tag_plastic>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateY = -30
+            float3 xformOp:scale = (0.051, 0.102, 0.0016)
+            double3 xformOp:translate = (0.355, 0.27, 0.14)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Mesh "tag1_face" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform bool doubleSided = 1
+            int[] faceVertexCounts = [4]
+            int[] faceVertexIndices = [0, 1, 2, 3]
+            rel material:binding = </pipe_run/Looks/tex_wheelvalve_tag_V23>
+            point3f[] points = [(0.33236635, 0.321, 0.12820263), (0.33236635, 0.219, 0.12820263), (0.37653366, 0.219, 0.15370263), (0.37653366, 0.321, 0.15370263)]
+            texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                interpolation = "faceVarying"
+            )
+        }
+
+        def Cube "tag_strap1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/zinc>
+            double size = 1
+            float xformOp:rotateY = -39.706364
+            float3 xformOp:scale = (0.0987792, 0.008, 0.002)
+            double3 xformOp:translate = (0.2964581761017484, 0.325, 0.096975)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Cylinder "tag_clamp1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.008
+            rel material:binding = </pipe_run/Looks/zinc>
+            double radius = 0.012199999999999999
+            double3 xformOp:translate = (0.26, 0.325, 0.05500000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </pipe_run/base>
+        }
+
+        def PhysicsRevoluteJoint "wheel_0_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </pipe_run/base>
+            rel physics:body1 = </pipe_run/wheel_0>
+            point3f physics:localPos0 = (0.26, 0, 0.15)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -190
+            float physics:upperLimit = 350
+        }
+
+        def PhysicsRevoluteJoint "wheel_1_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </pipe_run/base>
+            rel physics:body1 = </pipe_run/wheel_1>
+            point3f physics:localPos0 = (0.26, 0.25, 0.15)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -190
+            float physics:upperLimit = 350
+        }
+    }
+
+    def Xform "wheel_0" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </pipe_run/PhysicsMaterials/painted_iron> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.09
+        double3 xformOp:translate = (0.26, 0, 0.15)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "rim0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 0
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.0224, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 22.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.02069490152825282, 0.008572108884978011, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 45
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.015839191898578665, 0.015839191898578662, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 67.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.008572108884978013, 0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 90
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (1.3716044150450356e-18, 0.0224, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 112.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.00857210888497801, 0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 135
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.015839191898578662, 0.015839191898578665, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 157.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.02069490152825282, 0.008572108884978013, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 180
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.0224, 2.743208830090071e-18, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 202.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.020694901528252825, -0.008572108884978008, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim10" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 225
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.01583919189857867, -0.015839191898578662, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim11" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 247.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.008572108884978004, -0.020694901528252825, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim12" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 270
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-4.114813245135106e-18, -0.0224, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim13" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 292.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.008572108884978016, -0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim14" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 315
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.015839191898578662, -0.01583919189857867, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim15" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 337.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.020694901528252825, -0.008572108884978006, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 45
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (0.010394469683442249, 0.010394469683442247, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 135
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (-0.010394469683442247, 0.010394469683442249, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 225
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (-0.01039446968344225, -0.010394469683442247, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 315
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (0.010394469683442245, -0.01039446968344225, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "hub" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.014, 0.014, 0.009)
+            double3 xformOp:translate = (0, 0, 0.0005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "nut_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/zinc>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.011, 0.011, 0.005)
+            double3 xformOp:translate = (0, 0, 0.007500000000000005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "nut" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.005000000000000009
+            rel material:binding = </pipe_run/Looks/zinc>
+            double radius = 0.006350852961085883
+            double3 xformOp:translate = (0, 0, 0.007500000000000005)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Mesh "rim_visual" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [0, 8, 9, 1, 1, 9, 10, 2, 2, 10, 11, 3, 3, 11, 12, 4, 4, 12, 13, 5, 5, 13, 14, 6, 6, 14, 15, 7, 7, 15, 8, 0, 8, 16, 17, 9, 9, 17, 18, 10, 10, 18, 19, 11, 11, 19, 20, 12, 12, 20, 21, 13, 13, 21, 22, 14, 14, 22, 23, 15, 15, 23, 16, 8, 16, 24, 25, 17, 17, 25, 26, 18, 18, 26, 27, 19, 19, 27, 28, 20, 20, 28, 29, 21, 21, 29, 30, 22, 22, 30, 31, 23, 23, 31, 24, 16, 24, 32, 33, 25, 25, 33, 34, 26, 26, 34, 35, 27, 27, 35, 36, 28, 28, 36, 37, 29, 29, 37, 38, 30, 30, 38, 39, 31, 31, 39, 32, 24, 32, 40, 41, 33, 33, 41, 42, 34, 34, 42, 43, 35, 35, 43, 44, 36, 36, 44, 45, 37, 37, 45, 46, 38, 38, 46, 47, 39, 39, 47, 40, 32, 40, 48, 49, 41, 41, 49, 50, 42, 42, 50, 51, 43, 43, 51, 52, 44, 44, 52, 53, 45, 45, 53, 54, 46, 46, 54, 55, 47, 47, 55, 48, 40, 48, 56, 57, 49, 49, 57, 58, 50, 50, 58, 59, 51, 51, 59, 60, 52, 52, 60, 61, 53, 53, 61, 62, 54, 54, 62, 63, 55, 55, 63, 56, 48, 56, 64, 65, 57, 57, 65, 66, 58, 58, 66, 67, 59, 59, 67, 68, 60, 60, 68, 69, 61, 61, 69, 70, 62, 62, 70, 71, 63, 63, 71, 64, 56, 64, 72, 73, 65, 65, 73, 74, 66, 66, 74, 75, 67, 67, 75, 76, 68, 68, 76, 77, 69, 69, 77, 78, 70, 70, 78, 79, 71, 71, 79, 72, 64, 72, 80, 81, 73, 73, 81, 82, 74, 74, 82, 83, 75, 75, 83, 84, 76, 76, 84, 85, 77, 77, 85, 86, 78, 78, 86, 87, 79, 79, 87, 80, 72, 80, 88, 89, 81, 81, 89, 90, 82, 82, 90, 91, 83, 83, 91, 92, 84, 84, 92, 93, 85, 85, 93, 94, 86, 86, 94, 95, 87, 87, 95, 88, 80, 88, 96, 97, 89, 89, 97, 98, 90, 90, 98, 99, 91, 91, 99, 100, 92, 92, 100, 101, 93, 93, 101, 102, 94, 94, 102, 103, 95, 95, 103, 96, 88, 96, 104, 105, 97, 97, 105, 106, 98, 98, 106, 107, 99, 99, 107, 108, 100, 100, 108, 109, 101, 101, 109, 110, 102, 102, 110, 111, 103, 103, 111, 104, 96, 104, 112, 113, 105, 105, 113, 114, 106, 106, 114, 115, 107, 107, 115, 116, 108, 108, 116, 117, 109, 109, 117, 118, 110, 110, 118, 119, 111, 111, 119, 112, 104, 112, 120, 121, 113, 113, 121, 122, 114, 114, 122, 123, 115, 115, 123, 124, 116, 116, 124, 125, 117, 117, 125, 126, 118, 118, 126, 127, 119, 119, 127, 120, 112, 120, 128, 129, 121, 121, 129, 130, 122, 122, 130, 131, 123, 123, 131, 132, 124, 124, 132, 133, 125, 125, 133, 134, 126, 126, 134, 135, 127, 127, 135, 128, 120, 128, 136, 137, 129, 129, 137, 138, 130, 130, 138, 139, 131, 131, 139, 140, 132, 132, 140, 141, 133, 133, 141, 142, 134, 134, 142, 143, 135, 135, 143, 136, 128, 136, 144, 145, 137, 137, 145, 146, 138, 138, 146, 147, 139, 139, 147, 148, 140, 140, 148, 149, 141, 141, 149, 150, 142, 142, 150, 151, 143, 143, 151, 144, 136, 144, 152, 153, 145, 145, 153, 154, 146, 146, 154, 155, 147, 147, 155, 156, 148, 148, 156, 157, 149, 149, 157, 158, 150, 150, 158, 159, 151, 151, 159, 152, 144, 152, 160, 161, 153, 153, 161, 162, 154, 154, 162, 163, 155, 155, 163, 164, 156, 156, 164, 165, 157, 157, 165, 166, 158, 158, 166, 167, 159, 159, 167, 160, 152, 160, 168, 169, 161, 161, 169, 170, 162, 162, 170, 171, 163, 163, 171, 172, 164, 164, 172, 173, 165, 165, 173, 174, 166, 166, 174, 175, 167, 167, 175, 168, 160, 168, 176, 177, 169, 169, 177, 178, 170, 170, 178, 179, 171, 171, 179, 180, 172, 172, 180, 181, 173, 173, 181, 182, 174, 174, 182, 183, 175, 175, 183, 176, 168, 176, 184, 185, 177, 177, 185, 186, 178, 178, 186, 187, 179, 179, 187, 188, 180, 180, 188, 189, 181, 181, 189, 190, 182, 182, 190, 191, 183, 183, 191, 184, 176, 184, 192, 193, 185, 185, 193, 194, 186, 186, 194, 195, 187, 187, 195, 196, 188, 188, 196, 197, 189, 189, 197, 198, 190, 190, 198, 199, 191, 191, 199, 192, 184, 192, 200, 201, 193, 193, 201, 202, 194, 194, 202, 203, 195, 195, 203, 204, 196, 196, 204, 205, 197, 197, 205, 206, 198, 198, 206, 207, 199, 199, 207, 200, 192, 200, 208, 209, 201, 201, 209, 210, 202, 202, 210, 211, 203, 203, 211, 212, 204, 204, 212, 213, 205, 205, 213, 214, 206, 206, 214, 215, 207, 207, 215, 208, 200, 208, 216, 217, 209, 209, 217, 218, 210, 210, 218, 219, 211, 211, 219, 220, 212, 212, 220, 221, 213, 213, 221, 222, 214, 214, 222, 223, 215, 215, 223, 216, 208, 216, 224, 225, 217, 217, 225, 226, 218, 218, 226, 227, 219, 219, 227, 228, 220, 220, 228, 229, 221, 221, 229, 230, 222, 222, 230, 231, 223, 223, 231, 224, 216, 224, 232, 233, 225, 225, 233, 234, 226, 226, 234, 235, 227, 227, 235, 236, 228, 228, 236, 237, 229, 229, 237, 238, 230, 230, 238, 239, 231, 231, 239, 232, 224, 232, 240, 241, 233, 233, 241, 242, 234, 234, 242, 243, 235, 235, 243, 244, 236, 236, 244, 245, 237, 237, 245, 246, 238, 238, 246, 247, 239, 239, 247, 240, 232, 240, 248, 249, 241, 241, 249, 250, 242, 242, 250, 251, 243, 243, 251, 252, 244, 244, 252, 253, 245, 245, 253, 254, 246, 246, 254, 255, 247, 247, 255, 248, 240, 248, 0, 1, 249, 249, 1, 2, 250, 250, 2, 3, 251, 251, 3, 4, 252, 252, 4, 5, 253, 253, 5, 6, 254, 254, 6, 7, 255, 255, 7, 0, 248]
+            rel material:binding = </pipe_run/Looks/wheel>
+            point3f[] points = [(0.0254, 0, 0), (0.024521321, 0, 0.0021213202), (0.0224, 0, 0.003), (0.02027868, 0, 0.0021213202), (0.0194, 0, 3.6739403e-19), (0.02027868, 0, -0.0021213202), (0.0224, 0, -0.003), (0.024521321, 0, -0.0021213202), (0.024911946, 0.004955294, 0), (0.02405015, 0.004783872, 0.0021213202), (0.02196959, 0.004370023, 0.003), (0.01988903, 0.003956174, 0.0021213202), (0.019027235, 0.0037847522, 3.6739403e-19), (0.01988903, 0.003956174, -0.0021213202), (0.02196959, 0.004370023, -0.003), (0.02405015, 0.004783872, -0.0021213202), (0.02346654, 0.009720159, 0), (0.022654746, 0.009383903, 0.0021213202), (0.020694902, 0.008572109, 0.003), (0.018735057, 0.0077603147, 0.0021213202), (0.017923264, 0.0074240584, 3.6739403e-19), (0.018735057, 0.0077603147, -0.0021213202), (0.020694902, 0.008572109, -0.003), (0.022654746, 0.009383903, -0.0021213202), (0.021119328, 0.0141114835, 0), (0.020388734, 0.013623316, 0.0021213202), (0.018624919, 0.012444773, 0.003), (0.016861105, 0.011266231, 0.0021213202), (0.01613051, 0.010778063, 3.6739403e-19), (0.016861105, 0.011266231, -0.0021213202), (0.018624919, 0.012444773, -0.003), (0.020388734, 0.013623316, -0.0021213202), (0.017960513, 0.017960513, 0), (0.017339192, 0.017339192, 0.0021213202), (0.015839191, 0.015839191, 0.003), (0.014339192, 0.014339192, 0.0021213202), (0.013717871, 0.013717871, 3.6739403e-19), (0.014339192, 0.014339192, -0.0021213202), (0.015839191, 0.015839191, -0.003), (0.017339192, 0.017339192, -0.0021213202), (0.0141114835, 0.021119328, 0), (0.013623316, 0.020388734, 0.0021213202), (0.012444773, 0.018624919, 0.003), (0.011266231, 0.016861105, 0.0021213202), (0.010778063, 0.01613051, 3.6739403e-19), (0.011266231, 0.016861105, -0.0021213202), (0.012444773, 0.018624919, -0.003), (0.013623316, 0.020388734, -0.0021213202), (0.009720159, 0.02346654, 0), (0.009383903, 0.022654746, 0.0021213202), (0.008572109, 0.020694902, 0.003), (0.0077603147, 0.018735057, 0.0021213202), (0.0074240584, 0.017923264, 3.6739403e-19), (0.0077603147, 0.018735057, -0.0021213202), (0.008572109, 0.020694902, -0.003), (0.009383903, 0.022654746, -0.0021213202), (0.004955294, 0.024911946, 0), (0.004783872, 0.02405015, 0.0021213202), (0.004370023, 0.02196959, 0.003), (0.003956174, 0.01988903, 0.0021213202), (0.0037847522, 0.019027235, 3.6739403e-19), (0.003956174, 0.01988903, -0.0021213202), (0.004370023, 0.02196959, -0.003), (0.004783872, 0.02405015, -0.0021213202), (1.5553014e-18, 0.0254, 0), (1.5014978e-18, 0.024521321, 0.0021213202), (1.3716044e-18, 0.0224, 0.003), (1.241711e-18, 0.02027868, 0.0021213202), (1.1879074e-18, 0.0194, 3.6739403e-19), (1.241711e-18, 0.02027868, -0.0021213202), (1.3716044e-18, 0.0224, -0.003), (1.5014978e-18, 0.024521321, -0.0021213202), (-0.004955294, 0.024911946, 0), (-0.004783872, 0.02405015, 0.0021213202), (-0.004370023, 0.02196959, 0.003), (-0.003956174, 0.01988903, 0.0021213202), (-0.0037847522, 0.019027235, 3.6739403e-19), (-0.003956174, 0.01988903, -0.0021213202), (-0.004370023, 0.02196959, -0.003), (-0.004783872, 0.02405015, -0.0021213202), (-0.009720159, 0.02346654, 0), (-0.009383903, 0.022654746, 0.0021213202), (-0.008572109, 0.020694902, 0.003), (-0.0077603147, 0.018735057, 0.0021213202), (-0.0074240584, 0.017923264, 3.6739403e-19), (-0.0077603147, 0.018735057, -0.0021213202), (-0.008572109, 0.020694902, -0.003), (-0.009383903, 0.022654746, -0.0021213202), (-0.0141114835, 0.021119328, 0), (-0.013623316, 0.020388734, 0.0021213202), (-0.012444773, 0.018624919, 0.003), (-0.011266231, 0.016861105, 0.0021213202), (-0.010778063, 0.01613051, 3.6739403e-19), (-0.011266231, 0.016861105, -0.0021213202), (-0.012444773, 0.018624919, -0.003), (-0.013623316, 0.020388734, -0.0021213202), (-0.017960513, 0.017960513, 0), (-0.017339192, 0.017339192, 0.0021213202), (-0.015839191, 0.015839191, 0.003), (-0.014339192, 0.014339192, 0.0021213202), (-0.013717871, 0.013717871, 3.6739403e-19), (-0.014339192, 0.014339192, -0.0021213202), (-0.015839191, 0.015839191, -0.003), (-0.017339192, 0.017339192, -0.0021213202), (-0.021119328, 0.0141114835, 0), (-0.020388734, 0.013623316, 0.0021213202), (-0.018624919, 0.012444773, 0.003), (-0.016861105, 0.011266231, 0.0021213202), (-0.01613051, 0.010778063, 3.6739403e-19), (-0.016861105, 0.011266231, -0.0021213202), (-0.018624919, 0.012444773, -0.003), (-0.020388734, 0.013623316, -0.0021213202), (-0.02346654, 0.009720159, 0), (-0.022654746, 0.009383903, 0.0021213202), (-0.020694902, 0.008572109, 0.003), (-0.018735057, 0.0077603147, 0.0021213202), (-0.017923264, 0.0074240584, 3.6739403e-19), (-0.018735057, 0.0077603147, -0.0021213202), (-0.020694902, 0.008572109, -0.003), (-0.022654746, 0.009383903, -0.0021213202), (-0.024911946, 0.004955294, 0), (-0.02405015, 0.004783872, 0.0021213202), (-0.02196959, 0.004370023, 0.003), (-0.01988903, 0.003956174, 0.0021213202), (-0.019027235, 0.0037847522, 3.6739403e-19), (-0.01988903, 0.003956174, -0.0021213202), (-0.02196959, 0.004370023, -0.003), (-0.02405015, 0.004783872, -0.0021213202), (-0.0254, 3.1106028e-18, 0), (-0.024521321, 3.0029957e-18, 0.0021213202), (-0.0224, 2.7432088e-18, 0.003), (-0.02027868, 2.483422e-18, 0.0021213202), (-0.0194, 2.3758147e-18, 3.6739403e-19), (-0.02027868, 2.483422e-18, -0.0021213202), (-0.0224, 2.7432088e-18, -0.003), (-0.024521321, 3.0029957e-18, -0.0021213202), (-0.024911946, -0.004955294, 0), (-0.02405015, -0.004783872, 0.0021213202), (-0.02196959, -0.004370023, 0.003), (-0.01988903, -0.003956174, 0.0021213202), (-0.019027235, -0.0037847522, 3.6739403e-19), (-0.01988903, -0.003956174, -0.0021213202), (-0.02196959, -0.004370023, -0.003), (-0.02405015, -0.004783872, -0.0021213202), (-0.02346654, -0.009720159, 0), (-0.022654746, -0.009383903, 0.0021213202), (-0.020694902, -0.008572109, 0.003), (-0.018735057, -0.0077603147, 0.0021213202), (-0.017923264, -0.0074240584, 3.6739403e-19), (-0.018735057, -0.0077603147, -0.0021213202), (-0.020694902, -0.008572109, -0.003), (-0.022654746, -0.009383903, -0.0021213202), (-0.021119328, -0.0141114835, 0), (-0.020388734, -0.013623316, 0.0021213202), (-0.018624919, -0.012444773, 0.003), (-0.016861105, -0.011266231, 0.0021213202), (-0.01613051, -0.010778063, 3.6739403e-19), (-0.016861105, -0.011266231, -0.0021213202), (-0.018624919, -0.012444773, -0.003), (-0.020388734, -0.013623316, -0.0021213202), (-0.017960513, -0.017960513, 0), (-0.017339192, -0.017339192, 0.0021213202), (-0.015839191, -0.015839191, 0.003), (-0.014339192, -0.014339192, 0.0021213202), (-0.013717871, -0.013717871, 3.6739403e-19), (-0.014339192, -0.014339192, -0.0021213202), (-0.015839191, -0.015839191, -0.003), (-0.017339192, -0.017339192, -0.0021213202), (-0.0141114835, -0.021119328, 0), (-0.013623316, -0.020388734, 0.0021213202), (-0.012444773, -0.018624919, 0.003), (-0.011266231, -0.016861105, 0.0021213202), (-0.010778063, -0.01613051, 3.6739403e-19), (-0.011266231, -0.016861105, -0.0021213202), (-0.012444773, -0.018624919, -0.003), (-0.013623316, -0.020388734, -0.0021213202), (-0.009720159, -0.02346654, 0), (-0.009383903, -0.022654746, 0.0021213202), (-0.008572109, -0.020694902, 0.003), (-0.0077603147, -0.018735057, 0.0021213202), (-0.0074240584, -0.017923264, 3.6739403e-19), (-0.0077603147, -0.018735057, -0.0021213202), (-0.008572109, -0.020694902, -0.003), (-0.009383903, -0.022654746, -0.0021213202), (-0.004955294, -0.024911946, 0), (-0.004783872, -0.02405015, 0.0021213202), (-0.004370023, -0.02196959, 0.003), (-0.003956174, -0.01988903, 0.0021213202), (-0.0037847522, -0.019027235, 3.6739403e-19), (-0.003956174, -0.01988903, -0.0021213202), (-0.004370023, -0.02196959, -0.003), (-0.004783872, -0.02405015, -0.0021213202), (-4.665904e-18, -0.0254, 0), (-4.5044935e-18, -0.024521321, 0.0021213202), (-4.1148133e-18, -0.0224, 0.003), (-3.725133e-18, -0.02027868, 0.0021213202), (-3.5637224e-18, -0.0194, 3.6739403e-19), (-3.725133e-18, -0.02027868, -0.0021213202), (-4.1148133e-18, -0.0224, -0.003), (-4.5044935e-18, -0.024521321, -0.0021213202), (0.004955294, -0.024911946, 0), (0.004783872, -0.02405015, 0.0021213202), (0.004370023, -0.02196959, 0.003), (0.003956174, -0.01988903, 0.0021213202), (0.0037847522, -0.019027235, 3.6739403e-19), (0.003956174, -0.01988903, -0.0021213202), (0.004370023, -0.02196959, -0.003), (0.004783872, -0.02405015, -0.0021213202), (0.009720159, -0.02346654, 0), (0.009383903, -0.022654746, 0.0021213202), (0.008572109, -0.020694902, 0.003), (0.0077603147, -0.018735057, 0.0021213202), (0.0074240584, -0.017923264, 3.6739403e-19), (0.0077603147, -0.018735057, -0.0021213202), (0.008572109, -0.020694902, -0.003), (0.009383903, -0.022654746, -0.0021213202), (0.0141114835, -0.021119328, 0), (0.013623316, -0.020388734, 0.0021213202), (0.012444773, -0.018624919, 0.003), (0.011266231, -0.016861105, 0.0021213202), (0.010778063, -0.01613051, 3.6739403e-19), (0.011266231, -0.016861105, -0.0021213202), (0.012444773, -0.018624919, -0.003), (0.013623316, -0.020388734, -0.0021213202), (0.017960513, -0.017960513, 0), (0.017339192, -0.017339192, 0.0021213202), (0.015839191, -0.015839191, 0.003), (0.014339192, -0.014339192, 0.0021213202), (0.013717871, -0.013717871, 3.6739403e-19), (0.014339192, -0.014339192, -0.0021213202), (0.015839191, -0.015839191, -0.003), (0.017339192, -0.017339192, -0.0021213202), (0.021119328, -0.0141114835, 0), (0.020388734, -0.013623316, 0.0021213202), (0.018624919, -0.012444773, 0.003), (0.016861105, -0.011266231, 0.0021213202), (0.01613051, -0.010778063, 3.6739403e-19), (0.016861105, -0.011266231, -0.0021213202), (0.018624919, -0.012444773, -0.003), (0.020388734, -0.013623316, -0.0021213202), (0.02346654, -0.009720159, 0), (0.022654746, -0.009383903, 0.0021213202), (0.020694902, -0.008572109, 0.003), (0.018735057, -0.0077603147, 0.0021213202), (0.017923264, -0.0074240584, 3.6739403e-19), (0.018735057, -0.0077603147, -0.0021213202), (0.020694902, -0.008572109, -0.003), (0.022654746, -0.009383903, -0.0021213202), (0.024911946, -0.004955294, 0), (0.02405015, -0.004783872, 0.0021213202), (0.02196959, -0.004370023, 0.003), (0.01988903, -0.003956174, 0.0021213202), (0.019027235, -0.0037847522, 3.6739403e-19), (0.01988903, -0.003956174, -0.0021213202), (0.02196959, -0.004370023, -0.003), (0.02405015, -0.004783872, -0.0021213202)]
+        }
+    }
+
+    def Xform "wheel_1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        rel material:binding:physics = </pipe_run/PhysicsMaterials/painted_iron> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        float physics:mass = 0.09
+        double3 xformOp:translate = (0.26, 0.25, 0.15)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "rim0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 0
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.0224, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 22.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.02069490152825282, 0.008572108884978011, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 45
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.015839191898578665, 0.015839191898578662, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 67.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.008572108884978013, 0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 90
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (1.3716044150450356e-18, 0.0224, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 112.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.00857210888497801, 0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 135
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.015839191898578662, 0.015839191898578665, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 157.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.02069490152825282, 0.008572108884978013, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 180
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.0224, 2.743208830090071e-18, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 202.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.020694901528252825, -0.008572108884978008, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim10" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 225
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.01583919189857867, -0.015839191898578662, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim11" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 247.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-0.008572108884978004, -0.020694901528252825, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim12" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 270
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (-4.114813245135106e-18, -0.0224, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim13" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 292.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.008572108884978016, -0.02069490152825282, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim14" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 315
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.015839191898578662, -0.01583919189857867, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "rim15" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float xformOp:rotateZ = 337.5
+            float3 xformOp:scale = (0.006, 0.0106047485, 0.006)
+            double3 xformOp:translate = (0.020694901528252825, -0.008572108884978006, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 45
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (0.010394469683442249, 0.010394469683442247, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 135
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (-0.010394469683442247, 0.010394469683442249, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 225
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (-0.01039446968344225, -0.010394469683442247, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "spoke3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float xformOp:rotateZ = 315
+            float3 xformOp:scale = (0.0174, 0.005, 0.004)
+            double3 xformOp:translate = (0.010394469683442245, -0.01039446968344225, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ", "xformOp:scale"]
+        }
+
+        def Cube "hub" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/wheel>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.014, 0.014, 0.009)
+            double3 xformOp:translate = (0, 0, 0.0005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "nut_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </pipe_run/Looks/zinc>
+            custom float physxCollision:contactOffset = 0.001
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.011, 0.011, 0.005)
+            double3 xformOp:translate = (0, 0, 0.007500000000000005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "nut" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.005000000000000009
+            rel material:binding = </pipe_run/Looks/zinc>
+            double radius = 0.006350852961085883
+            double3 xformOp:translate = (0, 0, 0.007500000000000005)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Mesh "rim_visual" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [0, 8, 9, 1, 1, 9, 10, 2, 2, 10, 11, 3, 3, 11, 12, 4, 4, 12, 13, 5, 5, 13, 14, 6, 6, 14, 15, 7, 7, 15, 8, 0, 8, 16, 17, 9, 9, 17, 18, 10, 10, 18, 19, 11, 11, 19, 20, 12, 12, 20, 21, 13, 13, 21, 22, 14, 14, 22, 23, 15, 15, 23, 16, 8, 16, 24, 25, 17, 17, 25, 26, 18, 18, 26, 27, 19, 19, 27, 28, 20, 20, 28, 29, 21, 21, 29, 30, 22, 22, 30, 31, 23, 23, 31, 24, 16, 24, 32, 33, 25, 25, 33, 34, 26, 26, 34, 35, 27, 27, 35, 36, 28, 28, 36, 37, 29, 29, 37, 38, 30, 30, 38, 39, 31, 31, 39, 32, 24, 32, 40, 41, 33, 33, 41, 42, 34, 34, 42, 43, 35, 35, 43, 44, 36, 36, 44, 45, 37, 37, 45, 46, 38, 38, 46, 47, 39, 39, 47, 40, 32, 40, 48, 49, 41, 41, 49, 50, 42, 42, 50, 51, 43, 43, 51, 52, 44, 44, 52, 53, 45, 45, 53, 54, 46, 46, 54, 55, 47, 47, 55, 48, 40, 48, 56, 57, 49, 49, 57, 58, 50, 50, 58, 59, 51, 51, 59, 60, 52, 52, 60, 61, 53, 53, 61, 62, 54, 54, 62, 63, 55, 55, 63, 56, 48, 56, 64, 65, 57, 57, 65, 66, 58, 58, 66, 67, 59, 59, 67, 68, 60, 60, 68, 69, 61, 61, 69, 70, 62, 62, 70, 71, 63, 63, 71, 64, 56, 64, 72, 73, 65, 65, 73, 74, 66, 66, 74, 75, 67, 67, 75, 76, 68, 68, 76, 77, 69, 69, 77, 78, 70, 70, 78, 79, 71, 71, 79, 72, 64, 72, 80, 81, 73, 73, 81, 82, 74, 74, 82, 83, 75, 75, 83, 84, 76, 76, 84, 85, 77, 77, 85, 86, 78, 78, 86, 87, 79, 79, 87, 80, 72, 80, 88, 89, 81, 81, 89, 90, 82, 82, 90, 91, 83, 83, 91, 92, 84, 84, 92, 93, 85, 85, 93, 94, 86, 86, 94, 95, 87, 87, 95, 88, 80, 88, 96, 97, 89, 89, 97, 98, 90, 90, 98, 99, 91, 91, 99, 100, 92, 92, 100, 101, 93, 93, 101, 102, 94, 94, 102, 103, 95, 95, 103, 96, 88, 96, 104, 105, 97, 97, 105, 106, 98, 98, 106, 107, 99, 99, 107, 108, 100, 100, 108, 109, 101, 101, 109, 110, 102, 102, 110, 111, 103, 103, 111, 104, 96, 104, 112, 113, 105, 105, 113, 114, 106, 106, 114, 115, 107, 107, 115, 116, 108, 108, 116, 117, 109, 109, 117, 118, 110, 110, 118, 119, 111, 111, 119, 112, 104, 112, 120, 121, 113, 113, 121, 122, 114, 114, 122, 123, 115, 115, 123, 124, 116, 116, 124, 125, 117, 117, 125, 126, 118, 118, 126, 127, 119, 119, 127, 120, 112, 120, 128, 129, 121, 121, 129, 130, 122, 122, 130, 131, 123, 123, 131, 132, 124, 124, 132, 133, 125, 125, 133, 134, 126, 126, 134, 135, 127, 127, 135, 128, 120, 128, 136, 137, 129, 129, 137, 138, 130, 130, 138, 139, 131, 131, 139, 140, 132, 132, 140, 141, 133, 133, 141, 142, 134, 134, 142, 143, 135, 135, 143, 136, 128, 136, 144, 145, 137, 137, 145, 146, 138, 138, 146, 147, 139, 139, 147, 148, 140, 140, 148, 149, 141, 141, 149, 150, 142, 142, 150, 151, 143, 143, 151, 144, 136, 144, 152, 153, 145, 145, 153, 154, 146, 146, 154, 155, 147, 147, 155, 156, 148, 148, 156, 157, 149, 149, 157, 158, 150, 150, 158, 159, 151, 151, 159, 152, 144, 152, 160, 161, 153, 153, 161, 162, 154, 154, 162, 163, 155, 155, 163, 164, 156, 156, 164, 165, 157, 157, 165, 166, 158, 158, 166, 167, 159, 159, 167, 160, 152, 160, 168, 169, 161, 161, 169, 170, 162, 162, 170, 171, 163, 163, 171, 172, 164, 164, 172, 173, 165, 165, 173, 174, 166, 166, 174, 175, 167, 167, 175, 168, 160, 168, 176, 177, 169, 169, 177, 178, 170, 170, 178, 179, 171, 171, 179, 180, 172, 172, 180, 181, 173, 173, 181, 182, 174, 174, 182, 183, 175, 175, 183, 176, 168, 176, 184, 185, 177, 177, 185, 186, 178, 178, 186, 187, 179, 179, 187, 188, 180, 180, 188, 189, 181, 181, 189, 190, 182, 182, 190, 191, 183, 183, 191, 184, 176, 184, 192, 193, 185, 185, 193, 194, 186, 186, 194, 195, 187, 187, 195, 196, 188, 188, 196, 197, 189, 189, 197, 198, 190, 190, 198, 199, 191, 191, 199, 192, 184, 192, 200, 201, 193, 193, 201, 202, 194, 194, 202, 203, 195, 195, 203, 204, 196, 196, 204, 205, 197, 197, 205, 206, 198, 198, 206, 207, 199, 199, 207, 200, 192, 200, 208, 209, 201, 201, 209, 210, 202, 202, 210, 211, 203, 203, 211, 212, 204, 204, 212, 213, 205, 205, 213, 214, 206, 206, 214, 215, 207, 207, 215, 208, 200, 208, 216, 217, 209, 209, 217, 218, 210, 210, 218, 219, 211, 211, 219, 220, 212, 212, 220, 221, 213, 213, 221, 222, 214, 214, 222, 223, 215, 215, 223, 216, 208, 216, 224, 225, 217, 217, 225, 226, 218, 218, 226, 227, 219, 219, 227, 228, 220, 220, 228, 229, 221, 221, 229, 230, 222, 222, 230, 231, 223, 223, 231, 224, 216, 224, 232, 233, 225, 225, 233, 234, 226, 226, 234, 235, 227, 227, 235, 236, 228, 228, 236, 237, 229, 229, 237, 238, 230, 230, 238, 239, 231, 231, 239, 232, 224, 232, 240, 241, 233, 233, 241, 242, 234, 234, 242, 243, 235, 235, 243, 244, 236, 236, 244, 245, 237, 237, 245, 246, 238, 238, 246, 247, 239, 239, 247, 240, 232, 240, 248, 249, 241, 241, 249, 250, 242, 242, 250, 251, 243, 243, 251, 252, 244, 244, 252, 253, 245, 245, 253, 254, 246, 246, 254, 255, 247, 247, 255, 248, 240, 248, 0, 1, 249, 249, 1, 2, 250, 250, 2, 3, 251, 251, 3, 4, 252, 252, 4, 5, 253, 253, 5, 6, 254, 254, 6, 7, 255, 255, 7, 0, 248]
+            rel material:binding = </pipe_run/Looks/wheel>
+            point3f[] points = [(0.0254, 0, 0), (0.024521321, 0, 0.0021213202), (0.0224, 0, 0.003), (0.02027868, 0, 0.0021213202), (0.0194, 0, 3.6739403e-19), (0.02027868, 0, -0.0021213202), (0.0224, 0, -0.003), (0.024521321, 0, -0.0021213202), (0.024911946, 0.004955294, 0), (0.02405015, 0.004783872, 0.0021213202), (0.02196959, 0.004370023, 0.003), (0.01988903, 0.003956174, 0.0021213202), (0.019027235, 0.0037847522, 3.6739403e-19), (0.01988903, 0.003956174, -0.0021213202), (0.02196959, 0.004370023, -0.003), (0.02405015, 0.004783872, -0.0021213202), (0.02346654, 0.009720159, 0), (0.022654746, 0.009383903, 0.0021213202), (0.020694902, 0.008572109, 0.003), (0.018735057, 0.0077603147, 0.0021213202), (0.017923264, 0.0074240584, 3.6739403e-19), (0.018735057, 0.0077603147, -0.0021213202), (0.020694902, 0.008572109, -0.003), (0.022654746, 0.009383903, -0.0021213202), (0.021119328, 0.0141114835, 0), (0.020388734, 0.013623316, 0.0021213202), (0.018624919, 0.012444773, 0.003), (0.016861105, 0.011266231, 0.0021213202), (0.01613051, 0.010778063, 3.6739403e-19), (0.016861105, 0.011266231, -0.0021213202), (0.018624919, 0.012444773, -0.003), (0.020388734, 0.013623316, -0.0021213202), (0.017960513, 0.017960513, 0), (0.017339192, 0.017339192, 0.0021213202), (0.015839191, 0.015839191, 0.003), (0.014339192, 0.014339192, 0.0021213202), (0.013717871, 0.013717871, 3.6739403e-19), (0.014339192, 0.014339192, -0.0021213202), (0.015839191, 0.015839191, -0.003), (0.017339192, 0.017339192, -0.0021213202), (0.0141114835, 0.021119328, 0), (0.013623316, 0.020388734, 0.0021213202), (0.012444773, 0.018624919, 0.003), (0.011266231, 0.016861105, 0.0021213202), (0.010778063, 0.01613051, 3.6739403e-19), (0.011266231, 0.016861105, -0.0021213202), (0.012444773, 0.018624919, -0.003), (0.013623316, 0.020388734, -0.0021213202), (0.009720159, 0.02346654, 0), (0.009383903, 0.022654746, 0.0021213202), (0.008572109, 0.020694902, 0.003), (0.0077603147, 0.018735057, 0.0021213202), (0.0074240584, 0.017923264, 3.6739403e-19), (0.0077603147, 0.018735057, -0.0021213202), (0.008572109, 0.020694902, -0.003), (0.009383903, 0.022654746, -0.0021213202), (0.004955294, 0.024911946, 0), (0.004783872, 0.02405015, 0.0021213202), (0.004370023, 0.02196959, 0.003), (0.003956174, 0.01988903, 0.0021213202), (0.0037847522, 0.019027235, 3.6739403e-19), (0.003956174, 0.01988903, -0.0021213202), (0.004370023, 0.02196959, -0.003), (0.004783872, 0.02405015, -0.0021213202), (1.5553014e-18, 0.0254, 0), (1.5014978e-18, 0.024521321, 0.0021213202), (1.3716044e-18, 0.0224, 0.003), (1.241711e-18, 0.02027868, 0.0021213202), (1.1879074e-18, 0.0194, 3.6739403e-19), (1.241711e-18, 0.02027868, -0.0021213202), (1.3716044e-18, 0.0224, -0.003), (1.5014978e-18, 0.024521321, -0.0021213202), (-0.004955294, 0.024911946, 0), (-0.004783872, 0.02405015, 0.0021213202), (-0.004370023, 0.02196959, 0.003), (-0.003956174, 0.01988903, 0.0021213202), (-0.0037847522, 0.019027235, 3.6739403e-19), (-0.003956174, 0.01988903, -0.0021213202), (-0.004370023, 0.02196959, -0.003), (-0.004783872, 0.02405015, -0.0021213202), (-0.009720159, 0.02346654, 0), (-0.009383903, 0.022654746, 0.0021213202), (-0.008572109, 0.020694902, 0.003), (-0.0077603147, 0.018735057, 0.0021213202), (-0.0074240584, 0.017923264, 3.6739403e-19), (-0.0077603147, 0.018735057, -0.0021213202), (-0.008572109, 0.020694902, -0.003), (-0.009383903, 0.022654746, -0.0021213202), (-0.0141114835, 0.021119328, 0), (-0.013623316, 0.020388734, 0.0021213202), (-0.012444773, 0.018624919, 0.003), (-0.011266231, 0.016861105, 0.0021213202), (-0.010778063, 0.01613051, 3.6739403e-19), (-0.011266231, 0.016861105, -0.0021213202), (-0.012444773, 0.018624919, -0.003), (-0.013623316, 0.020388734, -0.0021213202), (-0.017960513, 0.017960513, 0), (-0.017339192, 0.017339192, 0.0021213202), (-0.015839191, 0.015839191, 0.003), (-0.014339192, 0.014339192, 0.0021213202), (-0.013717871, 0.013717871, 3.6739403e-19), (-0.014339192, 0.014339192, -0.0021213202), (-0.015839191, 0.015839191, -0.003), (-0.017339192, 0.017339192, -0.0021213202), (-0.021119328, 0.0141114835, 0), (-0.020388734, 0.013623316, 0.0021213202), (-0.018624919, 0.012444773, 0.003), (-0.016861105, 0.011266231, 0.0021213202), (-0.01613051, 0.010778063, 3.6739403e-19), (-0.016861105, 0.011266231, -0.0021213202), (-0.018624919, 0.012444773, -0.003), (-0.020388734, 0.013623316, -0.0021213202), (-0.02346654, 0.009720159, 0), (-0.022654746, 0.009383903, 0.0021213202), (-0.020694902, 0.008572109, 0.003), (-0.018735057, 0.0077603147, 0.0021213202), (-0.017923264, 0.0074240584, 3.6739403e-19), (-0.018735057, 0.0077603147, -0.0021213202), (-0.020694902, 0.008572109, -0.003), (-0.022654746, 0.009383903, -0.0021213202), (-0.024911946, 0.004955294, 0), (-0.02405015, 0.004783872, 0.0021213202), (-0.02196959, 0.004370023, 0.003), (-0.01988903, 0.003956174, 0.0021213202), (-0.019027235, 0.0037847522, 3.6739403e-19), (-0.01988903, 0.003956174, -0.0021213202), (-0.02196959, 0.004370023, -0.003), (-0.02405015, 0.004783872, -0.0021213202), (-0.0254, 3.1106028e-18, 0), (-0.024521321, 3.0029957e-18, 0.0021213202), (-0.0224, 2.7432088e-18, 0.003), (-0.02027868, 2.483422e-18, 0.0021213202), (-0.0194, 2.3758147e-18, 3.6739403e-19), (-0.02027868, 2.483422e-18, -0.0021213202), (-0.0224, 2.7432088e-18, -0.003), (-0.024521321, 3.0029957e-18, -0.0021213202), (-0.024911946, -0.004955294, 0), (-0.02405015, -0.004783872, 0.0021213202), (-0.02196959, -0.004370023, 0.003), (-0.01988903, -0.003956174, 0.0021213202), (-0.019027235, -0.0037847522, 3.6739403e-19), (-0.01988903, -0.003956174, -0.0021213202), (-0.02196959, -0.004370023, -0.003), (-0.02405015, -0.004783872, -0.0021213202), (-0.02346654, -0.009720159, 0), (-0.022654746, -0.009383903, 0.0021213202), (-0.020694902, -0.008572109, 0.003), (-0.018735057, -0.0077603147, 0.0021213202), (-0.017923264, -0.0074240584, 3.6739403e-19), (-0.018735057, -0.0077603147, -0.0021213202), (-0.020694902, -0.008572109, -0.003), (-0.022654746, -0.009383903, -0.0021213202), (-0.021119328, -0.0141114835, 0), (-0.020388734, -0.013623316, 0.0021213202), (-0.018624919, -0.012444773, 0.003), (-0.016861105, -0.011266231, 0.0021213202), (-0.01613051, -0.010778063, 3.6739403e-19), (-0.016861105, -0.011266231, -0.0021213202), (-0.018624919, -0.012444773, -0.003), (-0.020388734, -0.013623316, -0.0021213202), (-0.017960513, -0.017960513, 0), (-0.017339192, -0.017339192, 0.0021213202), (-0.015839191, -0.015839191, 0.003), (-0.014339192, -0.014339192, 0.0021213202), (-0.013717871, -0.013717871, 3.6739403e-19), (-0.014339192, -0.014339192, -0.0021213202), (-0.015839191, -0.015839191, -0.003), (-0.017339192, -0.017339192, -0.0021213202), (-0.0141114835, -0.021119328, 0), (-0.013623316, -0.020388734, 0.0021213202), (-0.012444773, -0.018624919, 0.003), (-0.011266231, -0.016861105, 0.0021213202), (-0.010778063, -0.01613051, 3.6739403e-19), (-0.011266231, -0.016861105, -0.0021213202), (-0.012444773, -0.018624919, -0.003), (-0.013623316, -0.020388734, -0.0021213202), (-0.009720159, -0.02346654, 0), (-0.009383903, -0.022654746, 0.0021213202), (-0.008572109, -0.020694902, 0.003), (-0.0077603147, -0.018735057, 0.0021213202), (-0.0074240584, -0.017923264, 3.6739403e-19), (-0.0077603147, -0.018735057, -0.0021213202), (-0.008572109, -0.020694902, -0.003), (-0.009383903, -0.022654746, -0.0021213202), (-0.004955294, -0.024911946, 0), (-0.004783872, -0.02405015, 0.0021213202), (-0.004370023, -0.02196959, 0.003), (-0.003956174, -0.01988903, 0.0021213202), (-0.0037847522, -0.019027235, 3.6739403e-19), (-0.003956174, -0.01988903, -0.0021213202), (-0.004370023, -0.02196959, -0.003), (-0.004783872, -0.02405015, -0.0021213202), (-4.665904e-18, -0.0254, 0), (-4.5044935e-18, -0.024521321, 0.0021213202), (-4.1148133e-18, -0.0224, 0.003), (-3.725133e-18, -0.02027868, 0.0021213202), (-3.5637224e-18, -0.0194, 3.6739403e-19), (-3.725133e-18, -0.02027868, -0.0021213202), (-4.1148133e-18, -0.0224, -0.003), (-4.5044935e-18, -0.024521321, -0.0021213202), (0.004955294, -0.024911946, 0), (0.004783872, -0.02405015, 0.0021213202), (0.004370023, -0.02196959, 0.003), (0.003956174, -0.01988903, 0.0021213202), (0.0037847522, -0.019027235, 3.6739403e-19), (0.003956174, -0.01988903, -0.0021213202), (0.004370023, -0.02196959, -0.003), (0.004783872, -0.02405015, -0.0021213202), (0.009720159, -0.02346654, 0), (0.009383903, -0.022654746, 0.0021213202), (0.008572109, -0.020694902, 0.003), (0.0077603147, -0.018735057, 0.0021213202), (0.0074240584, -0.017923264, 3.6739403e-19), (0.0077603147, -0.018735057, -0.0021213202), (0.008572109, -0.020694902, -0.003), (0.009383903, -0.022654746, -0.0021213202), (0.0141114835, -0.021119328, 0), (0.013623316, -0.020388734, 0.0021213202), (0.012444773, -0.018624919, 0.003), (0.011266231, -0.016861105, 0.0021213202), (0.010778063, -0.01613051, 3.6739403e-19), (0.011266231, -0.016861105, -0.0021213202), (0.012444773, -0.018624919, -0.003), (0.013623316, -0.020388734, -0.0021213202), (0.017960513, -0.017960513, 0), (0.017339192, -0.017339192, 0.0021213202), (0.015839191, -0.015839191, 0.003), (0.014339192, -0.014339192, 0.0021213202), (0.013717871, -0.013717871, 3.6739403e-19), (0.014339192, -0.014339192, -0.0021213202), (0.015839191, -0.015839191, -0.003), (0.017339192, -0.017339192, -0.0021213202), (0.021119328, -0.0141114835, 0), (0.020388734, -0.013623316, 0.0021213202), (0.018624919, -0.012444773, 0.003), (0.016861105, -0.011266231, 0.0021213202), (0.01613051, -0.010778063, 3.6739403e-19), (0.016861105, -0.011266231, -0.0021213202), (0.018624919, -0.012444773, -0.003), (0.020388734, -0.013623316, -0.0021213202), (0.02346654, -0.009720159, 0), (0.022654746, -0.009383903, 0.0021213202), (0.020694902, -0.008572109, 0.003), (0.018735057, -0.0077603147, 0.0021213202), (0.017923264, -0.0074240584, 3.6739403e-19), (0.018735057, -0.0077603147, -0.0021213202), (0.020694902, -0.008572109, -0.003), (0.022654746, -0.009383903, -0.0021213202), (0.024911946, -0.004955294, 0), (0.02405015, -0.004783872, 0.0021213202), (0.02196959, -0.004370023, 0.003), (0.01988903, -0.003956174, 0.0021213202), (0.019027235, -0.0037847522, 3.6739403e-19), (0.01988903, -0.003956174, -0.0021213202), (0.02196959, -0.004370023, -0.003), (0.02405015, -0.004783872, -0.0021213202)]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "painted_iron" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.8
+            float physics:staticFriction = 0.9
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+}
+
