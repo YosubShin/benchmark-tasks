@@ -1,0 +1,2430 @@
+#usda 1.0
+(
+    defaultPrim = "lockbox"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "lockbox" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "box_red"
+        {
+            token outputs:surface.connect = </lockbox/Looks/box_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.05, 0.04)
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "riser"
+        {
+            token outputs:surface.connect = </lockbox/Looks/riser/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.41, 0.43)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "window"
+        {
+            token outputs:surface.connect = </lockbox/Looks/window/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.11, 0.12)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </lockbox/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </lockbox/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.04, 0.04, 0.04)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "board"
+        {
+            token outputs:surface.connect = </lockbox/Looks/board/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.76, 0.66, 0.5)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "panel"
+        {
+            token outputs:surface.connect = </lockbox/Looks/panel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.8, 0.77)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "brass"
+        {
+            token outputs:surface.connect = </lockbox/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.66, 0.3)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "lock_red"
+        {
+            token outputs:surface.connect = </lockbox/Looks/lock_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.1, 0.08)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </lockbox/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </lockbox/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.12, 0.12, 0.13)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "plate_yellow"
+        {
+            token outputs:surface.connect = </lockbox/Looks/plate_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.96, 0.78, 0.12)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "plate_white"
+        {
+            token outputs:surface.connect = </lockbox/Looks/plate_white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.94, 0.94, 0.92)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "body" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 2
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "riser" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/riser>
+            double size = 1
+            float3 xformOp:scale = (0.152, 0.292, 0.055)
+            double3 xformOp:translate = (0, 0, 0.0275)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "floor" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.272, 0.002)
+            double3 xformOp:translate = (0, 0, 0.056)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "wall_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.0015, 0.272, 0.12)
+            double3 xformOp:translate = (-0.06325, 0, 0.11499999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "end_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.0015, 0.12)
+            double3 xformOp:translate = (0, -0.13525, 0.11499999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_inner" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (-0.065625, 0, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_outer" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (-0.079875, 0, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.1275, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.098, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.07, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.042, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.014, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, 0.014, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, 0.042, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, 0.07, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, 0.098, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, 0.1275, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "wall_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.0015, 0.272, 0.12)
+            double3 xformOp:translate = (0.06325, 0, 0.11499999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "end_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.0015, 0.12)
+            double3 xformOp:translate = (0, 0.13525, 0.11499999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_inner" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (0.065625, 0, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_outer" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (0.079875, 0, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.1275, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.098, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.07, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.042, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.014, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, 0.014, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, 0.042, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, 0.07, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, 0.098, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, 0.1275, 0.17425)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "window" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/window>
+            double size = 1
+            float3 xformOp:scale = (0.0008, 0.083, 0.065)
+            double3 xformOp:translate = (-0.0644, -0.08250000000000002, 0.11249999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "latch_staple" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.024, 0.008, 0.025)
+            double3 xformOp:translate = (0, -0.14, 0.15249999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </lockbox/body>
+        }
+
+        def PhysicsRevoluteJoint "lid_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </lockbox/body>
+            rel physics:body1 = </lockbox/lid>
+            point3f physics:localPos0 = (0, 0.14, 0.189)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 0
+        }
+    }
+
+    def Xform "lid" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.7
+        double3 xformOp:translate = (0, 0.14, 0.18899999999999997)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "top_a" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.2445, 0.0015)
+            double3 xformOp:translate = (0, -0.12525000000000003, 0.009250000000000008)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "top_b" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.0225, 0.0015)
+            double3 xformOp:translate = (0, -0.26575000000000004, 0.009250000000000008)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "top_c" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.044, 0.007, 0.0015)
+            double3 xformOp:translate = (-0.042, -0.25100000000000006, 0.009250000000000008)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "top_d" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.044, 0.007, 0.0015)
+            double3 xformOp:translate = (0.042, -0.25100000000000006, 0.009250000000000008)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "slot_plate_l" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.01, 0.016, 0.0008)
+            double3 xformOp:translate = (-0.025, -0.251, 0.010400000000000006)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "slot_plate_r" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.01, 0.016, 0.0008)
+            double3 xformOp:translate = (0.025, -0.251, 0.010400000000000006)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "skirt_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.0015, 0.272, 0.021)
+            double3 xformOp:translate = (-0.06325, -0.14, -0.001999999999999988)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "skirt_end_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.0015, 0.0225)
+            double3 xformOp:translate = (0, -0.27525, -0.0027499999999999886)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_inner" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (-0.065625, -0.14, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_outer" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (-0.079875, -0.14, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.2675, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.23800000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.21000000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.18200000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.15400000000000003, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.126, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.098, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.07, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.04200000000000001, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_front_bridge9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (-0.07275000000000001, -0.012500000000000011, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "skirt_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.0015, 0.272, 0.021)
+            double3 xformOp:translate = (0.06325, -0.14, -0.001999999999999988)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "skirt_end_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.128, 0.0015, 0.0225)
+            double3 xformOp:translate = (0, -0.004750000000000004, -0.0027499999999999886)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_inner" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (0.065625, -0.14, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_outer" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.00325, 0.272, 0.0015)
+            double3 xformOp:translate = (0.079875, -0.14, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.2675, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.23800000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge2" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.21000000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge3" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.18200000000000002, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge4" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.15400000000000003, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge5" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.126, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge6" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.098, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge7" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.07, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge8" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.014, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.04200000000000001, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "flange_back_bridge9" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            custom float physxCollision:contactOffset = 0.002
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.011, 0.017, 0.0015)
+            double3 xformOp:translate = (0.07275000000000001, -0.012500000000000011, -0.013249999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "handle_bar" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.15, 0.007)
+            double3 xformOp:translate = (0, -0.14, 0.013500000000000012)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "latch" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </lockbox/Looks/box_red>
+            double size = 1
+            float3 xformOp:scale = (0.026, 0.01, 0.031)
+            double3 xformOp:translate = (0, -0.277, -0.00449999999999999)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "hinge_pin" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.148
+            rel material:binding = </lockbox/Looks/steel>
+            double radius = 0.004
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Xform "num1"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02754166666666668, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.025708333333333347, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.02800000000000001, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num2"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.004583333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05554166666666667, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.052791666666666674, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05737500000000001, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05783333333333335, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05783333333333335, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05737500000000001, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05645833333333334, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05554166666666668, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05462500000000001, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.053708333333333344, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.006416667, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.05554166666666668, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num3"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08400000000000002, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08079166666666668, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08675000000000002, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08675000000000002, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08675000000000002, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.004583333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08445833333333336, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08629166666666668, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08675000000000002, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08675000000000002, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08079166666666668, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08629166666666668, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.004583333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.08354166666666668, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num4"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11337500000000002, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11154166666666668, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11062500000000001, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11016666666666669, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.10925000000000001, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.10879166666666668, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.007333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11200000000000002, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.11383333333333334, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num5"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.006416667, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13954166666666667, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13725, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13725, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13908333333333334, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13679166666666667, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.14183333333333337, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.14275000000000002, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.14275000000000002, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.14275000000000002, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13679166666666667, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.14183333333333337, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.004583333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.13954166666666667, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num6"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0036666666, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.168, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16616666666666668, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.17029166666666667, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16525, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16708333333333333, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16570833333333335, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16983333333333334, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16525, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.17075, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16525, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.17075, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16525, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.17075, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16616666666666668, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.16983333333333334, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0036666666, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.168, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num7"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.007333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.196, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19875, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19783333333333336, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19783333333333336, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19737500000000002, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19691666666666668, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19645833333333335, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.196, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19554166666666667, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.19508333333333333, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num8"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22400000000000003, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22125000000000003, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22675000000000003, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22125000000000003, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22675000000000003, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22125000000000003, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22675000000000003, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0036666666, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22400000000000003, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22170833333333334, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22629166666666672, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22125000000000003, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22675000000000003, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22125000000000003, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22675000000000003, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22170833333333334, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22629166666666672, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r16" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.22400000000000003, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "num9"
+        {
+            def Cube "r0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0036666666, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.252, 0.002874999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25016666666666665, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25383333333333336, 0.0019583333333333323)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.24924999999999997, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25475000000000003, 0.0010416666666666656)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.24924999999999997, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25475000000000003, 0.00012499999999999884)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.24924999999999997, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25475000000000003, -0.0007916666666666677)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r9" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25016666666666665, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r10" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00275, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.2542916666666667, -0.0017083333333333345)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r11" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0055, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.2529166666666667, -0.002625000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r12" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25475000000000003, -0.003541666666666668)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r13" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.00091666664, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.2497083333333333, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r14" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0018333333, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.25383333333333336, -0.004458333333333335)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "r15" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </lockbox/Looks/black>
+                double size = 1
+                float3 xformOp:scale = (0.0003, 0.0036666666, 0.00091666664)
+                double3 xformOp:translate = (-0.06455, -0.252, -0.005375000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+    }
+}
+
