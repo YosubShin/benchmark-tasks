@@ -1,0 +1,246 @@
+#usda 1.0
+(
+    defaultPrim = "stand"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "stand"
+{
+    def "Looks"
+    {
+        def Material "brass"
+        {
+            token outputs:surface.connect = </stand/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.66, 0.36)
+                float inputs:metallic = 0.6
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </stand/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:metallic = 0.6
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "zinc"
+        {
+            token outputs:surface.connect = </stand/Looks/zinc/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.64, 0.66)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "alu"
+        {
+            token outputs:surface.connect = </stand/Looks/alu/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.7, 0.72, 0.76)
+                float inputs:metallic = 0.3
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </stand/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.08)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "hose"
+        {
+            token outputs:surface.connect = </stand/Looks/hose/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.3, 0.78)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "clamp"
+        {
+            token outputs:surface.connect = </stand/Looks/clamp/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.7, 0.71, 0.72)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lockout_red"
+        {
+            token outputs:surface.connect = </stand/Looks/lockout_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.12, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </stand/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "fixture"
+        {
+            token outputs:surface.connect = </stand/Looks/fixture/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.25, 0.25, 0.27)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </stand/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "valve_red"
+        {
+            token outputs:surface.connect = </stand/Looks/valve_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.08, 0.06)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "block" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.1155, 0.18, 0.0442)
+        double3 xformOp:translate = (0.21325, 0.05000000000000001, 0.019599999999999996)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "clip_0" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/fixture>
+        double size = 1
+        float3 xformOp:scale = (0.016, 0.006, 0.0283)
+        double3 xformOp:translate = (0.255, -0.0345, 0.05585)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "clip_1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/fixture>
+        double size = 1
+        float3 xformOp:scale = (0.016, 0.006, 0.0283)
+        double3 xformOp:translate = (0.255, 0.1345, 0.05585)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "ped_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.05, 0.01)
+        double3 xformOp:translate = (0.082, 0.15000000000000002, 0.0024999999999999996)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Xform "ped_slab"
+    {
+        float xformOp:rotateX = 15
+        double3 xformOp:translate = (0.082, 0.1568052078311766, 0.051288085192016844)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX"]
+
+        def Cube "top" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.038, 0.022, 0.01)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Cube "ped_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.012, 0.016, 0.049788084)
+        double3 xformOp:translate = (0.082, 0.1568052078311766, 0.02239404259600842)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
