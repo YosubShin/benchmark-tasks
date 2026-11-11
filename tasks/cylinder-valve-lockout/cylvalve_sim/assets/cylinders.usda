@@ -1,0 +1,2267 @@
+#usda 1.0
+(
+    defaultPrim = "cylinders"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "cylinders" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "brass"
+        {
+            token outputs:surface.connect = </cylinders/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.66, 0.36)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "alu"
+        {
+            token outputs:surface.connect = </cylinders/Looks/alu/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.76, 0.78)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </cylinders/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.64, 0.67)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </cylinders/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.08)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lockout_red"
+        {
+            token outputs:surface.connect = </cylinders/Looks/lockout_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.07, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "label_yellow"
+        {
+            token outputs:surface.connect = </cylinders/Looks/label_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.98, 0.8, 0.1)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </cylinders/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "well"
+        {
+            token outputs:surface.connect = </cylinders/Looks/well/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.2, 0.22)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "target_shoulder"
+        {
+            token outputs:surface.connect = </cylinders/Looks/target_shoulder/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.33, 0.17)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "decoy_shoulder"
+        {
+            token outputs:surface.connect = </cylinders/Looks/decoy_shoulder/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.93, 0.93, 0.92)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "body_grey"
+        {
+            token outputs:surface.connect = </cylinders/Looks/body_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.56, 0.58)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "label_target"
+        {
+            token outputs:surface.connect = </cylinders/Looks/label_target/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </cylinders/Looks/label_target/tex.outputs:rgb>
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+
+            def Shader "stReader"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+
+            def Shader "tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @./label_target.png@
+                float2 inputs:st.connect = </cylinders/Looks/label_target/stReader.outputs:result>
+                token inputs:wrapS = "clamp"
+                token inputs:wrapT = "clamp"
+                float3 outputs:rgb
+            }
+        }
+
+        def Material "label_decoy"
+        {
+            token outputs:surface.connect = </cylinders/Looks/label_decoy/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor.connect = </cylinders/Looks/label_decoy/tex.outputs:rgb>
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+
+            def Shader "stReader"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+
+            def Shader "tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @./label_decoy.png@
+                float2 inputs:st.connect = </cylinders/Looks/label_decoy/stReader.outputs:result>
+                token inputs:wrapS = "clamp"
+                token inputs:wrapT = "clamp"
+                float3 outputs:rgb
+            }
+        }
+    }
+
+    def Xform "base" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 5
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Xform "target"
+        {
+            def Cylinder "well" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0016
+                rel material:binding = </cylinders/Looks/well>
+                double radius = 0.104
+                double3 xformOp:translate = (0.3, -0.04, 0.0008)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Sphere "shoulder" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/target_shoulder>
+                double radius = 1
+                float3 xformOp:scale = (0.092, 0.092, 0.06)
+                double3 xformOp:translate = (0.3, -0.04, -0.015)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Xform "dome_lo_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, -0.04, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_1"
+            {
+                float xformOp:rotateZ = 45
+                double3 xformOp:translate = (0.3, -0.04, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_2"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, -0.04, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_3"
+            {
+                float xformOp:rotateZ = 135
+                double3 xformOp:translate = (0.3, -0.04, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, -0.04, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_1"
+            {
+                float xformOp:rotateZ = 45
+                double3 xformOp:translate = (0.3, -0.04, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_2"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, -0.04, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_3"
+            {
+                float xformOp:rotateZ = 135
+                double3 xformOp:translate = (0.3, -0.04, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cylinder "ring_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.060000000000000005
+                rel material:binding = </cylinders/Looks/steel>
+                double radius = 0.04
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.046)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.0558)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.06559999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.0754)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.0852)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, -0.04, 0.095)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "ring_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_1"
+            {
+                float xformOp:rotateZ = 30
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_2"
+            {
+                float xformOp:rotateZ = 60
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_3"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_4"
+            {
+                float xformOp:rotateZ = 120
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_5"
+            {
+                float xformOp:rotateZ = 150
+                double3 xformOp:translate = (0.3, -0.04, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cylinder "stem_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.013999999999999999
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.0135
+                double3 xformOp:translate = (0.3, -0.04, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "stem_0"
+            {
+                float xformOp:rotateZ = 22.5
+                double3 xformOp:translate = (0.3, -0.04, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_1"
+            {
+                float xformOp:rotateZ = 67.5
+                double3 xformOp:translate = (0.3, -0.04, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_2"
+            {
+                float xformOp:rotateZ = 112.5
+                double3 xformOp:translate = (0.3, -0.04, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_3"
+            {
+                float xformOp:rotateZ = 157.5
+                double3 xformOp:translate = (0.3, -0.04, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cube "collar" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                float3 xformOp:scale = (0.042, 0.042, 0.014)
+                double3 xformOp:translate = (0.3, -0.04, 0.121)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "body" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                float3 xformOp:scale = (0.03, 0.03, 0.023)
+                double3 xformOp:translate = (0.3, -0.04, 0.1395)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cylinder "outlet_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Y"
+                double height = 0.020999999999999998
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.0125
+                double3 xformOp:translate = (0.3, -0.014500000000000002, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "outlet_bore" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Y"
+                double height = 0.0006
+                rel material:binding = </cylinders/Looks/dark>
+                double radius = 0.0075
+                double3 xformOp:translate = (0.3, -0.0038000000000000048, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cube "outlet" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.025, 0.022, 0.025)
+                double3 xformOp:translate = (0.3, -0.015000000000000003, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cylinder "bonnet_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.008000000000000007
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.012
+                double3 xformOp:translate = (0.3, -0.04, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "bonnet_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, -0.04, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "bonnet_1"
+            {
+                float xformOp:rotateZ = 60
+                double3 xformOp:translate = (0.3, -0.04, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "bonnet_2"
+            {
+                float xformOp:rotateZ = 120
+                double3 xformOp:translate = (0.3, -0.04, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Mesh "label" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [4]
+                int[] faceVertexIndices = [0, 1, 2, 3]
+                rel material:binding = </cylinders/Looks/label_target>
+                point3f[] points = [(0.23054351, -0.01, 0.020351024), (0.23054351, -0.07, 0.020351024), (0.24545649, -0.07, 0.041648977), (0.24545649, -0.01, 0.041648977)]
+                texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                    interpolation = "vertex"
+                )
+                uniform token subdivisionScheme = "none"
+            }
+        }
+
+        def Xform "decoy"
+        {
+            def Cylinder "well" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0016
+                rel material:binding = </cylinders/Looks/well>
+                double radius = 0.104
+                double3 xformOp:translate = (0.3, 0.21, 0.0008)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Sphere "shoulder" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/decoy_shoulder>
+                double radius = 1
+                float3 xformOp:scale = (0.092, 0.092, 0.06)
+                double3 xformOp:translate = (0.3, 0.21, -0.015)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Xform "dome_lo_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, 0.21, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_1"
+            {
+                float xformOp:rotateZ = 45
+                double3 xformOp:translate = (0.3, 0.21, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_2"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, 0.21, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_lo_3"
+            {
+                float xformOp:rotateZ = 135
+                double3 xformOp:translate = (0.3, 0.21, 0.011250000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.1, 0.041521356, 0.0275)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, 0.21, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_1"
+            {
+                float xformOp:rotateZ = 45
+                double3 xformOp:translate = (0.3, 0.21, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_2"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, 0.21, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "dome_hi_3"
+            {
+                float xformOp:rotateZ = 135
+                double3 xformOp:translate = (0.3, 0.21, 0.033)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/dark>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    token visibility = "invisible"
+                    float3 xformOp:scale = (0.064, 0.026609669, 0.016)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cylinder "ring_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.060000000000000005
+                rel material:binding = </cylinders/Looks/steel>
+                double radius = 0.04
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.046)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.0558)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.06559999999999999)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.0754)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.0852)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "groove_5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.0012000000000000066
+                rel material:binding = </cylinders/Looks/body_grey>
+                double radius = 0.0403
+                double3 xformOp:translate = (0.3, 0.21, 0.095)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "ring_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_1"
+            {
+                float xformOp:rotateZ = 30
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_2"
+            {
+                float xformOp:rotateZ = 60
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_3"
+            {
+                float xformOp:rotateZ = 90
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_4"
+            {
+                float xformOp:rotateZ = 120
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "ring_5"
+            {
+                float xformOp:rotateZ = 150
+                double3 xformOp:translate = (0.3, 0.21, 0.07)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/steel>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.08, 0.021535935, 0.06)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cylinder "stem_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.013999999999999999
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.0135
+                double3 xformOp:translate = (0.3, 0.21, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "stem_0"
+            {
+                float xformOp:rotateZ = 22.5
+                double3 xformOp:translate = (0.3, 0.21, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_1"
+            {
+                float xformOp:rotateZ = 67.5
+                double3 xformOp:translate = (0.3, 0.21, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_2"
+            {
+                float xformOp:rotateZ = 112.5
+                double3 xformOp:translate = (0.3, 0.21, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "stem_3"
+            {
+                float xformOp:rotateZ = 157.5
+                double3 xformOp:translate = (0.3, 0.21, 0.10700000000000001)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.027, 0.0112837665, 0.014)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Cube "collar" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                float3 xformOp:scale = (0.042, 0.042, 0.014)
+                double3 xformOp:translate = (0.3, 0.21, 0.121)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "body" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                float3 xformOp:scale = (0.03, 0.03, 0.023)
+                double3 xformOp:translate = (0.3, 0.21, 0.1395)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cylinder "outlet_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Y"
+                double height = 0.020999999999999998
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.0125
+                double3 xformOp:translate = (0.3, 0.2355, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cylinder "outlet_bore" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Y"
+                double height = 0.0006
+                rel material:binding = </cylinders/Looks/dark>
+                double radius = 0.0075
+                double3 xformOp:translate = (0.3, 0.24619999999999997, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cube "outlet" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/brass>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.025, 0.022, 0.025)
+                double3 xformOp:translate = (0.3, 0.235, 0.138)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cylinder "bonnet_v" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double height = 0.008000000000000007
+                rel material:binding = </cylinders/Looks/brass>
+                double radius = 0.012
+                double3 xformOp:translate = (0.3, 0.21, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "bonnet_0"
+            {
+                float xformOp:rotateZ = 0
+                double3 xformOp:translate = (0.3, 0.21, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "bonnet_1"
+            {
+                float xformOp:rotateZ = 60
+                double3 xformOp:translate = (0.3, 0.21, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Xform "bonnet_2"
+            {
+                float xformOp:rotateZ = 120
+                double3 xformOp:translate = (0.3, 0.21, 0.155)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+                def Cube "box" (
+                    prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+                )
+                {
+                    rel material:binding = </cylinders/Looks/brass>
+                    rel material:binding:physics = </cylinders/PhysicsMaterials/metal> (
+                        bindMaterialAs = "weakerThanDescendants"
+                    )
+                    custom float physxCollision:contactOffset = 0.0003
+                    custom float physxCollision:restOffset = 0
+                    double size = 1
+                    float3 xformOp:scale = (0.024, 0.013956406, 0.008)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+                }
+            }
+
+            def Mesh "label" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [4]
+                int[] faceVertexIndices = [0, 1, 2, 3]
+                rel material:binding = </cylinders/Looks/label_decoy>
+                point3f[] points = [(0.23054351, 0.24, 0.020351024), (0.23054351, 0.18, 0.020351024), (0.24545649, 0.18, 0.041648977), (0.24545649, 0.24, 0.041648977)]
+                texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                    interpolation = "vertex"
+                )
+                uniform token subdivisionScheme = "none"
+            }
+        }
+    }
+
+    def Xform "wheel_target" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, 0, 0.007)
+        float3 physics:diagonalInertia = (0.000014, 0.000014, 0.000024)
+        float physics:mass = 0.06
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.3, -0.04, 0.159)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Xform "rim_0"
+        {
+            float xformOp:rotateZ = 0
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_1"
+        {
+            float xformOp:rotateZ = 30
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_2"
+        {
+            float xformOp:rotateZ = 60
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_3"
+        {
+            float xformOp:rotateZ = 90
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_4"
+        {
+            float xformOp:rotateZ = 120
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_5"
+        {
+            float xformOp:rotateZ = 150
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Cylinder "disc_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999985
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.0245
+            double3 xformOp:translate = (0, 0, 0.005999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (0.017753520777580994, 0.010249999999999999, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (1.2552629691260371e-18, 0.0205, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-0.017753520777580994, 0.010249999999999999, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-0.01775352077758099, -0.010250000000000002, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-3.765788907378111e-18, -0.0205, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (0.017753520777580988, -0.010250000000000009, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "hub_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.004
+            rel material:binding = </cylinders/Looks/body_grey>
+            double radius = 0.009
+            double3 xformOp:translate = (0, 0, 0.012999999999999986)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "nut_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.002999999999999999
+            rel material:binding = </cylinders/Looks/brass>
+            double radius = 0.005
+            double3 xformOp:translate = (0, 0, 0.015499999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "mark" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cylinders/Looks/dark>
+            double size = 1
+            float3 xformOp:scale = (0.008, 0.005, 0.0009)
+            double3 xformOp:translate = (0.0205, 0, 0.013949999999999983)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsRevoluteJoint "wheel_target_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cylinders/base>
+            rel physics:body1 = </cylinders/wheel_target>
+            point3f physics:localPos0 = (0.3, -0.04, 0.159)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 720
+        }
+
+        def PhysicsRevoluteJoint "wheel_decoy_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cylinders/base>
+            rel physics:body1 = </cylinders/wheel_decoy>
+            point3f physics:localPos0 = (0.3, 0.21, 0.159)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 720
+        }
+
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </cylinders/base>
+        }
+    }
+
+    def Xform "wheel_decoy" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, 0, 0.007)
+        float3 physics:diagonalInertia = (0.000014, 0.000014, 0.000024)
+        float physics:mass = 0.06
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.3, 0.21, 0.159)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Xform "rim_0"
+        {
+            float xformOp:rotateZ = 0
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_1"
+        {
+            float xformOp:rotateZ = 30
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_2"
+        {
+            float xformOp:rotateZ = 60
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_3"
+        {
+            float xformOp:rotateZ = 90
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_4"
+        {
+            float xformOp:rotateZ = 120
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Xform "rim_5"
+        {
+            float xformOp:rotateZ = 150
+            double3 xformOp:translate = (0, 0, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "box" (
+                prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+            )
+            {
+                rel material:binding = </cylinders/Looks/alu>
+                rel material:binding:physics = </cylinders/PhysicsMaterials/wheel_grip> (
+                    bindMaterialAs = "weakerThanDescendants"
+                )
+                custom float physxCollision:contactOffset = 0.0003
+                custom float physxCollision:restOffset = 0
+                double size = 1
+                token visibility = "invisible"
+                float3 xformOp:scale = (0.053, 0.0143013075, 0.014)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+
+        def Cylinder "disc_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999985
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.0245
+            double3 xformOp:translate = (0, 0, 0.005999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (0.017753520777580994, 0.010249999999999999, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (1.2552629691260371e-18, 0.0205, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-0.017753520777580994, 0.010249999999999999, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-0.01775352077758099, -0.010250000000000002, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (-3.765788907378111e-18, -0.0205, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "lobe_5" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.011999999999999983
+            rel material:binding = </cylinders/Looks/alu>
+            double radius = 0.008
+            double3 xformOp:translate = (0.017753520777580988, -0.010250000000000009, 0.006999999999999992)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "hub_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.004
+            rel material:binding = </cylinders/Looks/body_grey>
+            double radius = 0.009
+            double3 xformOp:translate = (0, 0, 0.012999999999999986)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "nut_v" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.002999999999999999
+            rel material:binding = </cylinders/Looks/brass>
+            double radius = 0.005
+            double3 xformOp:translate = (0, 0, 0.015499999999999984)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "mark" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cylinders/Looks/dark>
+            double size = 1
+            float3 xformOp:scale = (0.008, 0.005, 0.0009)
+            double3 xformOp:translate = (0.0205, 0, 0.013949999999999983)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "metal" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.4
+            float physics:staticFriction = 0.5
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+
+        def Material "wheel_grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1.2
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+}
+

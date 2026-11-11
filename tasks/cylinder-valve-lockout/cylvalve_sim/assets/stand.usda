@@ -1,0 +1,351 @@
+#usda 1.0
+(
+    defaultPrim = "stand"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "stand"
+{
+    def "Looks"
+    {
+        def Material "brass"
+        {
+            token outputs:surface.connect = </stand/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.66, 0.36)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "alu"
+        {
+            token outputs:surface.connect = </stand/Looks/alu/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.76, 0.78)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </stand/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.64, 0.67)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </stand/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.08)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lockout_red"
+        {
+            token outputs:surface.connect = </stand/Looks/lockout_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.07, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "label_yellow"
+        {
+            token outputs:surface.connect = </stand/Looks/label_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.98, 0.8, 0.1)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </stand/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "well"
+        {
+            token outputs:surface.connect = </stand/Looks/well/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.2, 0.22)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "target_shoulder"
+        {
+            token outputs:surface.connect = </stand/Looks/target_shoulder/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.33, 0.17)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "decoy_shoulder"
+        {
+            token outputs:surface.connect = </stand/Looks/decoy_shoulder/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.93, 0.93, 0.92)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "body_grey"
+        {
+            token outputs:surface.connect = </stand/Looks/body_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.56, 0.58)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "pad_0"
+    {
+        float xformOp:rotateZ = 44.444443
+        double3 xformOp:translate = (0.2810559434532686, 0.12045945462787183, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_1"
+    {
+        float xformOp:rotateZ = 73.333336
+        double3 xformOp:translate = (0.26247594062293245, 0.13167254378572377, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_2"
+    {
+        float xformOp:rotateZ = 102.22222
+        double3 xformOp:translate = (0.24079088155802061, 0.13251402283390262, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_3"
+    {
+        float xformOp:rotateZ = 131.11111
+        double3 xformOp:translate = (0.2213978204672457, 0.12277446149025323, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_4"
+    {
+        float xformOp:rotateZ = 160
+        double3 xformOp:translate = (0.209123370995813, 0.10487787623466659, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_5"
+    {
+        float xformOp:rotateZ = 188.88889
+        double3 xformOp:translate = (0.2070224415477588, 0.08327843251285892, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_6"
+    {
+        float xformOp:rotateZ = 217.77777
+        double3 xformOp:translate = (0.21561791887593396, 0.06335187628409568, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_7"
+    {
+        float xformOp:rotateZ = 246.66667
+        double3 xformOp:translate = (0.2327705301772967, 0.05005759935070807, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "pad_8"
+    {
+        float xformOp:rotateZ = 275.55554
+        double3 xformOp:translate = (0.2542112728755883, 0.04670432838299729, 0.056999999999999995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "box" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </stand/Looks/stand>
+            double size = 1
+            float3 xformOp:scale = (0.013, 0.026758336, 0.006)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Cube "column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.06, 0.07, 0.0565)
+        double3 xformOp:translate = (0.23, 0.10500000000000001, 0.02575)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "ped_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.05, 0.05, 0.01)
+        double3 xformOp:translate = (0.15, 0.22, 0.0024999999999999996)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "ped_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.016, 0.014, 0.0825)
+        double3 xformOp:translate = (0.15, 0.22, 0.03875)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
