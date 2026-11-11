@@ -1,0 +1,308 @@
+#usda 1.0
+(
+    defaultPrim = "fixtures"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "fixtures"
+{
+    def "Looks"
+    {
+        def Material "box_grey"
+        {
+            token outputs:surface.connect = </fixtures/Looks/box_grey/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.6, 0.62, 0.62)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "dead_front"
+        {
+            token outputs:surface.connect = </fixtures/Looks/dead_front/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.66, 0.68, 0.68)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "insulator"
+        {
+            token outputs:surface.connect = </fixtures/Looks/insulator/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.1, 0.1)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "block_black"
+        {
+            token outputs:surface.connect = </fixtures/Looks/block_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.055)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "copper"
+        {
+            token outputs:surface.connect = </fixtures/Looks/copper/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.45, 0.22)
+                float inputs:roughness = 0.4
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </fixtures/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.4
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </fixtures/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.03, 0.03, 0.03)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </fixtures/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.93, 0.93, 0.91)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "board"
+        {
+            token outputs:surface.connect = </fixtures/Looks/board/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.76, 0.66, 0.5)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </fixtures/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "conduit"
+        {
+            token outputs:surface.connect = </fixtures/Looks/conduit/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.5, 0.52, 0.55)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "plate_yellow"
+        {
+            token outputs:surface.connect = </fixtures/Looks/plate_yellow/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.96, 0.78, 0.12)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "plate_white"
+        {
+            token outputs:surface.connect = </fixtures/Looks/plate_white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.94, 0.94, 0.92)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "board" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/board>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.018, 0.48, 0.36)
+        double3 xformOp:translate = (0.459, -0.09000000000000001, 0.18)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "board_foot0" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/board>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.122, 0.04, 0.03)
+        double3 xformOp:translate = (0.529, -0.30000000000000004, 0.015)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "board_foot1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/board>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.122, 0.04, 0.03)
+        double3 xformOp:translate = (0.529, 0.12, 0.015)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cylinder "conduit0l" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform token axis = "Z"
+        double height = 0.13
+        rel material:binding = </fixtures/Looks/conduit>
+        double radius = 0.009
+        double3 xformOp:translate = (0.43, -0.045, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cylinder "conduit0r" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform token axis = "Z"
+        double height = 0.13
+        rel material:binding = </fixtures/Looks/conduit>
+        double radius = 0.009
+        double3 xformOp:translate = (0.43, 0.045, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cylinder "conduit1l" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform token axis = "Z"
+        double height = 0.13
+        rel material:binding = </fixtures/Looks/conduit>
+        double radius = 0.009
+        double3 xformOp:translate = (0.43, -0.245, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cylinder "conduit1r" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform token axis = "Z"
+        double height = 0.13
+        rel material:binding = </fixtures/Looks/conduit>
+        double radius = 0.009
+        double3 xformOp:translate = (0.43, -0.15500000000000003, 0.065)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cube "pedestal_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/stand>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.06, 0.05, 0.01)
+        double3 xformOp:translate = (0.18, 0.21, 0.005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "pedestal_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/stand>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.03, 0.009, 0.11)
+        double3 xformOp:translate = (0.18, 0.21, 0.055)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "park_shelf" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </fixtures/Looks/stand>
+        custom float physxCollision:contactOffset = 0.002
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.12, 0.6, 0.01)
+        double3 xformOp:translate = (0.3, 0, -0.305)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
