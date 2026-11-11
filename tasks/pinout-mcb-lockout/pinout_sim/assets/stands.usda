@@ -1,0 +1,70 @@
+#usda 1.0
+(
+    defaultPrim = "stands"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "stands"
+{
+    def "Looks"
+    {
+        def Material "stand"
+        {
+            token outputs:surface.connect = </stands/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "padlock_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.06, 0.05, 0.01)
+        double3 xformOp:translate = (0.265, 0.085, 0.005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "padlock_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.03, 0.009, 0.146)
+        double3 xformOp:translate = (0.265, 0.085, 0.073)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "lockout_foot" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.06, 0.05, 0.01)
+        double3 xformOp:translate = (0.255, -0.16, 0.005)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "lockout_column" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stands/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.014, 0.008, 0.15625)
+        double3 xformOp:translate = (0.255, -0.16, 0.078125)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+

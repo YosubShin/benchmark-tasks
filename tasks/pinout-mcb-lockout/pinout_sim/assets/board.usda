@@ -1,0 +1,61 @@
+#usda 1.0
+(
+    defaultPrim = "board"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "board"
+{
+    def "Looks"
+    {
+        def Material "board"
+        {
+            token outputs:surface.connect = </board/Looks/board/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.85, 0.8)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "rail"
+        {
+            token outputs:surface.connect = </board/Looks/rail/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.76, 0.78)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "plate" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </board/Looks/board>
+        double size = 1
+        float3 xformOp:scale = (0.012, 0.3, 0.29)
+        double3 xformOp:translate = (0.378, -0.03, 0.14500000000000002)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "rail" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        rel material:binding = </board/Looks/rail>
+        double size = 1
+        float3 xformOp:scale = (0.0075, 0.26, 0.035)
+        double3 xformOp:translate = (0.36824999999999997, -0.03, 0.2)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
