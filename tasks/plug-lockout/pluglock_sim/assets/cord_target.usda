@@ -1,0 +1,1691 @@
+#usda 1.0
+(
+    defaultPrim = "cord_target"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "cord_target" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    custom bool physxArticulation:enabledSelfCollisions = 0
+    custom int physxArticulation:solverPositionIterationCount = 32
+    custom int physxArticulation:solverVelocityIterationCount = 4
+
+    def "Looks"
+    {
+        def Material "plug_black"
+        {
+            token outputs:surface.connect = </cord_target/Looks/plug_black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "brass"
+        {
+            token outputs:surface.connect = </cord_target/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.66, 0.36)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </cord_target/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.74, 0.77)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "ivory"
+        {
+            token outputs:surface.connect = </cord_target/Looks/ivory/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.9, 0.88, 0.8)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "cover"
+        {
+            token outputs:surface.connect = </cord_target/Looks/cover/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.81, 0.82)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "plate"
+        {
+            token outputs:surface.connect = </cord_target/Looks/plate/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.55, 0.57, 0.6)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "slot"
+        {
+            token outputs:surface.connect = </cord_target/Looks/slot/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.08)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "cord"
+        {
+            token outputs:surface.connect = </cord_target/Looks/cord/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.03, 0.03, 0.03)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "clamp"
+        {
+            token outputs:surface.connect = </cord_target/Looks/clamp/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.7, 0.71, 0.72)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "lockout_red"
+        {
+            token outputs:surface.connect = </cord_target/Looks/lockout_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.05, 0.04)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </cord_target/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.4, 0.4, 0.42)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "fixture"
+        {
+            token outputs:surface.connect = </cord_target/Looks/fixture/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.25, 0.25, 0.27)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </cord_target/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "anchor" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.1, -0.4, 0.0015)
+        float3 physics:diagonalInertia = (0.00001, 0.00001, 0.00001)
+        float physics:mass = 0.05
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Xform "clamp"
+        {
+            float xformOp:rotateZ = 60
+            double3 xformOp:translate = (0.1, -0.4, 0.0015)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+            def Cube "strap" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cord_target/Looks/clamp>
+                double size = 1
+                float3 xformOp:scale = (0.012, 0.028, 0.002)
+                double3 xformOp:translate = (0, 0, 0.005)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "tail" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cord_target/Looks/cord>
+                double size = 1
+                float3 xformOp:scale = (0.04, 0.008, 0.008)
+                double3 xformOp:translate = (-0.02, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "world_fixed"
+        {
+            rel physics:body1 = </cord_target/anchor>
+        }
+
+        def PhysicsRevoluteJoint "cord_j00" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/anchor>
+            rel physics:body1 = </cord_target/cord_00>
+            point3f physics:localPos0 = (0.1, -0.4, 0.0015)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8598044, 0.059823062, -0.10361658, 0.4964083)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j01" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_00>
+            rel physics:body1 = </cord_target/cord_01>
+            point3f physics:localPos0 = (0.025, 6.938894e-18, 8.6736174e-19)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.96588904, -3.1332104e-18, -4.356747e-19, -0.2589564)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j02" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_01>
+            rel physics:body1 = </cord_target/cord_02>
+            point3f physics:localPos0 = (0.025, -1.3010426e-17, 8.6736174e-19)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97023755, -0.2421551, -7.697441e-18, 9.059717e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j03" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_02>
+            rel physics:body1 = </cord_target/cord_03>
+            point3f physics:localPos0 = (0.025, -5.6378513e-18, -1.7347235e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9903135, 3.6743462e-18, 0.13884975, 9.289507e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j04" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_03>
+            rel physics:body1 = </cord_target/cord_04>
+            point3f physics:localPos0 = (0.025, -1.6805134e-18, -3.903128e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99996644, 7.685068e-19, -2.547472e-18, 0.0081942445)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j05" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_04>
+            rel physics:body1 = </cord_target/cord_05>
+            point3f physics:localPos0 = (0.025, -6.8304737e-18, -3.2526065e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9772697, -0.21199979, -3.752956e-18, -2.97012e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j06" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_05>
+            rel physics:body1 = </cord_target/cord_06>
+            point3f physics:localPos0 = (0.025, -5.6378513e-18, -5.421011e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.996751, -9.8273896e-18, -0.08054432, -1.4765876e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j07" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_06>
+            rel physics:body1 = </cord_target/cord_07>
+            point3f physics:localPos0 = (0.025, -9.86624e-18, -8.673617e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9744063, -3.791378e-18, 1.7966664e-17, 0.22479402)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j08" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_07>
+            rel physics:body1 = </cord_target/cord_08>
+            point3f physics:localPos0 = (0.025, -1.7347235e-18, 6.938894e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9647232, -0.2632663, -6.840483e-18, 4.9100376e-19)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j09" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_08>
+            rel physics:body1 = </cord_target/cord_09>
+            point3f physics:localPos0 = (0.025, -6.938894e-18, 5.8546917e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.87282044, -1.476944e-17, -0.48804146, 7.734284e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j10" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_09>
+            rel physics:body1 = </cord_target/cord_10>
+            point3f physics:localPos0 = (0.025, 0, 6.505213e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9982257, -1.9394356e-18, 7.5563156e-19, 0.059544284)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j11" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_10>
+            rel physics:body1 = </cord_target/cord_11>
+            point3f physics:localPos0 = (0.025, -2.6562953e-18, -8.402567e-19)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97097284, -0.23918983, -1.5675207e-17, 5.0374422e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j12" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_11>
+            rel physics:body1 = </cord_target/cord_12>
+            point3f physics:localPos0 = (0.025, -2.0599841e-18, -2.1887331e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9649309, -1.3669738e-17, -0.26250407, 1.058982e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j13" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_12>
+            rel physics:body1 = </cord_target/cord_13>
+            point3f physics:localPos0 = (0.025, -1.3010426e-18, -4.391019e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9372579, 1.0948457e-17, 1.285199e-17, -0.3486369)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j14" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_13>
+            rel physics:body1 = </cord_target/cord_14>
+            point3f physics:localPos0 = (0.025, -1.5612511e-17, 6.071532e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97555876, -0.21973865, -3.3038576e-17, -5.2981233e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j15" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_14>
+            rel physics:body1 = </cord_target/cord_15>
+            point3f physics:localPos0 = (0.025, -1.7347235e-17, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.986242, 2.6953862e-17, 0.16530806, 7.822747e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j16" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_15>
+            rel physics:body1 = </cord_target/cord_16>
+            point3f physics:localPos0 = (0.025, -1.7347235e-18, 9.540979e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9143541, -2.6641046e-17, -1.8305274e-17, -0.40491554)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j17" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_16>
+            rel physics:body1 = </cord_target/cord_17>
+            point3f physics:localPos0 = (0.025, -2.6020852e-18, -6.071532e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9795398, -0.20125061, 1.6723713e-17, -2.8569817e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j18" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_17>
+            rel physics:body1 = </cord_target/cord_18>
+            point3f physics:localPos0 = (0.025, -2.6020852e-18, -4.3368087e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.97322714, -1.849496e-17, 0.22984552, 2.2622642e-17)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j19" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_18>
+            rel physics:body1 = </cord_target/cord_19>
+            point3f physics:localPos0 = (0.025, 1.3010426e-17, 6.071532e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99972963, -3.8004586e-18, -2.7799133e-18, 0.023252241)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j20" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_19>
+            rel physics:body1 = </cord_target/cord_20>
+            point3f physics:localPos0 = (0.025, 3.469447e-18, -2.6020852e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.9889664, -0.14814003, 3.574157e-17, 4.6400535e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j21" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_20>
+            rel physics:body1 = </cord_target/cord_21>
+            point3f physics:localPos0 = (0.025, 4.214836e-18, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.81069124, -7.307663e-17, 0.5854739, 8.521279e-18)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j22" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cord_target/cord_21>
+            rel physics:body1 = </cord_target/cord_22>
+            point3f physics:localPos0 = (0.025, 8.472447e-18, -9.351244e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.983836, 3.692136e-18, -1.0161533e-17, 0.17907175)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j23" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cord_target/cord_22>
+            rel physics:body1 = </cord_target/cord_23>
+            point3f physics:localPos0 = (0.025, 1.2157252e-17, -4.445229e-18)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.99999994, 0.0002452232, 3.8400968e-19, 2.5663182e-21)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+
+        def PhysicsRevoluteJoint "cord_j24" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </cord_target/cord_23>
+            rel physics:body1 = </cord_target/plug>
+            point3f physics:localPos0 = (0.025, 1.2155101e-17, -4.445229e-18)
+            point3f physics:localPos1 = (-0.048, -2.2903639e-19, -0.005)
+            quatf physics:localRot0 = (0.9999914, -5.3620386e-19, 0.004137502, -2.4226383e-19)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -100
+            float physics:upperLimit = 100
+        }
+    }
+
+    def Xform "cord_00" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.8598044, 0.059823062, -0.10361658, 0.4964083)
+        double3 xformOp:translate = (0.1, -0.4, 0.0015)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_01" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9590237, 0.08461461, -0.084590554, 0.25682348)
+        double3 xformOp:translate = (0.11214212012974652, -0.37896923102367425, 0.007439332876613152)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_02" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9509707, -0.15013622, -0.14426404, 0.22869575)
+        double3 xformOp:translate = (0.13348642713105185, -0.36701212050473053, 0.012582101262589096)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_03" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9617901, -0.18043625, -0.010824584, 0.2056341)
+        double3 xformOp:translate = (0.15483073413235718, -0.3550550099857868, 0.01772486964856504)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_04" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9600728, -0.1805189, -0.009345682, 0.21350834)
+        double3 xformOp:translate = (0.1777106063810326, -0.34506851046679854, 0.016390226160011293)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_05" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.89998007, -0.37995088, -0.054396976, 0.20667395)
+        double3 xformOp:translate = (0.20042694873191563, -0.3347349794104557, 0.014911738383573918)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_06" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.89267474, -0.36207002, -0.12670852, 0.23660536)
+        double3 xformOp:translate = (0.22314329108279868, -0.3244014483541129, 0.013433250607136543)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_07" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.8166404, -0.38128662, -0.042074416, 0.4312177)
+        double3 xformOp:translate = (0.24454143372671866, -0.31154699925408297, 0.014805340154211671)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_08" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.687452, -0.58282995, -0.15411524, 0.40492892)
+        double3 xformOp:translate = (0.260155486203367, -0.29313738928596694, 0.008302446484596843)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_09" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.5248076, -0.31108376, -0.47002003, 0.63787544)
+        double3 xformOp:translate = (0.2757695386800153, -0.2747277793178509, 0.0017995528149820153)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_10" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.48589453, -0.33851883, -0.4506628, 0.66799295)
+        double3 xformOp:translate = (0.2693793431245977, -0.25067890634173595, 0.004211421248833272)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_11" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.39082015, 0.4449136, 0.59735847, -0.54080904)
+        double3 xformOp:translate = (0.2619137676656426, -0.22682230874481238, 0.0038537423913263713)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_12" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.22030538, 0.2873463, 0.6790015, -0.638635)
+        double3 xformOp:translate = (0.2544481922066875, -0.2029657111478888, 0.003496063533819471)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_13" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.42913467, 0.032592617, 0.736579, -0.52175903)
+        double3 xformOp:translate = (0.23600331034558222, -0.1861755465288842, 0.0017999782775321642)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_14" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.41148424, 0.12609349, 0.83322674, -0.34715176)
+        double3 xformOp:translate = (0.22026425221735946, -0.17377994976400152, 0.01675428301158296)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_15" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.5435621, 0.18174568, 0.75374156, -0.32153136)
+        double3 xformOp:translate = (0.2045251940891367, -0.16138435299911882, 0.03170858774563375)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_16" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.62720126, -0.13902178, 0.76277834, -0.07389675)
+        double3 xformOp:translate = (0.19594975728809466, -0.14579627661895272, 0.04927200878019995)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_17" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (-0.64234686, -0.0099527165, 0.7620435, 0.081124805)
+        double3 xformOp:translate = (0.19158518286229487, -0.1487810097119182, 0.07370644878698979)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_18" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.8003016, 0.028332425, -0.5940008, -0.07666527)
+        double3 xformOp:translate = (0.18722060843649507, -0.1517657428048837, 0.09814088879377961)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_19" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.8018679, 0.014512914, -0.59449905, -0.058035735)
+        double3 xformOp:translate = (0.19428488041287664, -0.15567498409932867, 0.12180127539132946)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_20" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.79517037, -0.10443595, -0.5793421, -0.1454645)
+        double3 xformOp:translate = (0.20144501816274082, -0.15843322941753404, 0.14559464653052637)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_21" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.98382735, 0.000500355, -0.004116116, -0.17907132)
+        double3 xformOp:translate = (0.208605155912605, -0.16119147473573942, 0.16938801766972328)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def "Looks"
+        {
+            def Material "tag_target_color"
+            {
+                token outputs:surface.connect = </cord_target/cord_21/Looks/tag_target_color/Shader.outputs:surface>
+
+                def Shader "Shader"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.97, 0.8, 0.06)
+                    float inputs:roughness = 0.5
+                    token outputs:surface
+                }
+            }
+
+            def Material "tag_target_legend"
+            {
+                token outputs:surface.connect = </cord_target/cord_21/Looks/tag_target_legend/Shader.outputs:surface>
+
+                def Shader "Shader"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor.connect = </cord_target/cord_21/Looks/tag_target_legend/tex.outputs:rgb>
+                    float inputs:roughness = 0.6
+                    token outputs:surface
+                }
+
+                def Shader "stReader"
+                {
+                    uniform token info:id = "UsdPrimvarReader_float2"
+                    token inputs:varname = "st"
+                    float2 outputs:result
+                }
+
+                def Shader "tex"
+                {
+                    uniform token info:id = "UsdUVTexture"
+                    asset inputs:file = @./tag_target.png@
+                    float2 inputs:st.connect = </cord_target/cord_21/Looks/tag_target_legend/stReader.outputs:result>
+                    token inputs:wrapS = "clamp"
+                    token inputs:wrapT = "clamp"
+                    float3 outputs:rgb
+                }
+            }
+        }
+
+        def Xform "tag"
+        {
+            quatf xformOp:orient = (0.9999992, -0.0012293807, 0, 0)
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+            def Cube "sleeve" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cord_target/cord_21/Looks/tag_target_color>
+                double size = 1
+                float3 xformOp:scale = (0.045, 0.0096, 0.0096)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cube "flag" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cord_target/cord_21/Looks/tag_target_color>
+                double size = 1
+                float3 xformOp:scale = (0.045, 0.0012, 0.022)
+                double3 xformOp:translate = (0, 0, 0.015)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Mesh "legend_a" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [4]
+                int[] faceVertexIndices = [0, 1, 2, 3]
+                rel material:binding = </cord_target/cord_21/Looks/tag_target_legend>
+                point3f[] points = [(0.0205, 0.0008, 0.006), (-0.0205, 0.0008, 0.006), (-0.0205, 0.0008, 0.024), (0.0205, 0.0008, 0.024)]
+                texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                    interpolation = "vertex"
+                )
+                uniform token subdivisionScheme = "none"
+            }
+
+            def Mesh "legend_b" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [4]
+                int[] faceVertexIndices = [0, 1, 2, 3]
+                rel material:binding = </cord_target/cord_21/Looks/tag_target_legend>
+                point3f[] points = [(-0.0205, -0.0008, 0.006), (0.0205, -0.0008, 0.006), (0.0205, -0.0008, 0.024), (-0.0205, -0.0008, 0.024)]
+                texCoord2f[] primvars:st = [(0, 0), (1, 0), (1, 1), (0, 1)] (
+                    interpolation = "vertex"
+                )
+                uniform token subdivisionScheme = "none"
+            }
+
+            def Cube "flag_top" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </cord_target/cord_21/Looks/tag_target_color>
+                double size = 1
+                float3 xformOp:scale = (0.045, 0.0024, 0.001)
+                double3 xformOp:translate = (0, 0, 0.0255)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Xform "cord_22" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9999914, -0.00024481295, -0.0041391826, -0.0000011177299)
+        double3 xformOp:translate = (0.23200098188862045, -0.17000034094649347, 0.16958601509656424)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "cord_23" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.0125, 0, 0)
+        float3 physics:diagonalInertia = (1e-7, 2e-7, 2e-7)
+        float physics:mass = 0.0025
+        quatf physics:principalAxes = (1, 0, 0, 0)
+        quatf xformOp:orient = (0.9999914, 4.0815723e-7, -0.004139183, -1.027062e-7)
+        double3 xformOp:translate = (0.25700012524682847, -0.17000034616623164, 0.1697929724731838)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Capsule "jacket" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.024999999999999998
+            rel material:binding = </cord_target/Looks/cord>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/jacket> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double radius = 0.004
+            double3 xformOp:translate = (0.012499999999999999, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "plug" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+    )
+    {
+        float physics:mass = 0.05
+        custom float physxRigidBody:angularDamping = 0.5
+        quatf xformOp:orient = (1, 4.0857867e-7, -0.0000016808137, -1.01016575e-7)
+        double3 xformOp:translate = (0.32999925179662687, -0.17000036516941203, 0.17500009120788498)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "body" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.03, 0.038, 0.03)
+            double3 xformOp:translate = (-0.015, 0, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "relief" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.018, 0.016, 0.016)
+            double3 xformOp:translate = (-0.039, 0, -0.005000000000000001)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_a0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.024, -0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_a1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.02, -0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_a2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.016, -0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_a3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.012, -0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_a4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.008, -0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_b0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.024, 0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_b1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.02, 0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_b2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.016, 0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_b3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.012, 0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "rib_b4" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/plug_black>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.018)
+            double3 xformOp:translate = (-0.008, 0.019299999999999998, -0.005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "blade_0" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/brass>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/brass> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0169, 0.0015, 0.00635)
+            double3 xformOp:translate = (0.00745, -0.00635, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "blade_1" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/brass>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/brass> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            float3 xformOp:scale = (0.0169, 0.0015, 0.00635)
+            double3 xformOp:translate = (0.00745, 0.00635, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "pin" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+        )
+        {
+            rel material:binding = </cord_target/Looks/brass>
+            rel material:binding:physics = </cord_target/PhysicsMaterials/brass> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            custom float physxCollision:contactOffset = 0.0003
+            custom float physxCollision:restOffset = 0
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0201, 0.0048, 0.0048)
+            double3 xformOp:translate = (0.009049999999999999, 0, -0.0119)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "pin_vis" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0201
+            rel material:binding = </cord_target/Looks/brass>
+            double radius = 0.0024
+            double3 xformOp:translate = (0.009049999999999999, 0, -0.0119)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "brass" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.35
+            float physics:staticFriction = 0.35
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+
+        def Material "grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1.2
+            float physics:staticFriction = 1.5
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "jacket" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.5
+            float physics:staticFriction = 0.6
+            custom token physxMaterial:frictionCombineMode = "min"
+        }
+    }
+}
+
