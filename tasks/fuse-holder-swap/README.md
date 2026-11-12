@@ -5,7 +5,8 @@ naming its circuit and fuse rating. F2 holds a blown fuse marked with a black X.
 (it hinges at the bottom and swings forward and down), take the blown fuse out and drop it in a tray, lay in the
 spare of the rating on F2's legend (6 A, not the 10 A spare beside it), and push the carrier shut until it latches,
 without opening F1 or F3. Scoring checks the result physically: after release, the carrier must hold shut against
-a 4 N pull on its grip tab, with the 6 A spare in it and the blown fuse in the tray.
+a 4 N pull on its grip tab, with the 6 A spare in it and the blown fuse in the tray. Opening F1 or F3, or seating the 10 A spare in F2, scores 0
+for the whole trial, whatever was achieved before or after.
 
 The task is a [yam-isaac-lab-arena](https://github.com/kairosiann/yam-isaac-lab-arena) task file
 (`fuse_holder_swap.py`) in Dream's `station` scene, with the `yam_arena` embodiment and the official `dream` policy.
@@ -42,13 +43,21 @@ inspect-robots run --embodiment yam_arena --policy fuse-demo \
   --instruction "<the same instruction>" --scorer task_score --max-steps 3200 --store-frames --log-dir ~/yam-eval/fuse-demo
 ```
 
-`task_score` prints the trial's score (1.0 on success, otherwise the partial credit in task.json). Videos:
+`task_score` prints the trial's score (1.0 on success, otherwise the partial credit in task.json, and 0 from the
+first hazard on; see "Scoring" below). Videos:
 `inspect-robots video <log>.json` writes one MP4 per camera; `demo.mp4` and `dream1.mp4` here put the top camera
 (2x) above the left and right wrist cameras.
 
 - **Episode end.** Once F2 is shut on the 6 A spare and both grippers have stayed at least 6 cm from its grip tab
   for 1 s, the hold test (4 N pull at the tab, 0.11 N m about the hinge, for 1.5 s) runs inside that control step,
   off camera, and the episode ends; the stored frames stop at the release. Otherwise the run ends at `--max-steps`.
+- **Scoring.** `fuse_sim/scorer.py` (`SwapScorer`) is the scoring implementation; the task file's `score()` returns
+  its `report()["score"]` unchanged. Milestones (0.25 / 0.5 / 0.75 / 1.0) are counted as progress; the two hazards
+  (F1 or F3 opened 5 degrees or more, the 10 A spare seated in F2) are latched the step they first occur, and from
+  then on the score is 0 for the rest of the trial, whatever milestones were reached before or are reached after.
+  The report also gives `progress_milestone` (not scored once a hazard occurred), `hazard_events`, `hazard_step`
+  and, unscored, `other_events` (a decoy tab touched, a fuse dropped). `python -m fuse_sim.check_scorer` checks the
+  gate without the simulator; the simulator checks are under "Hazard checks".
 - **Control run (the latch matters).** Two short runs with the arms idle at ready start from the swap already done
   (the 6 A spare seated in the shut carrier, the marked fuse in the tray; `FUSE_HOLD_CHECK=1`), so the hold test
   runs after 1 s. With the latch (as in the task) the carrier holds the 4 N pull: `task_score: 1`. With F2's latch
@@ -74,13 +83,33 @@ the GPU is not deterministic, and lifting the blown fuse out of the open carrier
 latch off, which changes how the carrier opens, the same demo code let the fuse slip from the fingertips there
 twice). The recorded run is the one listed above.
 
+## Hazard checks
+
+Each check is the official command above with `--policy fuse-demo`, seed 0 (`-E object_jitter=0`), and one
+environment variable, `FUSE_HAZARD_TEST=<case>` (empty in every scored run). The task-side cases (`fuse_sim/task.py`)
+put 0.4 N m of opening torque on a decoy carrier's hinge for 1 s; `wrong_spare` (`fuse_sim/demo.py`) makes the demo
+fit the 10 A spare instead of the 6 A. Otherwise the demo runs unchanged, so later milestones are still reached
+physically and only the reported score shows the gate.
+
+| Case | What happens | Progress reached | Reported `task_score` |
+|---|---|---|---|
+| none (the demo) | | 1.0 (1,952 steps) | 1 |
+| `decoy_open_start` | F1 opened by the torque at 1 s (hazard at step 21), before any milestone; it swings to its 72-degree stop | 1.0 (F2 opened, blown fuse in the tray, 6 A seated, F2 shut, hold check passed) | 0 |
+| `decoy_open_75` | F3 opened by the torque the step the 6 A spare is seated (after 0.75; hazard at step 1,525) | 1.0 (hold check passed) | 0 |
+| `wrong_spare` | the demo opens F2, removes the blown fuse (0.5) and seats the 10 A spare (hazard at step 1,601), then shuts F2 | 0.5 (run cut at 2,200 steps) | 0 |
+
+`python -m fuse_sim.check_scorer` (no simulator) checks both hazards before any milestone and after 0.25, 0.5 and
+0.75: the final score is 0 in every case, with every later milestone reached. (A wrong fuse can only be seated once
+the carrier is open and empty, so in the simulator it is checked after 0.5.)
+
 ## Layout
 
 | Path | What |
 |---|---|
 | `fuse_holder_swap.py` | the task file: description for agents, the props and task, scoring |
 | `fuse_sim/station.py` | the run-time extension of yam_arena (props, per-step task events, off-camera hold test) |
-| `fuse_sim/task.py`, `scorer.py`, `spec.py` | the mechanism (latch and open detent, fuse seat, hold test), milestones, layout and instruction |
+| `fuse_sim/task.py`, `scorer.py`, `spec.py` | the mechanism (latch and open detent, fuse seat, hold test), milestones and zero gate, layout and instruction |
+| `fuse_sim/check_scorer.py` | the scorer's zero-gate check without the simulator |
 | `fuse_sim/assets/*.usda`, `fuse_sim/assets/textures/` | the props and their printed labels |
 | `fuse_sim/usd/fuse_props.py` | generates the props from the dimensions in task.json (`python -m fuse_sim.usd.fuse_props`) |
 | `fuse_sim/demo.py`, `fuse_sim/policy.py` | the scripted demo and its Inspect Robots policy `fuse-demo` |

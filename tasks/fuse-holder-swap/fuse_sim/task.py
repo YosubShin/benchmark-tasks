@@ -69,6 +69,12 @@ NO_LATCH = os.environ.get("FUSE_CONTROL") == "1"
 HOLD_CHECK = os.environ.get("FUSE_HOLD_CHECK") == "1"
 """Mechanism check without the robot: start with the swap already done (milestone 75) so the hold test runs as soon
 as the arms, idle at their ready pose, have been clear for 1 s. With and without FUSE_CONTROL it isolates the latch."""
+HAZARD_TEST = os.environ.get("FUSE_HAZARD_TEST", "")
+"""Scorer checks only (README, "Hazard checks"); empty in every scored run. Task-side cases put HAZARD_OPEN_NM of
+opening torque on a decoy carrier for HAZARD_OPEN_S: ``decoy_open_start`` F1 at 1 s, before any milestone;
+``decoy_open_75`` F3 as soon as the matching spare is seated (milestone 75). ``wrong_spare`` is in fuse_sim.demo."""
+HAZARD_OPEN_NM = 0.40
+HAZARD_OPEN_S = 1.0
 CARRIER_DAMPING = 0.001
 
 OPENED_DEG = 30.0
@@ -150,6 +156,8 @@ class _TaskState:
         zl = lambda: torch.zeros(n, dtype=torch.long, device=dev)  # noqa: E731
         self.force_test, self.test_passed, self.test_held, self.was_open = zb(), zb(), zb(), zb()
         self.clear_steps, self.phase, self.phase_steps = zl(), zl(), zl()
+        self.inject_steps = zl()
+        self.inject_len = max(1, round(HAZARD_OPEN_S / env.step_dt))
         self.test_max = torch.zeros(n, device=dev)
         self.max_open = torch.zeros(n, 3, device=dev)
         self.seated_role = torch.full((n,), -1, dtype=torch.long, device=dev)
@@ -238,7 +246,7 @@ class FuseHolderTask(TaskBase):
         st.match[env_ids] = 1 + layout.matching_spare
         for buf in (st.force_test, st.test_passed, st.test_held, st.was_open):
             buf[env_ids] = False
-        for buf in (st.clear_steps, st.phase, st.phase_steps):
+        for buf in (st.clear_steps, st.phase, st.phase_steps, st.inject_steps):
             buf[env_ids] = 0
         st.test_max[env_ids] = 0.0
         st.max_open[env_ids] = 0.0
@@ -260,7 +268,7 @@ class FuseHolderTask(TaskBase):
             write_pose(st.fuses[0], (TRAY_XY[0], TRAY_XY[1], 0.012, s, 0.0, 0.0, s), env_ids, origins[env_ids])
             write_pose(st.fuses[1 + layout.matching_spare], props.fuse_seat_world(layout.named) + IDENTITY, env_ids,
                        origins[env_ids])
-            st.scorer.milestone[env_ids] = 75
+            st.scorer.progress[env_ids] = 75
         for env_id in env_ids.tolist():
             st.layouts[env_id] = layout
 
@@ -343,7 +351,7 @@ class FuseHolderTask(TaskBase):
         tab_w = nc_pos + math_utils.quat_apply(nc_quat, tab_c)
         clear = ((grasp - tab_w[:, None]).norm(dim=-1) > RELEASE_CLEAR_M).all(dim=1)
         shut = q_named < math.radians(CLOSED_DEG)
-        armed = shut & right_seated & (st.scorer.milestone >= 75)  # only once the swap is done
+        armed = shut & right_seated & (st.scorer.progress >= 75)  # only once the swap is done
         ready = (armed & clear & (st.phase == 0)) | (st.force_test & (st.phase == 0))
         st.clear_steps = torch.where(ready, st.clear_steps + 1, torch.zeros_like(st.clear_steps))
         start = ready & ((st.clear_steps >= st.wait_steps) | st.force_test)
@@ -365,6 +373,22 @@ class FuseHolderTask(TaskBase):
             st.test_held[ids] = st.test_max[ids] < math.radians(HELD_DEG)
             st.test_passed[ids] = st.test_held[ids] & right_seated[ids] & old_in_tray[ids] & shut[ids]
             st.phase[ids] = 2
+
+        # Hazard checks only (HAZARD_TEST): open a decoy carrier by a torque at its hinge.
+        if HAZARD_TEST in ("decoy_open_start", "decoy_open_75"):
+            start_inj = (st.inject_steps == 0) & ((st.scorer.step >= 20) if HAZARD_TEST == "decoy_open_start"
+                                                  else (st.scorer.progress >= 75))
+            stop_inj = st.inject_steps == st.inject_len
+            for flag, sign in ((start_inj, 1.0), (stop_inj, -1.0)):
+                if flag.any():
+                    ids = flag.nonzero().flatten()
+                    torque = torch.zeros(len(ids), 1, 3, device=dev)
+                    torque[..., 1] = -sign * HAZARD_OPEN_NM  # opening is negative about +y
+                    slot = 0 if HAZARD_TEST == "decoy_open_start" else 2
+                    st.holders.permanent_wrench_composer.add_forces_and_torques_index(
+                        forces=torch.zeros_like(torque), torques=torque, body_ids=[st.carrier_ids[slot]], env_ids=ids,
+                        is_global=True)
+            st.inject_steps = torch.where(start_inj | (st.inject_steps > 0), st.inject_steps + 1, st.inject_steps)
 
         st.scorer.update(SwapStep(opened, old_out, right_seated, st.test_passed.clone(), decoy_opened,
                                   wrong_installed, touched, fuse_dropped))

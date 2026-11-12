@@ -31,6 +31,8 @@ def _task():
 
 def _test_phase(view, task):
     phase = int(task.state(view).phase[0])
+    if phase >= 2:
+        print("[fuse] after-release check", task.episode_report(view, 0), flush=True)
     return "idle" if phase == 0 else ("done" if phase >= 2 else "running")
 
 
@@ -43,10 +45,8 @@ success = STATION.success
 
 
 def score(objects):
-    """Milestone / 100 (0.25 F2's carrier opened past 30 degrees, 0.5 the blown fuse out of it, 0.75 the 6 A spare
-    seated in it, 1.0 shut on it with the blown fuse in the tray and holding a 4 N pull at the grip tab); 0 if F1 or F3
-    was opened 5 degrees or more, or the 10 A spare was seated in F2."""
-    report = STATION.report or {}
-    if any(report.get("semantic_events", {}).values()):
-        return 0.0
-    return report.get("milestone", 0) / 100.0
+    """The score computed by fuse_sim.scorer.SwapScorer (report()["score"]): milestone / 100 (0.25 F2's carrier opened
+    past 30 degrees, 0.5 the blown fuse out of it, 0.75 the 6 A spare seated in it, 1.0 shut on it with the blown fuse
+    in the tray and holding a 4 N pull at the grip tab), and 0 from the first step at which F1 or F3 is opened 5
+    degrees or more or the 10 A spare is seated in F2, whatever milestones were reached before or after."""
+    return float((STATION.report or {}).get("score", 0.0))

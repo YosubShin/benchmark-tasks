@@ -111,6 +111,8 @@ class Demo:
             def __init__(self, L, R):
                 self.L, self.R, self.events = L, R, {}
                 self.spare_role = FUSE_ROLES[1 + layout.matching_spare]
+                if os.environ.get("FUSE_HAZARD_TEST") == "wrong_spare":  # scorer check only: fit the other rating
+                    self.spare_role = FUSE_ROLES[2 - layout.matching_spare]
 
             def at(self, step, fn):
                 self.events.setdefault(step, []).append(fn)
@@ -156,7 +158,8 @@ class Demo:
             def report(self, tag):
                 rep = task.episode_report(view, 0)
                 log(f"{tag}: theta {math.degrees(self.theta()):.1f} deg milestone {rep['milestone']} "
-                    f"seated {rep['fuse_seated_in_named']} sem {rep['semantic_events']} con {rep['contact_events']}",
+                    f"seated {rep['fuse_seated_in_named']} progress {rep['progress_milestone']} hazards {rep['hazard_events']} "
+                    f"other {rep['other_events']}",
                     flush=True)
 
             # 1. Open (arm A) -----------------------------------------------------------------------------
@@ -482,9 +485,11 @@ class Demo:
             L.hold(1)
             R.hold(1)
         rep = self._task.episode_report(self._view, 0)
-        if rep["milestone"] != self._last_ms:
-            self._log(f"MILESTONE {rep['milestone']} at step {k}", flush=True)
-            self._last_ms = rep["milestone"]
+        key = (rep["milestone"], rep["progress_milestone"], rep["hazard"], rep.get("cap", 100))
+        if key != self._last_ms:
+            self._log(f"MILESTONE {rep['milestone']} at step {k} (progress {rep['progress_milestone']}, hazard "
+                      f"{rep['hazard_events']} from step {rep['hazard_step']}, cap {rep.get('cap', 100)})", flush=True)
+            self._last_ms = key
         (lp, lq, lg), (rp, rq, rg) = L.steps[k], R.steps[k]
         self.state_k[0] = k + 1
         return np.concatenate([self._joint_action("left", lp, lq, lg), self._joint_action("right", rp, rq, rg)])
