@@ -4,7 +4,8 @@ A control sub-panel's back pan lies on the bench with three Eaton Bussmann BM603
 (F1, F2, F3, colour-coded circuit labels). Each 10 x 38 mm fuse is held by two spring clips at its ferrules. The
 robot must pick up a one-piece nylon tong fuse puller (Ideal 34-015 class), close its jaws round F2's body, and
 take F2 out the way the puller makers describe: lever one end out of its clip first, with the other clip as the
-pivot, then the other end, and drop it in a parts tray, without disturbing F1 or F3.
+pivot, then the other end, and drop it in a parts tray, without disturbing F1 or F3. Disturbing F1 or F3 scores 0 for the whole trial; taking
+F2 out of its clips without the puller holding it caps the score at 0.5 for the rest of the trial.
 
 The clips grip hard enough that a straight pull (both ferrules at once) needs about 70 N, more than the robot delivers
 through the puller: gripping the puller over its jaws with the full 50 N and commanding the hand up to 16 cm straight
@@ -48,12 +49,21 @@ inspect-robots run --embodiment yam_arena --policy fuse-puller-demo \
   --instruction "<the same instruction>" --scorer task_score --max-steps 3000 --store-frames --log-dir ~/yam-eval/fuse-puller-demo
 ```
 
-`task_score` prints the trial's score (1.0 on success, otherwise the partial credit in task.json, or 0 if F1 or
-F3 was moved). Videos: `inspect-robots video <log>.json` writes one MP4 per camera; `demo.mp4` and `dream1.mp4` here
+`task_score` prints the trial's score (1.0 on success, otherwise the partial credit in task.json; at most 0.5 once
+F2 has left its clips without the puller's jaws on it; 0 once F1 or F3 has moved; see "Scoring" below). Videos: `inspect-robots video <log>.json` writes one MP4 per camera; `demo.mp4` and `dream1.mp4` here
 put the top camera (2x) above the left and right wrist cameras.
 
 - **Episode end.** Once F2 lies in the tray (out of both clips, carried there in the jaws) the episode ends on
   success (after 0.5 s); otherwise at `--max-steps`.
+- **Scoring.** `fuse_puller_sim/scorer.py` (`PullScorer`) is the scoring implementation; the task file's `score()`
+  returns its `report()["score"]` unchanged. Milestones (0.25 / 0.5 / 0.75 / 1.0) are counted as progress. The cap
+  (F2 out of both clips with the jaws not on it, before 0.75) is latched the step it occurs: from then on the score
+  is at most 0.5, even if the puller grips F2 afterwards and it reaches the tray. The hazard (F1 or F3 moved 2 mm or
+  tilted 4 degrees) is latched the same way: from then on the score is 0. The scored milestone is
+  `0 if hazard else min(progress, cap)`; the report also gives `progress_milestone`, `cap`, `cap_step`,
+  `hazard_step` and, unscored, `other_events`. `python -m fuse_puller_sim.check_scorer` checks the gate and the cap
+  without the simulator; the simulator checks are under "Hazard checks". A trial with a hazard or the cap never
+  reaches success, so it runs to `--max-steps`.
 - **Control run (a straight pull fails).** `FPR_CONTROL=1` with `--policy fuse-puller-demo`: the demo puts the
   puller's jaws on F2 exactly as in the demo, then lets go of the handles, pinches the puller's arms directly
   over the jaws with the gripper's full 50 N (which also clamps the jaws on the fuse) and pulls straight up,
@@ -79,13 +89,34 @@ The demo's wall time is mostly the doubled physics rate, its Python IK every con
 demo is closed loop (it lifts further while the fuse does not turn) because the arm's soft gains leave the hand
 20-30 mm behind its target while it levers.
 
+## Hazard checks
+
+Each check is the official command above with `--policy fuse-puller-demo`, seed 0 (`-E object_jitter=0`), and one
+environment variable, `FPR_HAZARD_TEST=<case>`, read by `fuse_puller_sim/task.py` (empty in every scored run). The
+test harness moves a fuse by writing its pose (a stand-in for a hand); the demo otherwise runs unchanged, so the
+later milestones are still reached physically and only the reported score shows the gate. `--max-steps 1100` (a trial
+with a hazard or the cap never ends on success).
+
+| Case | What happens | Progress reached | Reported `task_score` |
+|---|---|---|---|
+| none (the demo) | | 1.0 | 1 |
+| `decoy_move_start` | F1 slid 4 mm along its clips at 1 s, before any milestone | 1.0 (puller picked up, jaws on F2, F2 levered out and put in the tray) | 0 |
+| `decoy_move_75` | F3 slid 4 mm the step F2 is out of its clips in the jaws (after 0.75) | 1.0 | 0 |
+| `out_by_hand_25` | F2 lifted 25 mm out of both clips with no jaws on it the step the puller is picked up (after 0.25), put back in its clips on the next step; the demo then grips it with the puller, levers it out and puts it in the tray | 1.0 | 0.5 |
+
+`python -m fuse_puller_sim.check_scorer` (no simulator) checks the same gate for a decoy moved before any milestone
+and after 0.25, 0.5 and 0.75 (final score 0 each time, with every later milestone reached), and the cap for F2
+taken out without the puller before any milestone, after 0.25 and after 0.5 (final score 0.5, with the puller then
+reaching 0.75 and 1.0; 0 if a decoy is moved afterwards).
+
 ## Layout
 
 | Path | What |
 |---|---|
 | `fuse_puller_rock.py` | the task file: description for agents, the props and task, scoring |
 | `fuse_puller_sim/station.py` | the run-time extension of yam_arena (props, per-step task events, physics rate) |
-| `fuse_puller_sim/task.py`, `scorer.py`, `spec.py` | props, ferrule-out and decoy checks, milestones, layout and instruction |
+| `fuse_puller_sim/task.py`, `scorer.py`, `spec.py` | props, ferrule-out and decoy checks, milestones, zero gate and cap, layout and instruction |
+| `fuse_puller_sim/check_scorer.py` | the scorer's zero-gate and cap check without the simulator |
 | `fuse_puller_sim/assets/`, `fuse_puller_sim/usd/` | the props (`puller_props.py`: pan, BM6031B blocks with compliant clip fingers, fuses, puller, rest, tray), generated with `python -m fuse_puller_sim.usd.puller_props fuse_puller_sim/assets` |
 | `fuse_puller_sim/demo.py`, `fuse_puller_sim/policy.py` | the scripted demo and its Inspect Robots policy `fuse-puller-demo` |
 

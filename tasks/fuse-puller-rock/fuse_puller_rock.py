@@ -42,9 +42,9 @@ success = STATION.success
 
 
 def score(objects):
-    """Milestone / 100 (0.25 the puller picked up, 0.5 its jaws closed on F2's body, 0.75 F2 out of both clips while
-    held in the jaws, 1.0 F2 lying in the tray); 0 if F1 or F3 was moved from its seat."""
-    report = STATION.report or {}
-    if any(report.get("semantic_events", {}).values()):
-        return 0.0
-    return report.get("milestone", 0) / 100.0
+    """The score computed by fuse_puller_sim.scorer.PullScorer (report()["score"]): milestone / 100 (0.25 the puller
+    picked up, 0.5 its jaws closed on F2's body, 0.75 F2 out of both clips while held in the jaws, 1.0 F2 lying in the
+    tray); at most 0.5 from the first step at which F2 is out of both clips without the puller's jaws on it, even if
+    the puller grips it afterwards; 0 from the first step at which F1 or F3 is moved from its seat, whatever milestones
+    were reached before or after."""
+    return float((STATION.report or {}).get("score", 0.0))

@@ -67,6 +67,14 @@ TRAY_Z_M = 0.03
 TRAY_SPEED = 0.05
 DROP_Z_M = 0.015
 PULLER_DROP_Z_M = 0.012
+HAZARD_TEST = os.environ.get("FPR_HAZARD_TEST", "")
+"""Scorer checks only (README, "Hazard checks"); empty in every scored run. The test harness moves a fuse by writing
+its pose (a stand-in for a hand): ``decoy_move_start`` slides F1 4 mm along its clips at 1 s, before any milestone;
+``decoy_move_75`` slides F3 4 mm as soon as F2 is out of its clips in the jaws (milestone 75); ``out_by_hand_25``
+lifts F2 25 mm out of its clips (no jaws on it) as soon as the puller is picked up (milestone 25) and puts it back
+in its clips on the next step, after which the demo goes on and pulls it with the puller."""
+HAZARD_SLIDE_M = 0.004
+HAZARD_LIFT_M = 0.025
 
 
 class Blocks(Object):
@@ -129,6 +137,7 @@ class _TaskState:
         self.tilt_first = torch.zeros(n, device=dev)
         self.max_tilt = torch.zeros(n, device=dev)
         self.was_jaws_on = torch.zeros(n, dtype=torch.bool, device=dev)
+        self.inject_steps = torch.zeros(n, dtype=torch.long, device=dev)
 
 
 class FusePullerTask(TaskBase):
@@ -223,6 +232,7 @@ class FusePullerTask(TaskBase):
         st.tilt_first[env_ids] = 0.0
         st.max_tilt[env_ids] = 0.0
         st.was_jaws_on[env_ids] = False
+        st.inject_steps[env_ids] = 0
         for s, fuse in enumerate(st.fuses):
             fuse.permanent_wrench_composer.reset(env_ids=env_ids)
             write_pose(fuse, props.fuse_seat(s) + props.FUSE_QUAT, env_ids, origins[env_ids])
@@ -274,7 +284,7 @@ class FusePullerTask(TaskBase):
         st.was_jaws_on |= jaws_on
         lifted = (h_pos - st.tool_start).norm(dim=-1) > LIFT_M
         held_out = out & jaws_on
-        out_by_hand = out & ~jaws_on & (st.scorer.milestone < 75)
+        out_by_hand = out & ~jaws_on & (st.scorer.progress < 75)
 
         # Tray.
         tx, ty = TRAY_XY
@@ -302,6 +312,32 @@ class FusePullerTask(TaskBase):
 
         st.scorer.update(PullStep(lifted, jaws_on, held_out, in_tray, decoy_moved, decoy_touched, out_by_hand,
                                   fuse_dropped, puller_dropped))
+        if HAZARD_TEST:
+            self._inject_hazard(env, st)
+
+    @staticmethod
+    def _inject_hazard(env: ManagerBasedEnv, st: _TaskState) -> None:
+        """Scorer checks only (HAZARD_TEST); env 0. Runs after the scorer's update, so a pose written here is scored
+        on the next step."""
+        k = int(st.inject_steps[0])
+        named = int(st.named[0])
+        ids = torch.tensor([0], device=env.device)
+        origins = env.scene.env_origins[ids]
+        if HAZARD_TEST in ("decoy_move_start", "decoy_move_75"):
+            due = int(st.scorer.step[0]) >= 20 if HAZARD_TEST == "decoy_move_start" else int(st.scorer.progress[0]) >= 75
+            if k == 0 and due:
+                slot = 0 if HAZARD_TEST == "decoy_move_start" else 2
+                x, y, z = props.fuse_seat(slot)
+                write_pose(st.fuses[slot], (x - HAZARD_SLIDE_M, y, z) + props.FUSE_QUAT, ids, origins)
+                st.inject_steps[0] = 1
+        elif HAZARD_TEST == "out_by_hand_25":
+            if k == 0 and int(st.scorer.progress[0]) >= 25:
+                x, y, z = props.fuse_seat(named)
+                write_pose(st.fuses[named], (x, y, z + HAZARD_LIFT_M) + props.FUSE_QUAT, ids, origins)
+                st.inject_steps[0] = 1
+            elif k == 1:
+                write_pose(st.fuses[named], props.fuse_seat(named) + props.FUSE_QUAT, ids, origins)
+                st.inject_steps[0] = 2
 
 
 REVIEWER_EYE = (0.12, 0.18, 0.25)

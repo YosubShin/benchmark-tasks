@@ -131,7 +131,8 @@ class Demo:
             def report(self, tag):
                 rep = task.episode_report(view, 0)
                 log(f"{tag}: milestone {rep['milestone']} tilt {tilt_deg():.1f} out {ferrules_out()} "
-                    f"first {rep['first_ferrule_out']} sem {rep['semantic_events']} con {rep['contact_events']}",
+                    f"first {rep['first_ferrule_out']} progress {rep['progress_milestone']} cap {rep['cap']} "
+                    f"hazards {rep['hazard_events']} other {rep['other_events']}",
                     flush=True)
 
             # 1. Pick the puller off its rest -----------------------------------------------------------------
@@ -388,9 +389,11 @@ class Demo:
             L.hold(1)
             R.hold(1)
         rep = self._task.episode_report(self._view, 0)
-        if rep["milestone"] != self._last_ms:
-            self._log(f"MILESTONE {rep['milestone']} at step {k}", flush=True)
-            self._last_ms = rep["milestone"]
+        key = (rep["milestone"], rep["progress_milestone"], rep["hazard"], rep.get("cap", 100))
+        if key != self._last_ms:
+            self._log(f"MILESTONE {rep['milestone']} at step {k} (progress {rep['progress_milestone']}, hazard "
+                      f"{rep['hazard_events']} from step {rep['hazard_step']}, cap {rep.get('cap', 100)})", flush=True)
+            self._last_ms = key
         (lp, lq, lg), (rp, rq, rg) = L.steps[k], R.steps[k]
         self.state_k[0] = k + 1
         return np.concatenate([self._joint_action("left", lp, lq, lg), self._joint_action("right", rp, rq, rg)])
