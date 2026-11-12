@@ -3,7 +3,8 @@
 Two interlock pairs stand on the table, each a breaker with a Kirk Type F interlock (locked-open type) holding its
 own trapped key, and a fuse-compartment door held shut by a second Kirk Type F (locked-closed type) with the same
 code: pair A1 on the left, pair B1 on the right. The two codes are cut differently, so a key enters only the locks
-of its own code. Both breakers are open (handles at OFF). The instruction names one pair (A1 by default): turn
+of its own code. Both breakers are open (handles at OFF). The instruction names one pair (A1 by default) and states
+only the goal (that door unlocked, that breaker locked open) and the constraints. The safe sequence it implies: turn
 that breaker's key a quarter turn (its bolt extends in front of the handle, locking the breaker open, and only then
 does the key come free), pull it out, take it to the door lock with the same code, insert it and turn it a quarter
 turn back (that door's bolt withdraws and the key is trapped there). The final check proves the function: tug the
@@ -32,10 +33,12 @@ def other(code: str) -> str:
 
 
 def instruction(target: str = DEFAULT_TARGET) -> str:
+    """Goal and constraints only; the procedure is in task.json's context and scoring (for reviewers)."""
     return (
-        f"Both breakers are open. Turn key {target} a quarter turn in breaker {target}'s interlock to lock that "
-        f"breaker open and free the key. Then take key {target} to the interlock on fuse compartment door {target}, "
-        f"insert it, and turn it a quarter turn to unlock the door. Use only the locks marked {target}."
+        f"Unlock fuse compartment door {target} with key {target} so the door can be opened, and leave breaker "
+        f"{target} locked in the off position. Use only the locks marked {target}, do not move either breaker's "
+        f"handle, do not touch a door's handle while that door is locked, and finish with both grippers away from "
+        f"the key."
     )
 
 

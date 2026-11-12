@@ -4,9 +4,9 @@ key A1 trapped in it; and a grey fuse-compartment door (labelled FUSE COMPT. A1)
 arms, just left of the midline, held shut by a second Kirk Type F on the table in front of its lower right corner.
 Pair B1 (blue labels, right) is the same: breaker B1 with key B1 trapped in its interlock 40 cm right of the
 midline, door B1 just right of the midline. Both breakers are open (handles at OFF). Keys are coded: key A1 fits
-only A1 locks, key B1 only B1 locks. Turn key A1 a quarter turn in breaker A1's interlock (its bolt then locks the
-breaker open and the key comes free), take it to door A1's interlock, insert it and turn it a quarter turn back to
-unlock the door. Use only the locks marked A1.
+only A1 locks, key B1 only B1 locks. Goal: door A1 unlocked with key A1 so it can be opened, breaker A1 left locked
+in the off position, both grippers away from the key at the end. Constraints: use only the locks marked A1, do not
+move either breaker's handle, do not touch a door's handle while that door is locked.
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. TRAPPED_KEY_CONTROL=1 forces the final check at
 3 s with key A1 still in breaker A1 (a control run: it must score 0). TRAPPED_KEY_CONTROL=wrong_key checks the
