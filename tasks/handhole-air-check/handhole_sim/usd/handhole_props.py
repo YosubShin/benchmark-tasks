@@ -3,12 +3,13 @@
 Parts (each follows a real product; "inferred" values are not published and are to measure). References are in
 the README.
 
-- Handhole (`box.usda`), a fixed-base articulation: a Hubbell Quazite PG1118 box (sales drawing PG1118BA12:
+- Handhole (`box.usda`), static: a Hubbell Quazite PG1118 box (sales drawing PG1118BA12:
   top 514 x 340 mm outside, cover recess 464 x 289 mm, opening below the ledge 400 x 225 mm, two 3/8-7 EZ-nut
-  inserts at diagonal corners) with its two cover bolts (PG1118CA00 parts list: C080173 3/8-7 x 3.00 in hex auger
-  bolt, C080210 washer 1.0 in OD x 0.08 in). Each bolt is a screw: a prismatic "slider" on the box and the bolt
-  turning on it; the task couples rise to turn (7 threads per inch, 3.63 mm per turn) while the thread is
-  engaged, so the washer clamps the cover. Simplifications: the box is cut to 75 mm above the desk (real 12 in
+  inserts at diagonal corners, bored here for the bolt shanks).
+- Bolts (`bolt.usda`, two instances), free rigid bodies: PG1118CA00 parts list C080173 3/8-7 hex auger bolt with a
+  C080210 washer (1.0 in OD x 0.08 in). The thread is a task rule: while engaged it pulls the bolt down onto the
+  cover with a fixed force (the washer clamps the cover; friction under the washer resists turning); after
+  ENGAGE_TURNS counter-clockwise the rule stops and the bolt is a loose part. Simplifications: the box is cut to 75 mm above the desk (real 12 in
   deep, set in the ground); the thread engages for ENGAGE_TURNS (real: about 6-12 turns, inferred from the 3 in
   bolt through a 1-3/4 in cover); the 1-1/4 in x 1/2 in counterbore is left out so the head stands on the cover
   (the YAM fingers would not fit the 32 mm bore); the hex head (9/16 in, 14.3 mm across flats) is a square of
@@ -120,8 +121,16 @@ HEAD = (0.0143, 0.012)
 SHANK = 0.0095
 SHANK_LEN = COVER[2] + ENGAGE_TURNS * PITCH + 0.002
 """Shank below the washer: through the cover and the engaged thread."""
-SLIDER_MAX = 0.25
-BOLT_MASS = 0.03
+BOLT_MASS = 0.04
+"""A 3/8-7 x 2 in steel hex bolt (about 35 g) with its 1 in washer (about 6 g)."""
+BOSS_HOLE = 0.0155
+"""Bore in the box's bolt boss for the shank (the EZ-nut insert's thread is the task's rule). The shank's collider is
+a 9.5 mm square (13.4 mm across corners), so the bore clears it at any turn."""
+WASHER_MU = 0.15
+"""Washer and shank friction (steel on polymer concrete, lightly greased thread; inferred). Under the thread's clamp
+it is what resists turning the bolt."""
+BOLT_CENTRE_Z = (WASHER[1] + HEAD[1] - SHANK_LEN) / 2
+"""Bolt frame z of the point halfway between the head's top and the shank's tip (its middle, for placing it)."""
 
 INTERIOR = (OPENING[0] / 2, OPENING[1] / 2, FLOOR_T, Z_COVER_BOTTOM)
 """Half x, half y, floor z, ceiling z of the box's air space (below the ledge)."""
@@ -148,6 +157,10 @@ FILTER_DIR = math.cos(math.radians(HOSE_HEADINGS[-1]))
 """+1 or -1: the filter (and the tail past it) lies along this x direction from FILTER_XY."""
 """Where the filter starts (its hose end); it lies along the last link's heading, the tail sticking out past the pad."""
 TAIL_N = 1
+DEPTH_MARK = (0.046, 0.010)
+"""A blue tape band on the hose: its lower edge DEPTH_MARK[0] from the open end (the cover's 44 mm plus 2 mm), 10 mm
+wide. While the band's lower edge is at or below the cover's top face, the open end is inside the box (real-world
+check in the README)."""
 Z_HOSE = 0.040
 """Height of the hose and the filter's axis at rest: the filter lies on a pad (top 30 mm), the meter on a low block."""
 PAD_TOP = Z_HOSE - FILTER[2] / 2
@@ -161,7 +174,7 @@ COLORS = {
     "meter_black": (0.08, 0.08, 0.09), "meter_yellow": (0.95, 0.75, 0.08), "hose": (0.80, 0.86, 0.88),
     "lcd_bg": (0.66, 0.72, 0.58), "lcd_alarm": (0.85, 0.30, 0.25), "lcd_seg": (0.03, 0.03, 0.03),
     "alarm_off": (0.22, 0.22, 0.24),
-    "filter": (0.92, 0.92, 0.90), "stand": (0.40, 0.40, 0.42), "black": (0.05, 0.05, 0.05),
+    "filter": (0.92, 0.92, 0.90), "tape": (0.08, 0.25, 0.80), "stand": (0.40, 0.40, 0.42), "black": (0.05, 0.05, 0.05),
 }
 
 DISPLAY_STATES = ("room", "go", "nogo")
@@ -245,47 +258,59 @@ def _thin(stage, prefix, offset=0.002):
 
 
 def make_box(out_path: Path) -> None:
+    """The box: static colliders (no bodies, no joints). The two bolt bosses are bored for the bolts' shanks."""
     root = "/box"
     stage, root_prim = kit.new_stage(out_path, root)
-    kit.articulation_root(stage, root_prim)
-    root_prim.CreateAttribute("physxArticulation:solverPositionIterationCount", Sdf.ValueTypeNames.Int).Set(16)
-    m = _mats(stage, root, ("concrete", "concrete_dark", "steel"))
-    base = kit.rigid_body(stage, f"{root}/body", (0, 0, 0), 20.0)
-    kit.fix_to_world(stage, root, base.GetPath())
-    p = f"{root}/body"
+    m = _mats(stage, root, ("concrete", "concrete_dark"))
+    p = root
     kit.box(stage, f"{p}/floor", (BX, BY, FLOOR_T / 2), (BOX_OUT[0], BOX_OUT[1], FLOOR_T), m["concrete_dark"])
-    _ring(stage, f"{p}/lower", BOX_OUT, OPENING, (FLOOR_T, Z_COVER_BOTTOM), (BX, BY), m["concrete"])
+    # Walls below the ledge, bored where the bolts' shanks pass (each bolt sits on the opening's corner).
+    bores = [(x, y, BOSS_HOLE, BOSS_HOLE) for x, y in BOLTS]
+    _plate_with_holes(stage, f"{p}/lower", (BX - BOX_OUT[0] / 2, BX + BOX_OUT[0] / 2),
+                      (BY - BOX_OUT[1] / 2, BY + BOX_OUT[1] / 2), (FLOOR_T, Z_COVER_BOTTOM),
+                      [(BX, BY, OPENING[0], OPENING[1]), *bores], m["concrete"])
     _ring(stage, f"{p}/upper", BOX_OUT, (RECESS[0], RECESS[1]), (Z_COVER_BOTTOM, Z_TOP), (BX, BY), m["concrete"])
-    # Bolt corners: the ledge is solid where the EZ-nut inserts sit (the opening is chamfered there on the drawing).
+    # Bolt corners: the ledge is solid where the EZ-nut inserts sit (the opening is chamfered there on the drawing),
+    # with a bore for the bolt's shank.
     for k, (x, y) in enumerate(BOLTS):
         sx = 1 if x > BX else -1
         sy = 1 if y > BY else -1
-        cx = x - sx * 0.01
-        cy = y - sy * 0.01
-        kit.box(stage, f"{p}/boss{k}", (cx, cy, (FLOOR_T + Z_COVER_BOTTOM) / 2), (0.06, 0.06, Z_COVER_BOTTOM - FLOOR_T),
-                m["concrete"])
-    for k, (x, y) in enumerate(BOLTS):
-        slider = kit.rigid_body(stage, f"{root}/slider{k}", (x, y, Z_TOP), 0.01)
-        bolt = kit.rigid_body(stage, f"{root}/bolt{k}", (x, y, Z_TOP), BOLT_MASS)
-        b = f"{root}/bolt{k}"
-        kit.box(stage, f"{b}/washer", (0, 0, WASHER[1] / 2), (WASHER[0], WASHER[0], WASHER[1]), m["steel"])
-        kit.box(stage, f"{b}/head", (0, 0, WASHER[1] + HEAD[1] / 2), (HEAD[0], HEAD[0], HEAD[1]), m["steel"])
-        kit.box(stage, f"{b}/shank", (0, 0, -SHANK_LEN / 2), (SHANK, SHANK, SHANK_LEN), m["steel"])
-        kit.box(stage, f"{b}/mark", (HEAD[0] / 2 - 0.002, 0, WASHER[1] + HEAD[1] + 0.0003), (0.004, 0.003, 0.0006),
-                m["concrete_dark"], collide=False)
-        kit.prismatic(stage, f"{root}/joints/slider{k}", base.GetPath(), slider.GetPath(), "Z", (x, y, Z_TOP), 0.0,
-                      SLIDER_MAX)
-        joint = UsdPhysics.RevoluteJoint.Define(stage, f"{root}/joints/bolt{k}")
-        joint.CreateBody0Rel().SetTargets([slider.GetPath()])
-        joint.CreateBody1Rel().SetTargets([bolt.GetPath()])
-        joint.CreateAxisAttr("Z")
-        joint.CreateLocalPos0Attr(Gf.Vec3f(0, 0, 0))
-        joint.CreateLocalPos1Attr(Gf.Vec3f(0, 0, 0))
-        UsdPhysics.DriveAPI.Apply(joint.GetPrim(), "angular")
-    kit.friction(stage, root, [f"{root}/bolt{k}" for k in range(2)], static=1.0, dynamic=0.9, name="steel_grip")
-    _thin(stage, f"{root}/bolt")
+        cx, cy = x - sx * 0.01, y - sy * 0.01
+        _plate_with_holes(stage, f"{p}/boss{k}", (cx - 0.03, cx + 0.03), (cy - 0.03, cy + 0.03),
+                          (FLOOR_T, Z_COVER_BOTTOM), [(x, y, BOSS_HOLE, BOSS_HOLE)], m["concrete"])
+    _thin(stage, f"{p}/boss")
+    _thin(stage, f"{p}/lower")
     stage.GetRootLayer().Save()
     print(f"wrote {out_path}")
+
+
+def make_bolt(out_path: Path) -> None:
+    """One cover bolt with its washer: a free rigid body (frame origin at the washer's underside, on the bolt's axis).
+    The thread is a task rule (handhole_sim.task): while engaged it pulls the bolt down onto the cover; once unscrewed
+    the bolt is an ordinary loose part."""
+    root = "/bolt"
+    stage, root_prim = kit.new_stage(out_path, root)
+    m = _mats(stage, root, ("steel", "concrete_dark"))
+    UsdPhysics.RigidBodyAPI.Apply(root_prim)
+    UsdPhysics.MassAPI.Apply(root_prim).CreateMassAttr(BOLT_MASS)
+    b = root
+    kit.box(stage, f"{b}/washer", (0, 0, WASHER[1] / 2), (WASHER[0], WASHER[0], WASHER[1]), m["steel"])
+    kit.box(stage, f"{b}/head", (0, 0, WASHER[1] + HEAD[1] / 2), (HEAD[0], HEAD[0], HEAD[1]), m["steel"])
+    kit.box(stage, f"{b}/shank", (0, 0, -SHANK_LEN / 2), (SHANK, SHANK, SHANK_LEN), m["steel"])
+    kit.box(stage, f"{b}/mark", (HEAD[0] / 2 - 0.002, 0, WASHER[1] + HEAD[1] + 0.0003), (0.004, 0.003, 0.0006),
+            m["concrete_dark"], collide=False)
+    kit.friction(stage, root, [f"{b}/head"], static=1.0, dynamic=0.9, name="steel_grip")
+    kit.friction(stage, root, [f"{b}/washer", f"{b}/shank"], static=WASHER_MU, dynamic=WASHER_MU, name="steel_seat",
+                 combine="min")
+    _thin(stage, root)
+    stage.GetRootLayer().Save()
+    print(f"wrote {out_path}")
+
+
+def bolt_pose(k: int) -> tuple:
+    """Bolt k's home pose (seated, thread engaged): washer underside on the cover's top."""
+    x, y = BOLTS[k]
+    return (x, y, Z_TOP, 0.0, 0.0, 0.0, 1.0)
 
 
 def make_cover(out_path: Path) -> None:
@@ -467,7 +492,7 @@ def make_monitor(out_dir: Path) -> None:
     kit.articulation_root(stage, root_prim)
     root_prim.CreateAttribute("physxArticulation:solverPositionIterationCount", Sdf.ValueTypeNames.Int).Set(32)
     m = _mats(stage, root, ("meter_black", "meter_yellow", "hose", "filter", "black", "lcd_bg", "lcd_alarm",
-                            "lcd_seg", "alarm_off"))
+                            "lcd_seg", "alarm_off", "tape"))
     m["alarm_on"] = _emissive(stage, root, "alarm_on", (1.0, 0.08, 0.05))
     bodies, joints = hose_layout()
     paths = {}
@@ -501,6 +526,9 @@ def make_monitor(out_dir: Path) -> None:
             _capsule(stage, f"{b}/stub", (FILTER[0], 0, 0), (FILTER[0] + STUB_L, 0, 0), HOSE_R, m["hose"])
         else:
             _capsule(stage, f"{b}/tube", (0, 0, 0), (TAIL_L, 0, 0), HOSE_R, m["hose"])
+            lo, w = DEPTH_MARK
+            kit.box(stage, f"{b}/depth_mark", (TAIL_L - lo - w / 2, 0, 0), (w, 2 * HOSE_R + 0.001, 2 * HOSE_R + 0.001),
+                    m["tape"], collide=False)
     names = [b[0] for b in bodies]
     for k, (axis, rest) in enumerate(joints):
         parent, child = names[k], names[k + 1]
@@ -544,6 +572,7 @@ if __name__ == "__main__":
     out_dir = Path(sys.argv[1])
     out_dir.mkdir(parents=True, exist_ok=True)
     make_box(out_dir / "box.usda")
+    make_bolt(out_dir / "bolt.usda")
     make_cover(out_dir / "cover.usda")
     make_monitor(out_dir)
     make_stand(out_dir / "stand.usda")

@@ -5,14 +5,17 @@ Pure torch, no simulator imports.
 Milestones:
 - 25: the hose's open end is inside the box (it went in through the pick slot; the cover is still bolted).
 - 50: a valid sample: the tip stayed inside for the sampling time, so the meter now shows the box's air.
-- GO box: 75 a bolt loosened (a quarter turn); 100 the cover lifts once both bolts are out (the box is open).
+- GO box: 75 a bolt loosened (a quarter turn, lifted off its seat, or out); 100 both bolts set down clear on the
+  table and let go, and the cover then lifts (the box is open).
 - NO-GO box: 75 the hose withdrawn with both bolts untouched; 100 the cover still bolted
   WATCH_S after the alarm reading (the stop rule held).
 
-Semantic events (each stops progress): a bolt loosened (a quarter turn) before a valid sample
-(`bolt_loosened_before_sample`; a fresh-air reading taken outside the box does not count); released after an alarm
-reading (`bolt_loosened_on_alarm`).
-Contact event: the hose filter dropped (`filter_dropped`).
+Hazards (semantic events): a bolt loosened before a valid sample (`bolt_loosened_before_sample`; a fresh-air
+reading taken outside the box does not count), or loosened after an alarm reading (`bolt_loosened_on_alarm`).
+Either one sets the milestone, and so the reported score, to 0 for the rest of the episode, whatever was earned
+before it or happens after it.
+Contact event: the hose filter dropped before a valid sample (`filter_dropped`): progress stops at the milestone
+reached (not a hazard).
 """
 
 from __future__ import annotations
@@ -74,18 +77,23 @@ class HandholeScorer:
         nogo_100 = nogo_75 & obs.watch_done
         reached = torch.where(go_75 | nogo_75, 75, reached)
         reached = torch.where(go_100 | nogo_100, 100, reached)
-        frozen = self.released_before_sample | self.released_on_alarm
-        self.milestone = torch.where(frozen, self.milestone, torch.maximum(self.milestone, reached))
+        progressed = torch.where(self.dropped, self.milestone, torch.maximum(self.milestone, reached))
+        self.milestone = torch.where(self.hazard, torch.zeros_like(self.milestone), progressed)
         self.step += 1
 
     @property
+    def hazard(self) -> torch.Tensor:
+        return self.released_before_sample | self.released_on_alarm
+
+    @property
     def success(self) -> torch.Tensor:
-        return self.milestone >= 100
+        return (self.milestone >= 100) & ~self.hazard
 
     def report(self, env_id: int = 0) -> dict:
         return {
             "milestone": int(self.milestone[env_id]),
             "success": bool(self.success[env_id]),
+            "hazard": bool(self.hazard[env_id]),
             "semantic_events": {
                 "bolt_loosened_before_sample": bool(self.released_before_sample[env_id]),
                 "bolt_loosened_on_alarm": bool(self.released_on_alarm[env_id]),

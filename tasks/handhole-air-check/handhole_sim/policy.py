@@ -1,12 +1,14 @@
 """Inspect Robots policy ``handhole-demo``: the scripted demo (handhole_sim.demo), closed loop, one action per control
-step. It binds to the task file the ``yam_arena`` embodiment loaded (as yam_scripted does) and reads its simulator
-state, so it runs only in the same process as that embodiment."""
+step. ``act`` gets the observation every policy gets (three camera images and the 14-D joint state) and returns the
+14-D joint action. It also binds to the task file the ``yam_arena`` embodiment loaded (as yam_scripted does) for its
+one simulator read, the hose end's position during the insertion (see handhole_sim.demo), so it runs only in the
+same process as that embodiment."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from inspect_robots import Action, ActionChunk, Box, ObservationSpace
+from inspect_robots import Action, ActionChunk, Box, CameraSpec, ObservationSpace
 from inspect_robots.policy import PolicyBase, PolicyInfo
 from inspect_robots.registry import policy
 
@@ -15,7 +17,9 @@ class DemoPolicy(PolicyBase):
     def __init__(self, speed: float = 0.10) -> None:
         self.speed = float(speed)
         self.info = PolicyInfo(name="handhole-demo", action_space=Box(shape=(14,)),
-                               observation_space=ObservationSpace(state_keys=frozenset({"joint_pos"})))
+                               observation_space=ObservationSpace(
+                                   cameras=tuple(CameraSpec(n, 176, 320) for n in ("top_cam", "left_cam", "right_cam")),
+                                   state_keys=frozenset({"joint_pos"})))
         self._control_hz = 20.0
         self._station = None
         self._demo = None
@@ -38,7 +42,7 @@ class DemoPolicy(PolicyBase):
             from handhole_sim.demo import Demo
 
             self._demo = Demo(self._station, control_hz=self._control_hz, speed=self.speed)
-        return ActionChunk(actions=[Action(self._demo.next_action())], control_hz=self._control_hz)
+        return ActionChunk(actions=[Action(self._demo.next_action(observation))], control_hz=self._control_hz)
 
 
 @policy("handhole-demo")

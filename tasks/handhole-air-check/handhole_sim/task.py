@@ -1,22 +1,27 @@
 """Sample the handhole's air through the cover's pull slot, then take the bolts out only on a clean reading.
 
 Mechanism (see handhole_sim/usd/handhole_props.py):
-- The cover is a free rigid body lying in the box's recess. Each of its two bolts is a screw on the box: a prismatic
-  slider (rise) and a revolute bolt (turn). While the thread is engaged the task drives the slider to
-  rise = turns * pitch with a stiff spring, so the washer clamps the cover down (geometry: washer on the cover's
-  top face). Turning the bolt takes ENGAGE_TURNS of counter-clockwise turning against BOLT_DAMPING. After that the
-  slider goes slack: the bolt can be pulled straight up out of its hole. Once its shank is clear of the cover and the
-  fingers have let go, the task parks it (held 45 mm above the cover and hidden: "put in the pocket", a rule).
+- The box is static. The cover is a free rigid body lying in the box's recess. Each of its two bolts is a free rigid
+  body (washer, hex head, shank) standing in its hole: the shank passes through the cover's bolt hole into the bore
+  of the box's boss. The thread is a rule: while it is engaged the task pushes the bolt down onto the cover with
+  THREAD_CLAMP_N (so the washer clamps the cover, and friction under the washer resists turning). The task measures
+  each bolt's turn from its orientation; after ENGAGE_TURNS of counter-clockwise turning the thread lets go and the
+  rule stops for good. From then on the bolt is an ordinary loose part: nothing holds, hides or moves it. The robot
+  lifts it out of its hole, carries it and sets it down; a bolt counts as clear when it lies on the table with its
+  middle at least BOLT_CLEAR_M outside the box's outer edge and no hand within HAND_OFF_BOLT_M of it.
+- A bolt counts as loosened once it has turned a quarter turn counter-clockwise, or been lifted 3 mm off its seat,
+  or left its hole (latched for the episode).
 - The monitor (meter, hose links, inline filter, hose tail) is one floating articulation. The hose's open end (the
   tail's end point) counts as inside the box only below the cover's underside within the box's opening, with the
   cover still seated, so the hose can only get there through the 13 mm pull slot (geometry). The meter's LCD shows
   room air until the end has been inside for RESPONSE_S, then the seeded box air (a rule on geometric state).
 - The meter's visual alarm bars flash (ALARM_BLINK_S on, ALARM_BLINK_S off) while it shows an alarm reading. The alarm
   latches (the Max XT II's "Latching Alarms" option): it keeps showing the alarm after the hose is out.
-- Function test (the success check, run off camera by the station harness). GO: once both bolts are out, the hose end is out of the box and the grippers are
-  clear, the scorer lifts the cover with a hook-like spring at its centre (up to 3 x its weight, aiming 50 mm up).
-  Lifted 30 mm = the box is open. NO-GO: WATCH_S after the hose is out with the bolts untouched, the same lift must
-  fail (the cover is still bolted). `force_lift_test(env)` starts the test now (control runs).
+- Function test (the success check, run off camera by the station harness). GO: once both bolts lie clear on the
+  table, the hose end is out of the box and both hands are clear, continuously for TEST_WAIT_S, the scorer lifts the
+  cover with a hook-like spring at its centre (up to 3 x its weight, aiming 50 mm up). Lifted 30 mm = the box is
+  open. NO-GO: WATCH_S after the hose is out with the bolts untouched, the same lift must fail (the cover is still
+  bolted). `force_lift_test(env)` starts the test now (control runs).
 """
 
 from __future__ import annotations
@@ -52,23 +57,29 @@ from handhole_sim.usd import handhole_props as props
 
 _ASSETS = Path(__file__).resolve().parent / "assets"
 
-SLIDER_K = 2.0e4
-SLIDER_D = 200.0
-SLACK_D = 1.0
-BOLT_DAMPING = 0.05
-"""N*m*s/rad: 0.05 N*m at 1 rad/s. The running torque of a 3/8-7 auger bolt in an EZ-nut is not published (to measure).
-At 0.3 N*m*s/rad the YAM's fingertip pinch on the 14 mm head slipped (30-40 deg of bolt turn per 180 deg wrist turn)."""
+THREAD_CLAMP_N = 40.0
+"""While the thread is engaged, the bolt is pushed down onto the cover with this force (the thread's pull, a rule).
+With the washer's friction (WASHER_MU 0.15) it gives a running torque of a few hundredths of a N*m (the real torque is
+not published); it holds the 0.6 kg cover down against the 17.7 N lift check with margin."""
 HOSE_K = 0.003
 HOSE_D = 0.002
 TAIL_D = 0.004
 """The tail hangs on free hinges (light damping stands in for the hose's own stiffness and friction)."""
 RELEASED_RAD = math.pi / 2
 """A bolt turned a quarter turn counts as the cover's fastening released."""
+LIFTED_M = 0.003
+"""A bolt lifted this far off its seat (while still in its hole) also counts as loosened."""
 OUT_CLEAR_M = 0.003
-PARK_CLEAR_M = 0.06
-PARK_RISE = props.SHANK_LEN + 0.045
-"""A parked (hidden) bolt hangs with its shank tip 45 mm above the cover: clear of the 30 mm lift test, and low
-enough that the retreating arm does not run into it (it still collides while hidden)."""
+"""A bolt is out of the cover once its shank's tip is this far above the cover's top."""
+UPRIGHT_COS = math.cos(math.radians(30.0))
+"""Turns are counted while the bolt stands within 30 deg of upright (in its hole)."""
+BOLT_CLEAR_M = 0.04
+"""A bolt is set down clear when its middle is at least this far outside the box's outer edge (horizontally)..."""
+BOLT_ON_TABLE_Z = 0.045
+"""... and its middle no higher than this above the table (it rests on the table: lying about 13 mm, standing on its
+shank's end about 33 mm; not held up)..."""
+HAND_OFF_BOLT_M = 0.05
+"""... and neither hand's grasp point is within this distance of it (it has been let go)."""
 INSIDE_MARGIN = 0.002
 """The hose end's centreline must be this far below the cover's underside (through the slot, in the box's air)."""
 COVER_SEATED_M = 0.003
@@ -92,17 +103,15 @@ def _layout_pose(name: str) -> tuple:
 
 class HandholeBox(Object):
     def __init__(self):
-        super().__init__(name="handhole", usd_path=str(_ASSETS / "box.usda"), object_type=ObjectType.ARTICULATION,
+        super().__init__(name="handhole", usd_path=str(_ASSETS / "box.usda"), object_type=ObjectType.BASE,
                          initial_pose=Pose(position_xyz=(0.0, 0.0, 0.0), rotation_xyzw=(0.0, 0.0, 0.0, 1.0)))
 
-    def _generate_articulation_cfg(self) -> ArticulationCfg:
-        cfg = super()._generate_articulation_cfg()
-        cfg.actuators = {
-            "sliders": ImplicitActuatorCfg(joint_names_expr=["slider.*"], stiffness=SLIDER_K, damping=SLIDER_D),
-            "bolts": ImplicitActuatorCfg(joint_names_expr=["bolt.*"], stiffness=0.0, damping=BOLT_DAMPING),
-        }
-        cfg.init_state.joint_pos = {".*": 0.0}
-        return cfg
+
+class Bolt(Object):
+    def __init__(self, k: int):
+        p = props.bolt_pose(k)
+        super().__init__(name=f"bolt{k}", usd_path=str(_ASSETS / "bolt.usda"), object_type=ObjectType.RIGID,
+                         initial_pose=Pose(position_xyz=p[:3], rotation_xyzw=p[3:]))
 
 
 class Cover(Object):
@@ -136,17 +145,14 @@ class Stand(Object):
 class _TaskState:
     def __init__(self, env: ManagerBasedEnv, task: "HandholeTask"):
         n, dev = env.num_envs, env.device
-        self.box = env.scene["handhole"]
+        self.bolts = [env.scene[f"bolt{k}"] for k in range(2)]
         self.cover = env.scene["cover"]
         self.mon = env.scene["monitor"]
         self.robot = env.scene["robot"]
-        self.bolt_j = [self.box.find_joints(f"bolt{k}")[0][0] for k in range(2)]
-        self.slider_j = [self.box.find_joints(f"slider{k}")[0][0] for k in range(2)]
         self.tail_id = self.mon.find_bodies(props.TIP_BODY)[0][0]
         self.filter_id = self.mon.find_bodies("filter")[0][0]
         self.root_name = self.mon.body_names[0]
         self.flange_ids, _ = self.robot.find_bodies(["left_gripper", "right_gripper"], preserve_order=True)
-        self.box_paths = sim_utils.find_matching_prim_paths("/World/envs/env_.*/handhole")
         self.mon_paths = sim_utils.find_matching_prim_paths("/World/envs/env_.*/monitor")
         self.scorer = HandholeScorer(n, dev)
         self.next_layout = make_seed(task.default_seed)
@@ -156,8 +162,9 @@ class _TaskState:
         zb = lambda *s: torch.zeros(n, *s, dtype=torch.bool, device=dev)  # noqa: E731
         zf = lambda *s: torch.zeros(n, *s, device=dev)  # noqa: E731
         zl = lambda: torch.zeros(n, dtype=torch.long, device=dev)  # noqa: E731
-        self.turn, self.prev_q = zf(2), zf(2)
-        self.engaged, self.out, self.parked = zb(2), zb(2), zb(2)
+        self.turn, self.prev_yaw = zf(2), zf(2)
+        self.engaged, self.loosened, self.out, self.clear = zb(2), zb(2), zb(2), zb(2)
+        self.bolt_rise = zf(2)
         self.picked, self.force_test, self.lift_lifted, self.lift_held = zb(), zb(), zb(), zb()
         self.inside_steps, self.out_steps, self.clear_steps, self.phase, self.phase_steps = zl(), zl(), zl(), zl(), zl()
         self.max_inside_s, self.lift_max = zf(), zf()
@@ -215,7 +222,9 @@ class HandholeTask(TaskBase):
             hose_end_inside_s=round(float(st.inside_steps[env_id]) * st.dt, 1),
             hose_end_inside_max_s=round(float(st.max_inside_s[env_id]), 1),
             bolt_turns=[round(float(t) / (2 * math.pi), 2) for t in st.turn[env_id]],
-            bolts_engaged=[bool(v) for v in st.engaged[env_id]], bolts_out=[bool(v) for v in st.out[env_id]],
+            bolts_engaged=[bool(v) for v in st.engaged[env_id]], bolts_loosened=[bool(v) for v in st.loosened[env_id]],
+            bolts_out=[bool(v) for v in st.out[env_id]], bolts_clear=[bool(v) for v in st.clear[env_id]],
+            bolt_rise_mm=[round(float(v) * 1000, 1) for v in st.bolt_rise[env_id]],
             lift_test_phase=int(st.phase[env_id]), lift_max_mm=round(float(st.lift_max[env_id]) * 1000, 1),
             lift_test_lifted=bool(st.lift_lifted[env_id]), lift_test_held=bool(st.lift_held[env_id]),
         )
@@ -257,34 +266,26 @@ class HandholeTask(TaskBase):
         origins = env.scene.env_origins
         st.scorer.reset(env_ids)
         st.go[env_ids] = layout.go
-        for buf in (st.out, st.parked, st.picked, st.force_test, st.lift_lifted, st.lift_held):
+        for buf in (st.loosened, st.out, st.clear, st.picked, st.force_test, st.lift_lifted, st.lift_held):
             buf[env_ids] = False
         st.engaged[env_ids] = True
         for buf in (st.inside_steps, st.out_steps, st.clear_steps, st.phase, st.phase_steps):
             buf[env_ids] = 0
-        for buf in (st.turn, st.prev_q, st.max_inside_s, st.lift_max):
+        for buf in (st.turn, st.prev_yaw, st.bolt_rise, st.max_inside_s, st.lift_max):
             buf[env_ids] = 0.0
         st.cover.permanent_wrench_composer.reset(env_ids=env_ids)
-        # Box: bolts home and engaged.
-        joints = st.slider_j + st.bolt_j
-        zero = torch.zeros(n, 4, device=dev)
-        st.box.write_joint_state_to_sim(zero, zero, joint_ids=joints, env_ids=env_ids)
-        st.box.set_joint_position_target(zero, joint_ids=joints, env_ids=env_ids)
-        st.box.write_joint_stiffness_to_sim_index(stiffness=torch.full((n, 2), SLIDER_K, device=dev),
-                                                  joint_ids=st.slider_j, env_ids=env_ids)
-        st.box.write_joint_damping_to_sim_index(damping=torch.full((n, 2), SLIDER_D, device=dev),
-                                                joint_ids=st.slider_j, env_ids=env_ids)
+        # Bolts: seated in their holes, thread engaged.
+        for k, bolt in enumerate(st.bolts):
+            bolt.permanent_wrench_composer.reset(env_ids=env_ids)
+            _write_pose(bolt, props.bolt_pose(k), env_ids, origins)
         _write_pose(st.cover, props.cover_pose(), env_ids, origins)
         # Monitor: hose at rest, filter in its fork.
         _write_pose(st.mon, _layout_pose(st.root_name), env_ids, origins)
         q = torch.zeros(n, st.mon.num_joints, device=dev)
         st.mon.write_joint_state_to_sim(q, q, env_ids=env_ids)
         st.mon.set_joint_position_target(q, env_ids=env_ids)
-        stage = sim_utils.get_current_stage()
         for env_id in env_ids.tolist():
             st.layouts[env_id] = layout
-            for k in range(2):
-                set_visible(stage, f"{st.box_paths[env_id]}/bolt{k}", True)
         st.display[env_ids] = -1
         st.alarm_lit[env_ids] = True
         st.latched[env_ids] = False
@@ -319,40 +320,42 @@ class HandholeTask(TaskBase):
         origins = env.scene.env_origins
         n, dev = env.num_envs, env.device
 
-        # Bolts: accumulate turn (counter-clockwise from above loosens), couple rise to turn while engaged.
-        q = st.box.data.joint_pos.torch[:, st.bolt_j]
-        delta = torch.remainder(q - st.prev_q + math.pi, 2 * math.pi) - math.pi
-        st.turn += delta
-        st.prev_q = q.clone()
-        rise = st.box.data.joint_pos.torch[:, st.slider_j]
-        newly_free = st.engaged & (st.turn >= props.ENGAGE_TURNS * 2 * math.pi)
-        st.engaged &= ~newly_free
-        target = (st.turn.clamp(min=0.0) / (2 * math.pi) * props.PITCH).clamp(max=props.ENGAGE_TURNS * props.PITCH)
-        newly_out = ~st.engaged & ~st.out & (rise > props.SHANK_LEN + OUT_CLEAR_M)
-        st.out |= newly_out
+        # Bolts: measure each one's turn about its axis (counter-clockwise from above loosens) while it stands upright
+        # in its hole; the engaged thread pushes it down onto the cover; after ENGAGE_TURNS it lets go for good.
         flange_pos = st.robot.data.body_pos_w.torch[:, st.flange_ids]
         flange_quat = st.robot.data.body_quat_w.torch[:, st.flange_ids]
         down = torch.tensor([0.0, 0.0, -GRASP_OFFSET_M], device=dev).expand_as(flange_pos)
-        grasp = flange_pos + math_utils.quat_apply(flange_quat, down) - origins[:, None]  # (N, 2, 3)
-        bolt_xy = torch.tensor(props.BOLTS, device=dev)
-        head = torch.cat([bolt_xy.unsqueeze(0).expand(n, 2, 2), (props.Z_TOP + rise).unsqueeze(-1)], dim=-1)
-        far = ((grasp[:, None] - head[:, :, None]).norm(dim=-1) > PARK_CLEAR_M).all(dim=-1)  # (N, 2 bolts)
-        newly_parked = st.out & ~st.parked & far
-        st.parked |= newly_parked
-        target = torch.where(st.engaged, target, rise)
-        target = torch.where(st.out, torch.where(st.parked, torch.full_like(rise, PARK_RISE),
-                                                 rise.clamp(min=props.SHANK_LEN + OUT_CLEAR_M)), target)
-        stiff = torch.where(st.engaged | st.out, SLIDER_K, 0.0)
-        st.box.write_joint_stiffness_to_sim_index(stiffness=stiff, joint_ids=st.slider_j)
-        # A loose bolt drops back onto its washer seat at once (no thread drag once disengaged).
-        st.box.write_joint_damping_to_sim_index(damping=torch.where(st.engaged | st.out, SLIDER_D, SLACK_D),
-                                                joint_ids=st.slider_j)
-        st.box.set_joint_position_target(target, joint_ids=st.slider_j)
-        if newly_parked.any():
-            stage = sim_utils.get_current_stage()
-            for env_id, k in newly_parked.nonzero().tolist():
-                set_visible(stage, f"{st.box_paths[env_id]}/bolt{k}", False)
-        released = (st.turn > RELEASED_RAD).any(dim=1)
+        grasp = flange_pos + math_utils.quat_apply(flange_quat, down) - origins[:, None]  # (N, 2 hands, 3)
+        home = torch.tensor([props.bolt_pose(k)[:3] for k in range(2)], device=dev)  # (2, 3)
+        b_pos = torch.stack([b.data.root_pos_w.torch for b in st.bolts], dim=1) - origins[:, None]  # (N, 2, 3)
+        b_quat = torch.stack([b.data.root_quat_w.torch for b in st.bolts], dim=1)
+        ex = math_utils.quat_apply(b_quat, torch.tensor([1.0, 0.0, 0.0], device=dev).expand_as(b_pos))
+        ez = math_utils.quat_apply(b_quat, torch.tensor([0.0, 0.0, 1.0], device=dev).expand_as(b_pos))
+        mid = b_pos + ez * props.BOLT_CENTRE_Z
+        yaw = torch.atan2(ex[..., 1], ex[..., 0])
+        upright = ez[..., 2] > UPRIGHT_COS
+        delta = torch.remainder(yaw - st.prev_yaw + math.pi, 2 * math.pi) - math.pi
+        st.turn += torch.where(upright, delta, torch.zeros_like(delta))
+        st.prev_yaw = yaw
+        st.bolt_rise = b_pos[..., 2] - home[None, :, 2]
+        off_hole = (b_pos[..., :2] - home[None, :, :2]).norm(dim=-1)
+        st.engaged &= st.turn < props.ENGAGE_TURNS * 2 * math.pi
+        st.out |= (b_pos[..., 2] - props.SHANK_LEN > props.Z_TOP + OUT_CLEAR_M) | (off_hole > 0.03)
+        st.loosened |= (st.turn > RELEASED_RAD) | (st.bolt_rise > LIFTED_M) | st.out
+        for k, bolt in enumerate(st.bolts):
+            bolt.permanent_wrench_composer.reset()
+            ids = st.engaged[:, k].nonzero().flatten()
+            if len(ids):
+                forces = torch.zeros(len(ids), 1, 3, device=dev)
+                forces[:, 0, 2] = -THREAD_CLAMP_N
+                bolt.permanent_wrench_composer.add_forces_and_torques_index(
+                    forces=forces, torques=torch.zeros_like(forces), body_ids=[0], env_ids=ids, is_global=True)
+        # Set down clear: on the table, its middle outside the box's outline by BOLT_CLEAR_M, let go.
+        ox = ((mid[..., 0] - props.BX).abs() - props.BOX_OUT[0] / 2).clamp(min=0.0)
+        oy = ((mid[..., 1] - props.BY).abs() - props.BOX_OUT[1] / 2).clamp(min=0.0)
+        hands_off = ((grasp[:, None] - mid[:, :, None]).norm(dim=-1) > HAND_OFF_BOLT_M).all(dim=-1)  # (N, 2 bolts)
+        st.clear = st.out & ((ox * ox + oy * oy).sqrt() >= BOLT_CLEAR_M) & (mid[..., 2] < BOLT_ON_TABLE_Z) & hands_off
+        released = st.loosened.any(dim=1)
 
         # Hose end and the box's air.
         tq = st.mon.data.body_quat_w.torch[:, st.tail_id]
@@ -387,9 +390,11 @@ class HandholeTask(TaskBase):
 
         # Lift test (hook-like spring on the cover's centre).
         slot = torch.tensor([props.SLOT_XY[0], props.SLOT_XY[1], props.Z_TOP], device=dev)
-        clear_pts = torch.cat([head, slot.expand(n, 1, 3)], dim=1)  # (N, 3, 3)
+        holes = home.clone()
+        holes[:, 2] = props.Z_TOP
+        clear_pts = torch.cat([holes.expand(n, 2, 3), slot.expand(n, 1, 3)], dim=1)  # (N, 3, 3)
         clear = ((grasp[:, None] - clear_pts[:, :, None]).norm(dim=-1) > TEST_CLEAR_M).all(dim=-1).all(dim=-1)
-        go_ready = st.go & st.parked.all(dim=1) & st.scorer.sample_ok & withdrawn & clear
+        go_ready = st.go & st.clear.all(dim=1) & st.scorer.sample_ok & withdrawn & clear
         nogo_ready = ~st.go & st.scorer.sample_ok & (st.out_steps >= st.watch_steps)
         ready = (st.phase == 0) & (go_ready | nogo_ready | st.force_test)
         st.clear_steps = torch.where(ready, st.clear_steps + 1, torch.zeros_like(st.clear_steps))

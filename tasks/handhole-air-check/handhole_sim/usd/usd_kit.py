@@ -7,9 +7,6 @@ from __future__ import annotations
 
 from pxr import Gf, Sdf, Usd, UsdGeom, UsdPhysics, UsdShade
 
-PARK_Z = -0.30
-"""The parking shelf under the desk (desk top z = 0), as in the padlock task."""
-
 COLORS = {
     "red": (0.80, 0.06, 0.05),
     "dark_red": (0.55, 0.04, 0.03),
@@ -137,6 +134,3 @@ def prismatic(stage, path, body0, body1, axis, pos0, lower, upper):
     UsdPhysics.DriveAPI.Apply(joint.GetPrim(), "linear")
     return joint
 
-
-def hide(stage, path) -> None:
-    UsdGeom.Imageable(stage.GetPrimAtPath(path)).MakeInvisible()

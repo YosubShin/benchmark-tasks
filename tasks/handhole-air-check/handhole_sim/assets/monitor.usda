@@ -131,6 +131,19 @@ def Xform "monitor" (
             }
         }
 
+        def Material "tape"
+        {
+            token outputs:surface.connect = </monitor/Looks/tape/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.25, 0.8)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
         def Material "alarm_on"
         {
             token outputs:surface.connect = </monitor/Looks/alarm_on/Shader.outputs:surface>
@@ -1818,6 +1831,17 @@ def Xform "monitor" (
             double radius = 0.003175
             double3 xformOp:translate = (0.05, 0, 0)
             uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "depth_mark" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </monitor/Looks/tape>
+            double size = 1
+            float3 xformOp:scale = (0.01, 0.00735, 0.00735)
+            double3 xformOp:translate = (0.04900000000000001, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
         }
     }
 
