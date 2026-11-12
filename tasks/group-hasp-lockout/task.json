@@ -1,6 +1,6 @@
 {
   "title": "Add your padlock to a group lockout hasp",
-  "category": "Societal relevance",
+  "category": "Societal relatability",
   "keywords": [
     "bimanual",
     "lockout/tagout",
@@ -17,5 +17,5 @@
   "reset_notes": "Unlock the purple padlock with its key, take it off the hasp and lay it back on the pedestal with its shackle open. Unlock the coworker's yellow padlock if it was removed for the hold test, re-hang it locked through the wall-side bottom hole, with its tag. Close the hasp through the handle's lock-off hole and the ear with the handle at OFF. About 2 minutes.",
   "fidelity": "PhysX rigid bodies on joints, arms with the station's i2rt gains. Published: hasp jaw/length/width/holes, Master Lock 410 outline. Inferred: hasp plate thickness, hole size/spacing, handle size, 1.0 N·m detent, shackle travel and spring. Simplified: enclosure is a plain box; lever points up at OFF; box/segment colliders; shackle latches by a catch, no key; coworker lock one rigid body; hold test applied in sim after recording. Details in README.",
   "scores": "Dream-1 run: 0.0; demo: 1.0",
-  "media": "M-WQY9NQ"
+  "media": "M-Q84DBT"
 }
