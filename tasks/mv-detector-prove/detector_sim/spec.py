@@ -42,12 +42,10 @@ CRADLE_BACK = 0.03
 """The detector starts this far back along the stick from its proving pose (tip short of the end plate)."""
 
 INSTRUCTION = (
-    "Check the red detector on the yellow stick on the black tester before and after you use it on the metal bar. "
-    "Press the white ON button on the detector's face and wait about 3 seconds while its lights step through. "
-    "Pick the detector up by its stick. Hold down the red TEST button on the black tester and touch the detector's "
-    "top end to the tester's metal end until the detector's red lights flash. Then touch the detector's top end to "
-    "the side of the bare metal bar on the two grey posts. Then do the tester check again. If the detector's lights "
-    "do not flash on the tester, move it away from the tester and stop: do not bring it to the bar."
+    "Test the bare metal bar on the two grey posts with the red detector on the yellow stick, by touching the side "
+    "of the bar with the detector's top end. The test only counts if the detector flashes its red lights on the "
+    "black tester both before and after it touches the bar. Do not bring the detector near the bar before it has "
+    "flashed on the tester. If it does not flash on the tester, keep it away from the bar and stop."
 )
 
 

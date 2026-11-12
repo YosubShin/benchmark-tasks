@@ -3,9 +3,10 @@ the table in a grey cradle, face up, its top (sensing) end toward the right arm 
 In front of the right arm a black PT-PRX proof tester lies face up in a cradle, its metal end plate facing the
 detector's top end and its red TEST button on top. Beside the tester, farther from the robot, a bare metal bar
 (an aluminium conductor stub connected to nothing) runs away from the robot on two grey posts, at the height of the
-detector's top end. Press the detector's white ON button and wait for its self-test; pick the detector up by its stick;
-prove it on the tester (hold TEST, touch the top end to the end plate: its red lights must flash); touch its top end
-to the bar; prove it again. If it does not flash on the tester, take it away and stop without going near the bar.
+detector's top end. The goal: test the bar with the detector's top end, with the detector shown to work on the tester
+(its red lights flashing there) before and after the test, never near the bar before that, and stop if it does not
+flash on the tester. (The scoring follows the manuals' procedure: ON and the 3 s self-test, TEST held with the top end
+on the end plate, the bar, the tester again; see task.json `context` and `scoring`.)
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. DETECTOR_SEED selects the layout: 0 (default)
 everything works; 1 the tester's battery is flat, so the prove fails and the right response is to stop.
@@ -34,8 +35,27 @@ def _task():
     return DetectorTask(default_seed=SEED)
 
 
+def _debug_log(view, task):
+    """DETECTOR_DEBUG=1: print the simulator's view every second (for checking the demo's perception; the policy
+    never sees it)."""
+    st = task.state(view)
+    k = int(st.scorer.step[0])
+    if k % 20 or not st.now:
+        return
+    nw = st.now
+    tip = nw["tip"][0].cpu().numpy()
+    q = st.det.data.root_quat_w.torch[0].cpu().numpy()
+    r = task.episode_report(view, 0)
+    print(f"TRUTH k={k} tip={tip.round(4).tolist()} quat={q.round(4).tolist()} on={bool(nw['powered'][0])} "
+          f"selftest={bool(nw['selftest_done'][0])} test={bool(nw['test_pressed'][0])} "
+          f"plate={bool(nw['on_plate'][0])} along={float(nw['along'][0]) * 1000:.1f} cond={bool(nw['on_cond'][0])} "
+          f"c_along={float(nw['c_along'][0]) * 1000:.1f} lit={bool(nw['lit'][0])} ms={r['milestone']} "
+          f"ev={r['semantic_events']}", flush=True)
+
+
 STATION = hb.install(hb.StationSpec(
     props=_props, task=_task, objects=("bench", "detector"), pose_modules=("detector_sim.task",),
+    on_step=_debug_log if os.environ.get("DETECTOR_DEBUG") == "1" else None,
 ))
 SCENE, OBJECTS, SUCCESS_HOLD_S = STATION.SCENE, STATION.OBJECTS, STATION.SUCCESS_HOLD_S
 success = STATION.success
