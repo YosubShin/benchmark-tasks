@@ -51,11 +51,9 @@ success = STATION.success
 
 
 def score(objects):
-    """Milestone / 100 (0.25 the FEEDER 2 handle lifted past 45 deg, 0.5 the unit cam-ejected 6 mm by its handle so
-    the connectors part, 0.75 the unit wholly out of its case, 1.0 set upright on the mat, released, and the
-    after-release check passed); 0 if the FEEDER 1 unit was unlatched or moved, the FEEDER 1 relay touched, a finger
-    went into the empty case, or the FEEDER 2 unit dropped."""
-    report = STATION.report or {}
-    if any(report.get("semantic_events", {}).values()) or any(report.get("contact_events", {}).values()):
-        return 0.0
-    return report.get("milestone", 0) / 100.0
+    """The score computed by relay_sim.scorer.RelayScorer (report()["score"]): milestone / 100 (0.25 the FEEDER 2
+    handle lifted past 45 deg, 0.5 the unit cam-ejected 6 mm by its handle so the connectors part, 0.75 the unit
+    wholly out of its case, 1.0 set upright on the mat, released, and the after-release check passed), and 0 from the
+    first step at which the FEEDER 1 unit is unlatched or moved, the FEEDER 1 relay is touched, a finger goes into
+    the empty case, or the FEEDER 2 unit is dropped, whatever milestones were reached before or after."""
+    return float((STATION.report or {}).get("score", 0.0))

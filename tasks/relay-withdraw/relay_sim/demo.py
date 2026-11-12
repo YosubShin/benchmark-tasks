@@ -24,10 +24,19 @@ It reads the simulator's state (handle angle, unit pose), like any scripted demo
 from __future__ import annotations
 
 import math
+import os
 
 import numpy as np
 
 from yam_arena import ik, station
+
+HAZARD_TEST = os.environ.get("RELAY_HAZARD_TEST", "")
+"""Scorer checks only (README, "Hazard checks"); empty in every scored run. Robot-side cases: ``touch_start`` arm A
+first touches the FEEDER 1 relay's front frame, then does the demo; ``touch_25`` after lifting the handle A lets go
+and touches the FEEDER 1 frame; ``drop_50`` A lets go of the unit after pulling it 12 cm out alone; ``drop_75``
+while the unit is held out, B drops away from under it and A raises the handle 12 cm, then lets go. A finger in the
+empty case is checked by relay_sim.check_scorer only: the case is full until 0.75, and after that the unit in front of
+it blocks the arms. relay_sim.task has the task-side cases."""
 
 A_OPEN = 0.30
 """Arm A opens only ~28 mm around the 12 mm bar: wide open, its upper finger would hit the relay's front."""
@@ -136,7 +145,7 @@ class Demo:
             log(f"{label}: s {s_meas() * 1000:.1f} mm, handle {math.degrees(phi()):.1f} deg, pitch {pitch_deg():.2f} deg, "
                 f"unit z {unit_pose()[0][2]:.4f}, bar - graspA (mm) {np.round((bar_world() - g) * 1000, 1)}, "
                 f"I_A {np.round(self._A.I, 3)}, I_B {np.round(self._B.I, 3)}, milestone {rep['milestone']} "
-                f"events {rep['semantic_events']} {rep['contact_events']}", flush=True)
+                f"progress {rep['progress_milestone']} hazards {rep['hazard_events']}", flush=True)
 
         def bar_target(phi_cmd, s):
             px, pz = props.pivot_world(slot)
@@ -177,8 +186,25 @@ class Demo:
 
         flags = {"supported": False, "on_mat": False, "b_out": False}
 
+        def decoy_front():
+            """A grasp-point target 3 cm in front of the FEEDER 1 frame, 1 cm inside its edge nearer the midline."""
+            x0, y0, z0 = props.seated_origin(1 - slot)
+            return np.array([x0 - props.BEZEL[0] - 0.03, y0 - props.BAR_SPAN / 2 + 0.01, z0 + 0.08])
+
+        def touch_decoy(arm):
+            t = decoy_front()
+            yield from move(arm, np.array([0.20, t[1], 0.22]), qa(0.0), speed=0.12, min_steps=steps(1.5))
+            yield from move(arm, t, speed=0.06)
+            yield from settle(arm, max_s=2.0)
+            yield from hold(arm, steps(0.5))
+            status("HAZARD touch_decoy")
+
         def script_a(arm):
             yield from hold(arm, steps(1.0))
+            if HAZARD_TEST == "touch_start":
+                arm.grip = A_OPEN
+                yield from touch_decoy(arm)
+                yield from move(arm, np.array([0.20, arm.pos[1], 0.25]), speed=0.10)
             # Grip the bar.
             bar = bar_target(0.0, max(0.0, s_meas()))
             d = rotate(qa(0.0), (0.0, 0.0, -1.0))
@@ -208,6 +234,12 @@ class Demo:
                 yield
             yield from hold(arm, steps(0.5))
             status("LIFTED")
+            if HAZARD_TEST == "touch_25":
+                arm.grip = OPEN
+                yield from hold(arm, steps(0.8))
+                yield from move(arm, arm.pos + np.array([-0.05, 0.0, 0.05]), speed=0.05)
+                yield from touch_decoy(arm)
+                yield from script_hold(arm)
             self.metrics["lift"] = {"handle_deg": round(math.degrees(phi()), 1), "eject_mm": round(s_meas() * 1000, 1)}
             # Pull alone (the handle rests on its up stop: the bar's weight and the pull keep it there).
             arm.integrate = True
@@ -219,6 +251,12 @@ class Demo:
                 yield
             yield from hold(arm, steps(0.5))
             status("PULLED (alone)")
+            if HAZARD_TEST == "drop_50":  # let go of the unit with no hand under it (B never comes: A not integrating)
+                arm.integrate = False
+                yield from grip(arm, OPEN, steps(0.5))
+                yield from move(arm, arm.pos + np.array([-0.03, 0.0, 0.06]), speed=0.05)
+                status("HAZARD let go")
+                yield from script_hold(arm)
             yield from wait_until(lambda: flags["supported"], steps(30.0))
             # Withdraw together with B (B mirrors A's x through flags["dx"]).
             yield from wait_until(lambda: flags["on_mat"], steps(60.0))
@@ -275,6 +313,21 @@ class Demo:
             yield from hold(arm, steps(1.0))
             status("HELD OUT")
             self.metrics["held_out"] = {"pitch_deg": round(pitch_deg(), 2), "s_mm": round(s_meas() * 1000, 1)}
+            if HAZARD_TEST == "drop_75":  # B drops away from under the body while A raises the handle 12 cm: the
+                # unit swings down at the back and tips; then A lets go
+                a0, b0 = A.pos.copy(), arm.pos.copy()
+                A.integrate, arm.integrate = False, False
+                n = steps(2.0)
+                for k in range(1, n + 1):
+                    A.pos = a0 + np.array([0.0, 0.0, 0.12 * k / n])
+                    arm.pos = b0 + np.array([0.0, 0.0, -0.06 * k / n])
+                    yield
+                yield from hold(arm, steps(1.0))
+                status("HAZARD support removed")
+                A.grip = OPEN
+                yield from hold(arm, steps(2.0))
+                status("HAZARD let go")
+                yield from script_hold(arm)
             self._carry = True
             yield from hold(arm, steps(HOLD_S))
             self._carry = False

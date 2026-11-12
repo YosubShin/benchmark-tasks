@@ -22,6 +22,7 @@ handle down (latched: it must not come out), let go, lift its handle by a torque
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import MISSING
 from pathlib import Path
 
@@ -90,6 +91,13 @@ UNIT_FRONT_X = -(props.BEZEL[0] + 0.045)
 """Unit-frame bounding box of the bezel and the handle at rest, for touch checks."""
 
 
+HAZARD_TEST = os.environ.get("RELAY_HAZARD_TEST", "")
+"""Scorer checks only (README, "Hazard checks"); empty in every scored run. The task-side cases lift the FEEDER 1
+handle with HAZARD_LIFT_NM for CTL_PHASE_S: ``decoy_lift_start`` at 1 s, before any milestone; ``decoy_lift_75`` as
+soon as the unit is out of its case (milestone 75). The other cases are robot behaviours in relay_sim.demo."""
+HAZARD_LIFT_NM = CTL_LIFT_NM
+
+
 def unit_name(slot: int) -> str:
     return f"relay_unit_{slot}"
 
@@ -143,6 +151,7 @@ class _TaskState:
         self.wait_steps = max(1, round(TEST_WAIT_S / env.step_dt))
         self.phase_len = max(1, round(TEST_PHASE_S / env.step_dt))
         self.ctl_len = max(1, round(CTL_PHASE_S / env.step_dt))
+        self.inject_steps = zl()
         self.named = 0
         self.debug: dict[str, torch.Tensor] = {}
 
@@ -222,7 +231,7 @@ class RelayTask(TaskBase):
         st.scorer.reset(env_ids)
         for buf in (st.parted_by_handle, st.test_passed, st.decoy_held, st.force_ctl):
             buf[env_ids] = False
-        for buf in (st.clear_steps, st.phase, st.phase_steps, st.ctl_phase, st.ctl_steps):
+        for buf in (st.clear_steps, st.phase, st.phase_steps, st.ctl_phase, st.ctl_steps, st.inject_steps):
             buf[env_ids] = 0
         for buf in (st.decoy_max, st.max_s, st.max_phi):
             buf[env_ids] = 0.0
@@ -287,6 +296,14 @@ class RelayTask(TaskBase):
         st.ctl_phase = torch.where(adv, st.ctl_phase + 1, st.ctl_phase)
         st.ctl_steps = torch.where(adv, 0, st.ctl_steps)
 
+        # Hazard checks only (HAZARD_TEST): lift the other unit's handle.
+        decoy_torque = torch.zeros(n, 1, 3, device=dev)
+        if HAZARD_TEST in ("decoy_lift_start", "decoy_lift_75"):
+            due = (st.scorer.step >= 20) if HAZARD_TEST == "decoy_lift_start" else (st.scorer.progress >= 75)
+            active = (due | (st.inject_steps > 0)) & (st.inject_steps < st.ctl_len)
+            st.inject_steps = torch.where(active, st.inject_steps + 1, st.inject_steps)
+            decoy_torque[:, 0, 1] = torch.where(active, HAZARD_LIFT_NM, 0.0)
+
         # Pads and grasp points.
         pads = st.tips.points(origins)  # (N, 4, 3)
 
@@ -332,7 +349,7 @@ class RelayTask(TaskBase):
         decoy_unlatched = before_test & ((phi_d > math.radians(DECOY_LIFT_DEG)) | (decoy_move > DECOY_MOVE_M))
 
         # Function test.
-        ready = before_test & on_mat & ~near_unit & (st.scorer.milestone >= 75) & ~st.force_ctl
+        ready = before_test & on_mat & ~near_unit & (st.scorer.progress >= 75) & ~st.force_ctl
         st.clear_steps = torch.where(ready, st.clear_steps + 1, torch.zeros_like(st.clear_steps))
         start = ready & (st.clear_steps >= st.wait_steps)
         st.phase = torch.where(start, 1, st.phase)
@@ -348,7 +365,7 @@ class RelayTask(TaskBase):
 
         # One set call per unit (a set clears the env's whole buffer): body force, handle torque.
         for k, unit in enumerate(st.units):
-            torque = handle_torque if k == st.named else torch.zeros_like(handle_torque)
+            torque = handle_torque if k == st.named else decoy_torque
             f = torch.cat([forces[:, k], torch.zeros_like(torque)], dim=1)
             t = torch.cat([torch.zeros_like(torque), torque], dim=1)
             unit.permanent_wrench_composer.set_forces_and_torques_index(

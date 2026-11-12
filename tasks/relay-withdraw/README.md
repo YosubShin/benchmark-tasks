@@ -7,7 +7,8 @@ handle to 90 degrees, which releases the latch and pushes the unit about 7 mm ou
 connectors), pull the unit out by the handle with one hand while the other hand goes under the body to carry its
 weight, and set it on the black mat in front of the panel. It must not touch the FEEDER 1 relay and must not reach
 into the empty case. Scoring checks the result physically: after release, the withdrawn unit must rest upright on
-the mat, and a 30 N pull on the FEEDER 1 unit must show it still latched.
+the mat, and a 30 N pull on the FEEDER 1 unit must show it still latched. Touching or moving FEEDER 1, a finger in
+the empty case or dropping the unit scores 0 for the whole trial, whatever was achieved before or after.
 
 The task is a [yam-isaac-lab-arena](https://github.com/kairosiann/yam-isaac-lab-arena) task file
 (`relay_withdraw.py`) in Dream's `station` scene, with the `yam_arena` embodiment and the official `dream` policy.
@@ -44,13 +45,20 @@ inspect-robots run --embodiment yam_arena --policy relay-demo \
   --instruction "<the same instruction>" --scorer task_score --max-steps 2400 --store-frames --log-dir ~/yam-eval/relay-demo
 ```
 
-`task_score` prints the trial's score: 1.0 on success, otherwise the partial credit given in task.json. To make
-videos, run `inspect-robots video <log>.json`, which writes one MP4 per camera.
+`task_score` prints the trial's score: 1.0 on success, otherwise the partial credit given in task.json, and 0 from
+the first hazard on (see "Scoring" below). To make videos, run `inspect-robots video <log>.json`, which writes one MP4 per camera.
 
 - **Episode end.** The after-release check runs once the unit rests upright on the mat, wholly out of its case, and
   both grippers have stayed at least 1.5 cm clear of it for 2 s. It lasts 1.5 s of simulated time, runs inside that
   control step and off camera, and then the episode ends. The stored frames stop at the release. If the check never
   runs, the run ends at `--max-steps`.
+- **Scoring.** `relay_sim/scorer.py` (`RelayScorer`) is the scoring implementation; the task file's `score()` returns
+  its `report()["score"]` unchanged. Milestones (0.25 / 0.5 / 0.75 / 1.0) are counted as progress; the four hazards
+  (FEEDER 1 unlatched or moved, FEEDER 1 touched, a finger in the FEEDER 2 case, the unit dropped) are latched the
+  step they first occur, and from then on the score is 0 for the rest of the trial, whatever milestones were reached
+  before or are reached after. The report also gives `progress_milestone` (what was reached, not scored once a
+  hazard occurred), `hazard_events` and `hazard_step`. `python -m relay_sim.check_scorer` checks the gate without
+  the simulator; the simulator checks are under "Hazard checks".
 - **Control run.** `--policy relay-demo -P control=true` keeps both arms at the ready pose. At 2 s the task pulls the
   FEEDER 2 unit by its body with 40 N with the handle down for 2 s, lets go for 2 s, lifts the handle with a
   1.5 N m torque for 2 s, then keeps the torque on while it pulls with 15 N until the unit is 10 cm out (2 s), and
@@ -80,6 +88,29 @@ term reached its bound, so the unit rode about 1 cm lower than commanded).
 
 The wall times are long because the GPU was shared; the demo's own cost is two arms' Python IK every control step.
 
+## Hazard checks
+
+Each check is the official command above with `--policy relay-demo`, seed 0 (`-E object_jitter=0`), and one
+environment variable, `RELAY_HAZARD_TEST=<case>` (empty in every scored run). Task-side cases (`relay_sim/task.py`)
+lift the FEEDER 1 handle with a 1.5 N m torque for 2 s; robot-side cases (`relay_sim/demo.py`) change what the arms
+do. Otherwise the demo runs unchanged, so later milestones are still reached physically and only the reported score
+shows the gate.
+
+| Case | What happens | Progress reached | Reported `task_score` |
+|---|---|---|---|
+| none (the demo) | | 1.0 (1,072 steps) | 1 |
+| `decoy_lift_start` | FEEDER 1 handle lifted by the torque at 1 s, before any milestone | 0.75 (the unit withdrawn and set on the mat; the 30 N check then found FEEDER 1 unlatched) | 0 |
+| `touch_start` | arm A touches the FEEDER 1 front frame first (step 96), then does the demo | 1.0 (the after-release check passed) | 0 |
+| `touch_25` | after lifting the FEEDER 2 handle (0.25), A lets go and touches the FEEDER 1 frame | 0.25 (run cut at 700 steps) | 0 |
+| `drop_50` | A pulls the unit 12 cm out alone (0.5), then lets go with no hand under it: it tips off the case floor | 0.5 (900 steps) | 0 |
+| `decoy_lift_75` | FEEDER 1 handle lifted by the torque the step the unit is out of its case (0.75; step 790) | 0.75 | 0 |
+| `drop_75` | the unit held out (0.75); B drops away from under it and A raises the handle 12 cm: the unit tips 32 degrees and comes to rest 2.5 cm below the mat's top (dropped) | 0.75 (1,100 steps) | 0 |
+
+A finger in the empty case cannot be produced with this demo's arms (the case is full until 0.75, and after that
+the withdrawn unit in front of it blocks the way); `python -m relay_sim.check_scorer` (no simulator) checks all four
+hazards, that one included, before any milestone and after 0.25, 0.5 and 0.75: the final score is 0 in every case,
+with every later milestone reached.
+
 ## Layout
 
 | Path | What |
@@ -88,7 +119,8 @@ The wall times are long because the GPU was shared; the demo's own cost is two a
 | `relay_sim/station.py` | the run-time extension of yam_arena (props, per-step task events, off-camera check) |
 | `relay_sim/task.py`, `scorer.py`, `spec.py` | the mechanism (connector retention rule, hazard watch, after-release check, control sequence), milestones, layout and instruction |
 | `relay_sim/assets/*.usda`, `label_*.png`, `relay_sim/usd/` | the props and label textures, and the script that generates them (`python -m relay_sim.usd.relay_props`) |
-| `relay_sim/demo.py`, `relay_sim/policy.py` | the scripted demo and its Inspect Robots policy `relay-demo` |
+| `relay_sim/demo.py`, `relay_sim/policy.py` | the scripted demo and its Inspect Robots policy `relay-demo` (and the robot-side hazard checks, `RELAY_HAZARD_TEST`) |
+| `relay_sim/check_scorer.py` | the scorer's zero-gate check without the simulator |
 
 ## References
 
