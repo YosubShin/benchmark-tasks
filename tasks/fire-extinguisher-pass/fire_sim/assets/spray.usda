@@ -1,0 +1,45 @@
+#usda 1.0
+(
+    defaultPrim = "spray"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "spray" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    bool physics:kinematicEnabled = 1
+    float physics:mass = 0.01
+
+    def "Looks"
+    {
+        def Material "spray"
+        {
+            token outputs:surface.connect = </spray/Looks/spray/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.93, 0.95, 1)
+                float inputs:opacity = 0.55
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cone "plume" (
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        uniform token axis = "X"
+        double height = 0.17
+        rel material:binding = </spray/Looks/spray>
+        double radius = 0.022
+        float xformOp:rotateZ = 180
+        double3 xformOp:translate = (0.085, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+    }
+}
+

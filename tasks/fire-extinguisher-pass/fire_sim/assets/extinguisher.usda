@@ -1,0 +1,643 @@
+#usda 1.0
+(
+    defaultPrim = "extinguisher"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "extinguisher"
+{
+    def "Looks"
+    {
+        def Material "ext_red"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/ext_red/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.05, 0.04)
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "chrome"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/chrome/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.8, 0.81, 0.83)
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+
+        def Material "gauge"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/gauge/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.92, 0.92, 0.9)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.12, 0.12, 0.13)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "seal_green"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/seal_green/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.7, 0.25)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+
+        def Material "white"
+        {
+            token outputs:surface.connect = </extinguisher/Looks/white/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.95, 0.95, 0.95)
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "body" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, 0, 0.196)
+        float3 physics:diagonalInertia = (0.008473, 0.008473, 0.000722)
+        float physics:mass = 1
+        custom bool physxArticulation:enabledSelfCollisions = 1
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Mesh "cyl_collider" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysicsMeshCollisionAPI"]
+        )
+        {
+            int[] faceVertexCounts = [24, 24, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 1, 25, 24, 1, 2, 26, 25, 2, 3, 27, 26, 3, 4, 28, 27, 4, 5, 29, 28, 5, 6, 30, 29, 6, 7, 31, 30, 7, 8, 32, 31, 8, 9, 33, 32, 9, 10, 34, 33, 10, 11, 35, 34, 11, 12, 36, 35, 12, 13, 37, 36, 13, 14, 38, 37, 14, 15, 39, 38, 15, 16, 40, 39, 16, 17, 41, 40, 17, 18, 42, 41, 18, 19, 43, 42, 19, 20, 44, 43, 20, 21, 45, 44, 21, 22, 46, 45, 22, 23, 47, 46, 23, 0, 24, 47]
+            uniform token physics:approximation = "convexHull"
+            point3f[] points = [(0.037674904, 0.0049599954, 0), (0.035107423, 0.014541971, 0), (0.030147428, 0.023132935, 0), (0.023132935, 0.030147428, 0), (0.014541971, 0.035107423, 0), (0.0049599954, 0.037674904, 0), (-0.0049599954, 0.037674904, 0), (-0.014541971, 0.035107423, 0), (-0.023132935, 0.030147428, 0), (-0.030147428, 0.023132935, 0), (-0.035107423, 0.014541971, 0), (-0.037674904, 0.0049599954, 0), (-0.037674904, -0.0049599954, 0), (-0.035107423, -0.014541971, 0), (-0.030147428, -0.023132935, 0), (-0.023132935, -0.030147428, 0), (-0.014541971, -0.035107423, 0), (-0.0049599954, -0.037674904, 0), (0.0049599954, -0.037674904, 0), (0.014541971, -0.035107423, 0), (0.023132935, -0.030147428, 0), (0.030147428, -0.023132935, 0), (0.035107423, -0.014541971, 0), (0.037674904, -0.0049599954, 0), (0.037674904, 0.0049599954, 0.312), (0.035107423, 0.014541971, 0.312), (0.030147428, 0.023132935, 0.312), (0.023132935, 0.030147428, 0.312), (0.014541971, 0.035107423, 0.312), (0.0049599954, 0.037674904, 0.312), (-0.0049599954, 0.037674904, 0.312), (-0.014541971, 0.035107423, 0.312), (-0.023132935, 0.030147428, 0.312), (-0.030147428, 0.023132935, 0.312), (-0.035107423, 0.014541971, 0.312), (-0.037674904, 0.0049599954, 0.312), (-0.037674904, -0.0049599954, 0.312), (-0.035107423, -0.014541971, 0.312), (-0.030147428, -0.023132935, 0.312), (-0.023132935, -0.030147428, 0.312), (-0.014541971, -0.035107423, 0.312), (-0.0049599954, -0.037674904, 0.312), (0.0049599954, -0.037674904, 0.312), (0.014541971, -0.035107423, 0.312), (0.023132935, -0.030147428, 0.312), (0.030147428, -0.023132935, 0.312), (0.035107423, -0.014541971, 0.312), (0.037674904, -0.0049599954, 0.312)]
+            token visibility = "invisible"
+        }
+
+        def Cylinder "cylinder" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.3
+            rel material:binding = </extinguisher/Looks/ext_red>
+            double radius = 0.038
+            double3 xformOp:translate = (0, 0, 0.15)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "shoulder" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.012
+            rel material:binding = </extinguisher/Looks/ext_red>
+            double radius = 0.03
+            double3 xformOp:translate = (0, 0, 0.306)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "base_ring" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.006
+            rel material:binding = </extinguisher/Looks/dark>
+            double radius = 0.0385
+            double3 xformOp:translate = (0, 0, 0.003)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "neck" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.032
+            rel material:binding = </extinguisher/Looks/chrome>
+            double radius = 0.014
+            double3 xformOp:translate = (0, 0, 0.316)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "neck_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.028, 0.028, 0.032)
+            double3 xformOp:translate = (0, 0, 0.316)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "head" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.036, 0.026, 0.032)
+            double3 xformOp:translate = (0, 0, 0.34600000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "label" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.09
+            rel material:binding = </extinguisher/Looks/white>
+            double radius = 0.0386
+            double3 xformOp:translate = (0, 0, 0.17)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "gauge" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Y"
+            double height = 0.008
+            rel material:binding = </extinguisher/Looks/gauge>
+            double radius = 0.013
+            double3 xformOp:translate = (0, -0.017, 0.34600000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "gauge_needle" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/ext_red>
+            double size = 1
+            float3 xformOp:scale = (0.002, 0.0006, 0.009)
+            double3 xformOp:translate = (0, -0.0212, 0.34900000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "nozzle" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.04
+            rel material:binding = </extinguisher/Looks/chrome>
+            double radius = 0.008
+            double3 xformOp:translate = (0.038, 0, 0.35000000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "nozzle_bore" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0006
+            rel material:binding = </extinguisher/Looks/black>
+            double radius = 0.0055
+            double3 xformOp:translate = (0.0582, 0, 0.35000000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "nozzle_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.04, 0.014, 0.014)
+            double3 xformOp:translate = (0.038, 0, 0.35000000000000003)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "handle" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            rel material:binding:physics = </extinguisher/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double size = 1
+            float xformOp:rotateY = -12
+            float3 xformOp:scale = (0.105, 0.02, 0.006)
+            double3 xformOp:translate = (-0.0693527490385248, 0, 0.34108463623206764)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Cube "ear0_lo" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0046)
+            double3 xformOp:translate = (-0.024, 0.011, 0.36229999999999996)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear0_hi" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0074)
+            double3 xformOp:translate = (-0.024, 0.011, 0.37429999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear0_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.006)
+            double3 xformOp:translate = (-0.0285, 0.011, 0.3676)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear0_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.006)
+            double3 xformOp:translate = (-0.0195, 0.011, 0.3676)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear1_lo" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0046)
+            double3 xformOp:translate = (-0.024, -0.011, 0.36229999999999996)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear1_hi" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0074)
+            double3 xformOp:translate = (-0.024, -0.011, 0.37429999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear1_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.006)
+            double3 xformOp:translate = (-0.0285, -0.011, 0.3676)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ear1_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.006)
+            double3 xformOp:translate = (-0.0195, -0.011, 0.3676)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "bridge" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.026, 0.008)
+            double3 xformOp:translate = (-0.024, 0, 0.356)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.9
+            float physics:staticFriction = 1
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "grip_lever" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.9
+            float physics:staticFriction = 1
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+
+    def Xform "lever" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.04
+        double3 xformOp:translate = (-0.008, 0, 0.378)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "bar" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            rel material:binding:physics = </extinguisher/PhysicsMaterials/grip_lever> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double size = 1
+            float xformOp:rotateY = 8
+            float3 xformOp:scale = (0.12, 0.018, 0.005)
+            double3 xformOp:translate = (-0.05941608412449422, 0, 0.008350386057603926)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY", "xformOp:scale"]
+        }
+
+        def Cube "cheek0_lo" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0046)
+            double3 xformOp:translate = (-0.016, 0.006, -0.015700000000000047)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek0_hi" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0088)
+            double3 xformOp:translate = (-0.016, 0.006, -0.0033999999999999773)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek0_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.0056)
+            double3 xformOp:translate = (-0.0205, 0.006, -0.010600000000000023)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek0_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.0056)
+            double3 xformOp:translate = (-0.0115, 0.006, -0.010600000000000023)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek1_lo" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0046)
+            double3 xformOp:translate = (-0.016, -0.006, -0.015700000000000047)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek1_hi" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.004, 0.0088)
+            double3 xformOp:translate = (-0.016, -0.006, -0.0033999999999999773)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek1_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.0056)
+            double3 xformOp:translate = (-0.0205, -0.006, -0.010600000000000023)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "cheek1_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.004, 0.0056)
+            double3 xformOp:translate = (-0.0115, -0.006, -0.010600000000000023)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsRevoluteJoint "lever_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </extinguisher/body>
+            rel physics:body1 = </extinguisher/lever>
+            point3f physics:localPos0 = (-0.008, 0, 0.378)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = -20
+            float physics:upperLimit = 0
+        }
+
+        def PhysicsPrismaticJoint "pin_joint" (
+            prepend apiSchemas = ["PhysicsDriveAPI:linear"]
+        )
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </extinguisher/body>
+            rel physics:body1 = </extinguisher/pin>
+            point3f physics:localPos0 = (-0.024, 0, 0.3672)
+            point3f physics:localPos1 = (0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 0.06
+        }
+    }
+
+    def Xform "pin" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float3 physics:diagonalInertia = (0.000002, 1e-7, 0.000002)
+        float physics:mass = 0.012
+        double3 xformOp:translate = (-0.024, 0, 0.36719999999999997)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+
+        def Cube "shaft" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.004, 0.046, 0.004)
+            double3 xformOp:translate = (0, 0.007, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ring_top" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.024, 0.003, 0.003)
+            double3 xformOp:translate = (0, 0.0315, -0.0015)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ring_bot" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.024, 0.003, 0.003)
+            double3 xformOp:translate = (0, 0.0315, -0.0225)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ring_back" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.003, 0.024)
+            double3 xformOp:translate = (-0.0105, 0.0315, -0.012)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ring_front" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.003, 0.024)
+            double3 xformOp:translate = (0.0105, 0.0315, -0.012)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "ring_link" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/chrome>
+            double size = 1
+            float3 xformOp:scale = (0.003, 0.003, 0.0035)
+            double3 xformOp:translate = (0, 0.0315, 0.00025)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "seal" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/seal_green>
+            double size = 1
+            float3 xformOp:scale = (0.0025, 0.017, 0.002)
+            double3 xformOp:translate = (-0.006, 0.021500000000000002, -0.0045000000000000005)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "seal_tag" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </extinguisher/Looks/seal_green>
+            double size = 1
+            float3 xformOp:scale = (0.007, 0.007, 0.006)
+            double3 xformOp:translate = (-0.006, 0.021500000000000002, -0.0085)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+}
+
