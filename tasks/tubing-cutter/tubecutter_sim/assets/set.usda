@@ -1,0 +1,511 @@
+#usda 1.0
+(
+    defaultPrim = "cutter_set"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "cutter_set"
+{
+    def "Looks"
+    {
+        def Material "copper"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/copper/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.42, 0.2)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "mark"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/mark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.02, 0.02, 0.02)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "wood"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/wood/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.74, 0.6, 0.4)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "iron"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/iron/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.2, 0.21)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "brass"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/brass/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.58, 0.28)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "orange"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/orange/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.93, 0.4, 0.06)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "black"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/black/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.05, 0.05, 0.05)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.75, 0.76, 0.78)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </cutter_set/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.18, 0.18, 0.19)
+                float inputs:roughness = 0.45
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "tube" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+    )
+    {
+        float physics:mass = 1
+        custom bool physxArticulation:enabledSelfCollisions = 0
+        custom int physxArticulation:solverPositionIterationCount = 32
+        custom int physxArticulation:solverVelocityIterationCount = 4
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "block" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/wood>
+            double size = 1
+            float3 xformOp:scale = (0.1, 0.1, 0.018)
+            double3 xformOp:translate = (0, 0, 0.009)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "flange" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.004
+            rel material:binding = </cutter_set/Looks/iron>
+            double radius = 0.03
+            double3 xformOp:translate = (0, 0, 0.019999999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "adapter" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.012
+            rel material:binding = </cutter_set/Looks/brass>
+            double radius = 0.0115
+            double3 xformOp:translate = (0, 0, 0.027999999999999997)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "tube_vis" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.093
+            rel material:binding = </cutter_set/Looks/copper>
+            double radius = 0.0079375
+            double3 xformOp:translate = (0, 0, 0.0685)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "tube_col" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/copper>
+            double size = 1
+            token visibility = "invisible"
+            float3 xformOp:scale = (0.0142875, 0.0142875, 0.093)
+            double3 xformOp:translate = (0, 0, 0.0685)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "mark" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.0015
+            rel material:binding = </cutter_set/Looks/mark>
+            double radius = 0.0082375
+            double3 xformOp:translate = (0, 0, 0.075)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "carrier" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.02
+        quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
+        double3 xformOp:translate = (0, 0, 0.075)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+    }
+
+    def Xform "cutter" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.26
+        quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
+        double3 xformOp:translate = (0, 0, 0.075)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cube "hook" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/orange>
+            rel material:binding:physics = </cutter_set/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double size = 1
+            float3 xformOp:scale = (0.02, 0.05, 0.024)
+            double3 xformOp:translate = (-0.03, -0.009000000000000001, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "spine" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/orange>
+            rel material:binding:physics = </cutter_set/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double size = 1
+            float3 xformOp:scale = (0.076, 0.014, 0.024)
+            double3 xformOp:translate = (-0.0020000000000000018, -0.027000000000000003, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "carriage" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/orange>
+            double size = 1
+            float3 xformOp:scale = (0.021, 0.037, 0.02)
+            double3 xformOp:translate = (0.0235, -0.0014999999999999996, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "housing" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/orange>
+            rel material:binding:physics = </cutter_set/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double size = 1
+            float3 xformOp:scale = (0.042, 0.04, 0.036)
+            double3 xformOp:translate = (0.055, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "button" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </cutter_set/Looks/black>
+            double size = 1
+            float3 xformOp:scale = (0.016, 0.006, 0.012)
+            double3 xformOp:translate = (0.05, 0.023, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "wheel" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.003
+            rel material:binding = </cutter_set/Looks/steel>
+            double radius = 0.0095
+            double3 xformOp:translate = (-0.0174375, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "wheel_bolt" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.003
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.004
+            double3 xformOp:translate = (-0.0174375, 0, 0.0125)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "roller0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.012
+            rel material:binding = </cutter_set/Looks/black>
+            double radius = 0.0065
+            double3 xformOp:translate = (0.011826507639422319, -0.008281009799818226, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "roller2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.012
+            rel material:binding = </cutter_set/Looks/black>
+            double radius = 0.0065
+            double3 xformOp:translate = (0.011826507639422319, 0.008281009799818226, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "screw" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.022000000000000006
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.0045
+            double3 xformOp:translate = (0.087, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "crest0" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0015
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.0053
+            double3 xformOp:translate = (0.079, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "crest1" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0015
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.0053
+            double3 xformOp:translate = (0.084, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "crest2" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0015
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.0053
+            double3 xformOp:translate = (0.089, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "crest3" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.0015
+            rel material:binding = </cutter_set/Looks/dark>
+            double radius = 0.0053
+            double3 xformOp:translate = (0.094, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "knob" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.04
+        quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
+        double3 xformOp:translate = (6.000769315822031e-18, 0.098, 0.075)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Mesh "grip" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysicsMeshCollisionAPI"]
+        )
+        {
+            uniform bool doubleSided = 1
+            int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 8, 8]
+            int[] faceVertexIndices = [0, 1, 9, 8, 1, 2, 10, 9, 2, 3, 11, 10, 3, 4, 12, 11, 4, 5, 13, 12, 5, 6, 14, 13, 6, 7, 15, 14, 7, 0, 8, 15, 7, 6, 5, 4, 3, 2, 1, 0, 8, 9, 10, 11, 12, 13, 14, 15]
+            rel material:binding = </cutter_set/Looks/black>
+            rel material:binding:physics = </cutter_set/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            uniform token physics:approximation = "convexHull"
+            point3f[] points = [(-0.018, 0.014782073, 0.006122935), (-0.018, 0.006122935, 0.014782073), (-0.018, -0.006122935, 0.014782073), (-0.018, -0.014782073, 0.006122935), (-0.018, -0.014782073, -0.006122935), (-0.018, -0.006122935, -0.014782073), (-0.018, 0.006122935, -0.014782073), (-0.018, 0.014782073, -0.006122935), (0.018, 0.014782073, 0.006122935), (0.018, 0.006122935, 0.014782073), (0.018, -0.006122935, 0.014782073), (0.018, -0.014782073, 0.006122935), (0.018, -0.014782073, -0.006122935), (0.018, -0.006122935, -0.014782073), (0.018, 0.006122935, -0.014782073), (0.018, 0.014782073, -0.006122935)]
+            uniform token subdivisionScheme = "none"
+            double3 xformOp:translate = (0.018, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Mesh "stripe" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform bool doubleSided = 1
+            int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 6, 6]
+            int[] faceVertexIndices = [0, 1, 7, 6, 1, 2, 8, 7, 2, 3, 9, 8, 3, 4, 10, 9, 4, 5, 11, 10, 5, 0, 6, 11, 5, 4, 3, 2, 1, 0, 6, 7, 8, 9, 10, 11]
+            rel material:binding = </cutter_set/Looks/orange>
+            point3f[] points = [(-0.00225, 0.0076210233, 0.0044), (-0.00225, 5.388446e-19, 0.0088), (-0.00225, -0.0076210233, 0.0044), (-0.00225, -0.0076210233, -0.0044), (-0.00225, -1.6165337e-18, -0.0088), (-0.00225, 0.0076210233, -0.0044), (0.00225, 0.0076210233, 0.0044), (0.00225, 5.388446e-19, 0.0088), (0.00225, -0.0076210233, 0.0044), (0.00225, -0.0076210233, -0.0044), (0.00225, -1.6165337e-18, -0.0088), (0.00225, 0.0076210233, -0.0044)]
+            uniform token subdivisionScheme = "none"
+            double3 xformOp:translate = (0.033999999999999996, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1.2
+            custom token physxMaterial:frictionCombineMode = "max"
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsRevoluteJoint "orbit" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cutter_set/tube>
+            rel physics:body1 = </cutter_set/carrier>
+            point3f physics:localPos0 = (0, 0, 0.075)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -1440
+            float physics:upperLimit = 1440
+        }
+
+        def PhysicsPrismaticJoint "slide" (
+            prepend apiSchemas = ["PhysicsDriveAPI:linear"]
+        )
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </cutter_set/carrier>
+            rel physics:body1 = </cutter_set/cutter>
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -0.02
+            float physics:upperLimit = 0.02
+        }
+
+        def PhysicsRevoluteJoint "feed" (
+            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </cutter_set/cutter>
+            rel physics:body1 = </cutter_set/knob>
+            point3f physics:localPos0 = (0.098, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -1440
+            float physics:upperLimit = 1440
+        }
+    }
+}
+
