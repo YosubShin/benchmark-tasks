@@ -1,34 +1,35 @@
 """Inspect Robots policy ``clamp-demo``: the scripted demo (groundclamp_sim.demo), closed loop, one action per control
-step. It binds to the task file the ``yam_arena`` embodiment loaded (as yam_scripted does) and reads its simulator
-state, so it runs only in the same process as that embodiment."""
+step. Its only input is the observation Inspect Robots hands every policy: the ``top_cam``, ``left_cam`` and
+``right_cam`` images and the 14-D ``joint_pos`` state. It holds no handle on the simulator or the task (it must run in
+the simulator's process only because it imports the prop geometry module, which needs Isaac Sim's USD library)."""
 
 from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
+
 from inspect_robots import Action, ActionChunk, Box, ObservationSpace
 from inspect_robots.policy import PolicyBase, PolicyInfo
 from inspect_robots.registry import policy
+from inspect_robots.spaces import CameraSpec
+
+CAMERAS = ("top_cam", "left_cam", "right_cam")
 
 
 class DemoPolicy(PolicyBase):
     def __init__(self, control: bool = False) -> None:
         self.control = bool(control)
-        self.info = PolicyInfo(name="clamp-demo", action_space=Box(shape=(14,)),
-                               observation_space=ObservationSpace(state_keys=frozenset({"joint_pos"})))
+        self.info = PolicyInfo(
+            name="clamp-demo", action_space=Box(shape=(14,)),
+            observation_space=ObservationSpace(cameras=tuple(CameraSpec(c, 176, 320) for c in CAMERAS),
+                                               state_keys=frozenset({"joint_pos"})))
         self._control_hz = 20.0
-        self._station = None
         self._demo = None
 
     def bind(self, embodiment_info: Any) -> None:
-        from yam_arena import task_file
-
         if embodiment_info.control_hz:
             self._control_hz = float(embodiment_info.control_hz)
-        task = task_file.lookup(embodiment_info.environment_id)
-        self._station = getattr(getattr(task, "module", None), "STATION", None)
-        if self._station is None:
-            raise ValueError("clamp-demo needs --embodiment yam_arena -E task=ground_clamp_order.py")
 
     def reset(self, scene: Any) -> None:
         self._demo = None
@@ -37,11 +38,12 @@ class DemoPolicy(PolicyBase):
         if self._demo is None:
             from groundclamp_sim.demo import Demo
 
-            self._demo = Demo(self._station, control_hz=self._control_hz, control=self.control)
-        return ActionChunk(actions=[Action(self._demo.next_action())], control_hz=self._control_hz)
+            h, w = np.asarray(observation.images["top_cam"]).shape[:2]
+            self._demo = Demo(w, h, control_hz=self._control_hz, control=self.control)
+        return ActionChunk(actions=[Action(self._demo.next_action(observation))], control_hz=self._control_hz)
 
 
 @policy("clamp-demo")
 def clamp_demo(control: bool = False) -> DemoPolicy:
-    """``-P control=true``: hang the line clamp on bar B without tightening it, then force the check (must score below 1)."""
+    """``-P control=true``: hang the line clamp on the tagged bar without tightening it (must score below 1)."""
     return DemoPolicy(control=str(control).lower() in ("1", "true", "yes"))

@@ -1,4 +1,4 @@
-# Put a grounding set on a tested bus bar, ground end first
+# Ground a tested bus bar with a two-clamp grounding set, in the safe order
 
 A bench bus mock stands in front of the robot: a ground bar (GND) and three flat copper phase bars (A, B, C) on an
 insulating back board. A yellow TESTED tag lies behind bar B, the bar that has been tested dead. A protective
@@ -6,10 +6,14 @@ grounding set (two C-type grounding clamps with eye screws, joined by a yellow g
 parking plates. Each clamp's eye screw carries a short stick with a square handle; turning the stick tightens the
 clamp. Two simplifications matter most: the stick is a 12 cm handle, not a 1.2-1.8 m clamp stick (the arm's
 fingers-down reach ends about 22 cm above the table), and the tightening torque is far below real (about 0.6-0.9 N m
-through the gripper's pinch against 28 N m specified), so "tight" means a 120 N clamp force. See task.json `fidelity`. The robot must hang the ground clamp on GND and tighten it first, then hang the line clamp on bar B and tighten
-it, and let go. The sourced order rule is enforced: the line end may touch a phase bar only after the ground end is
-tight (OSHA 29 CFR 1910.269(n)(6)(i)), and only on the tested bar. Scoring checks the result physically: after the
-robot lets go, each clamp is tugged off its bar with 40 N and must hold.
+through the gripper's pinch against 28 N m specified), so "tight" means a 120 N clamp force. See task.json `fidelity`.
+
+The instruction gives only the goal and the constraints: ground bar B with the set, its right clamp (the ground end)
+on GND and its left clamp (the line end) on bar B, both tight, sticks let go, and keep both clamps off bars A and C.
+It does not say in which order, nor how a clamp is tightened. The safe order is what is tested: the line end may
+touch a phase bar only after the ground end is tight on GND (OSHA 29 CFR 1910.269(n)(6)(i)); touching one earlier
+scores 0. Scoring checks the result physically: after the robot lets go, each clamp is tugged off its bar with 40 N
+and must hold throughout the pull.
 
 The task is a [yam-isaac-lab-arena](https://github.com/kairosiann/yam-isaac-lab-arena) task file
 (`ground_clamp_order.py`) in Dream's `station` scene, with the `yam_arena` embodiment and the official `dream` policy.
@@ -33,12 +37,28 @@ Dream-1 (20 Hz, 320x176 frames, as in the walkthrough):
 ```bash
 inspect-robots run --embodiment yam_arena --policy dream -P record=false \
   -E task=tasks/ground-clamp-order/ground_clamp_order.py -E object_jitter=0 -E control_hz=20 -E cam_width=320 -E cam_height=176 \
-  --instruction "Ground bar B, the bar with the yellow TESTED tag. First take the ground clamp (on the right, by its black stick handle), hang it on the ground bar GND and turn its stick clockwise until the clamp is tight. Only then take the line clamp (on the left), hang it on bar B and tighten it the same way. Let go of both sticks at the end. Do not touch bars A or C." \
+  --instruction "Ground bar B for work, using the grounding set on the table (bar B is the bar with the yellow TESTED tag). The set's right clamp is its ground end and belongs on the ground bar GND; its left clamp is its line end and belongs on bar B. At the end both clamps must be tight on their bars and neither stick held. Keep both clamps off bars A and C." \
   --scorer task_score --max-steps 3600 --store-frames --log-dir ~/yam-eval/ground-clamp-dream
 ```
 
-The scripted demo is closed loop. Like a scripted demo with privileged state, it reads the clamps' poses and the clamp
-force from the simulator, and it sends the same 14-D joint action a policy does, through yam_arena's IK:
+The scripted demo (`--policy clamp-demo`) is closed loop and **uses only what any policy receives**: the three camera
+images (`top_cam`, `left_cam`, `right_cam`) and the 14-D `joint_pos` state (both arms' joint angles and gripper
+openings). It never reads the simulator (no prop poses, prop joint angles, screw turns, clamp forces or scorer
+state). Beside the observation it uses the documented setup (bar and plate positions, stick and clamp dimensions:
+task.json `setup`), the station's camera calibration and the YAM URDF (both from yam_arena), and time. Concretely:
+
+| What the demo needs | How it gets it |
+|---|---|
+| Where each stick is | One top-camera look with both open hands over where the layout puts the sticks: the red cap on each handle is the red blob nearest its layout position, back-projected through the calibrated camera onto the cap's known height. Corrects the pick-up point (clipped to 2 cm). |
+| Which bar is tested | The yellow TESTED card: yellow pixels inside the label ledge's image region (this excludes the yellow cable), back-projected onto the ledge; the nearest phase bar is the one the line clamp goes on. If no card is seen, the line clamp is not used. |
+| Bars and plates | Fixed to the bench: positions from the layout. |
+| Whether a grasp holds | The gripper's measured opening (it stops on the 26 mm handle at about 0.28 instead of closing). |
+| Where the held clamp is | Forward kinematics of the measured joint angles, plus the grasp: the handle across the fingers at the grasp point, along them at the camera's estimate, at the layout's height; the clamp hangs rigidly below it (stated dimensions). Hanging is closed loop on this estimate, which removes the arm's ~1 cm sag under the clamp. |
+| How far the screw has turned | The wrist's measured roll while the fingers hold the handle, summed over strokes (the setup states about 1.2 turns take up the slack). |
+| Whether the clamp is tight | Felt at the wrist: at the end of each stroke the wrist roll lags its command (the wrist joint is a PD drive, so a resisting torque shows as a steady lag). Tight = more than 1.40 counted turns and a lag at least 1.5 deg above the first, unloaded stroke's. |
+| When to start the line end | When the right arm has judged the ground clamp tight by that rule (the demo's own plan). |
+
+It sends the same 14-D joint action a policy does, through yam_arena's IK:
 
 ```bash
 inspect-robots run --embodiment yam_arena --policy clamp-demo \
@@ -49,12 +69,15 @@ inspect-robots run --embodiment yam_arena --policy clamp-demo \
 `task_score` prints the trial's score: 1.0 on success, otherwise the partial credit given in task.json. To make
 videos, run `inspect-robots video <log>.json`, which writes one MP4 per camera.
 
-- **Episode end.** Once both clamps are tight on their bars and both grippers have stayed at least 5 cm from both
-  stick handles for 1 s, the tug check runs (2.5 s per clamp, 5 s of simulated time) inside that control step, off
-  camera, and the episode ends. The stored frames stop at the release. If the check never runs, the run ends at
-  `--max-steps`.
-- **Control run.** `--policy clamp-demo -P control=true` does everything except tightening the line clamp: it hangs
-  it on bar B, lets go and backs off, and the check is forced. It must score below 1.
+- **Episode end.** Once both clamps have stayed tight on their bars with both grippers at least 5 cm from both
+  stick handles continuously for 1 s, the tug check runs (2.5 s per clamp, 5 s of simulated time) inside that control step, off
+  camera, and the episode ends. Each clamp passes only if, on every step of its pull, it has moved less than 3 mm,
+  is still on its bar and both grippers are still clear (not judged once at the end). The stored frames stop at the release. If the check never
+  runs, the run ends at `--max-steps`.
+- **Control run.** `GROUNDCLAMP_CONTROL=1 inspect-robots run ... --policy clamp-demo -P control=true` does everything
+  except tightening the line clamp: it hangs it on bar B, lets go and backs off. The variable only makes the task start
+  its after-release check once that clamp has hung on bar B with both hands clear for 1 s, so the run ends early
+  instead of at `--max-steps`. It must score below 1.
 - **Seeds.** One fixed layout (`-E object_jitter=0`). Seeded jitter is not used.
 - **Runtime per trial.** See "Measured" below. Isaac Sim's first start on a new machine adds several minutes.
 
@@ -65,7 +88,7 @@ RTX-class GPU shared with several other simulators, Isaac Sim shader cache warm,
 
 | Run | Score | Steps | Wall time per trial |
 |---|---|---|---|
-| `clamp-demo` | `task_score: 1`. Arm B picked the ground clamp off its plate by the stick, carried it to GND, lined it up (closed loop on the clamp's position) and slid it on, let go, and tightened it in 5 regrasp strokes of 110 deg (1.47 turns, 331 N). Meanwhile arm A picked the line clamp and waited in front of bar B; once the ground clamp counted as tight it hung the line clamp on B and tightened it in 5 strokes (1.45 turns, about 300 N). Both hands backed off and the tug check held both clamps. No order or wrong-bar event. | 2,163 (108 s), then the 5 s check off camera | about 45 minutes |
+| `clamp-demo` | `task_score: 1`. Arm B picked the ground clamp off its plate by the stick, carried it to GND, lined it up (closed loop on the clamp's position) and slid it on, let go, and tightened it in 5 regrasp strokes of 110 deg (1.47 turns, 331 N). Meanwhile arm A picked the line clamp and waited in front of bar B; once the ground clamp counted as tight it hung the line clamp on B and tightened it in 5 strokes (1.45 turns, about 300 N). Both hands backed off and the tug check held both clamps. No order or wrong-bar event. | 2,490 (124 s), then the 5 s check off camera | about 45 minutes |
 | Control: `clamp-demo -P control=true` (line clamp hung on B, not tightened) | `task_score: 0.5`. The ground clamp was tight (331 N) and the line clamp hung on bar B; with the line clamp loose (7 N) the 0.75 level is never reached, so the forced tug check cannot raise the score | 1,591, then the forced check | about 32 minutes |
 | `dream` (`dreamlabs/dream-1-beta`, `-P record=false`) | `task_score: 0`. The arms moved out over the bench and back; neither clamp was picked up, and no bar was touched | 3,600 (step limit) | about 49 minutes |
 
@@ -80,7 +103,7 @@ The wall times are long because the GPU was shared; the demo's own cost is two a
 | `groundclamp_sim/station.py` | the run-time extension of yam_arena (props, per-step task events, off-camera check) |
 | `groundclamp_sim/task.py`, `scorer.py`, `spec.py` | the mechanism (screw coupling, thread friction, attach and touch tests, tug check) and milestones |
 | `groundclamp_sim/assets/*`, `groundclamp_sim/usd/` | the props, and the script that generates them (`python -m groundclamp_sim.usd.clamp_props`) |
-| `groundclamp_sim/demo.py`, `groundclamp_sim/policy.py` | the scripted demo and its Inspect Robots policy `clamp-demo` |
+| `groundclamp_sim/demo.py`, `groundclamp_sim/vision.py`, `groundclamp_sim/policy.py` | the scripted demo (observation only), its camera and kinematics helpers, and its Inspect Robots policy `clamp-demo` |
 | `assumptions.md` | what is inferred rather than measured |
 
 ## References

@@ -15,9 +15,10 @@ Mechanism (groundclamp_sim/usd/clamp_props.py):
 - Holding on the bar is friction between the serrated jaw, the pad and the copper bar under F (geometry +
   friction). A clamp hung on its pad but not tightened is held only by its weight.
 
-Function test (success check), once both clamps are attached with both grippers clear for TEST_WAIT_S: tug the
-line clamp toward the robot (-x, off the bar's edge) with TUG_N for TEST_PHASE_S, then the ground clamp. Passed if
-each moved less than HOLD_M and is still on its bar.
+Function test (success check), once both clamps have stayed attached with both grippers clear on every step of
+TEST_WAIT_S (the count restarts if any of these lapses): tug the line clamp toward the robot (-x, off the bar's edge)
+with TUG_N for TEST_PHASE_S, then the ground clamp. Passed if, on every step of its tug, each clamp had moved less
+than HOLD_M, was still on its bar and both grippers were still clear (not only at the tug's end).
 """
 
 from __future__ import annotations
@@ -151,6 +152,8 @@ class _TaskState:
         zb = lambda: torch.zeros(n, dtype=torch.bool, device=dev)  # noqa: E731
         self.force_test, self.test_passed = zb(), zb()
         self.held = torch.zeros(n, 2, dtype=torch.bool, device=dev)
+        self.tug_ok = torch.zeros(n, 2, dtype=torch.bool, device=dev)
+        """Per clamp: held (moved < HOLD_M, still on its bar, both hands clear) on every step of its tug so far."""
         zl = lambda: torch.zeros(n, dtype=torch.long, device=dev)  # noqa: E731
         self.ready_steps, self.phase, self.phase_steps = zl(), zl(), zl()
         self.tug_start = torch.zeros(n, 3, device=dev)
@@ -232,7 +235,7 @@ class ClampTask(TaskBase):
         dev, n = env.device, len(env_ids)
         st.scorer.reset(env_ids)
         st.scorer.set_tagged(env_ids, layout.tagged)
-        for buf in (st.force_test, st.test_passed, st.held):
+        for buf in (st.force_test, st.test_passed, st.held, st.tug_ok):
             buf[env_ids] = False
         for buf in (st.ready_steps, st.phase, st.phase_steps):
             buf[env_ids] = 0
@@ -338,8 +341,14 @@ class ClampTask(TaskBase):
             if not active.any():
                 continue
             moved = (fp[:, c] - st.tug_start).norm(dim=-1)
+            # Held must be true on every step of the tug (not only at its end): moved < HOLD_M, still on its bar, and
+            # both hands still clear of both handles.
+            ok_now = (moved < HOLD_M) & on_own[:, c] & clear
+            fresh = active & (st.phase_steps == 0)
+            st.tug_ok[:, c] = torch.where(fresh, ok_now, torch.where(active, st.tug_ok[:, c] & ok_now,
+                                                                     st.tug_ok[:, c]))
             done = active & ((st.phase_steps >= st.phase_len) | (moved > RUNAWAY_M))
-            st.held[:, c] = torch.where(done, (moved < HOLD_M) & on_own[:, c], st.held[:, c])
+            st.held[:, c] = torch.where(done, st.tug_ok[:, c], st.held[:, c])
             st.phase = torch.where(done, torch.full_like(st.phase, phase + 1), st.phase)
             st.phase_steps = torch.where(done, torch.zeros_like(st.phase_steps), st.phase_steps)
             if phase == 1:
