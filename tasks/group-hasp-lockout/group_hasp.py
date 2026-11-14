@@ -7,7 +7,8 @@ in front of the left arm. Put the purple padlock's shackle through a free hole o
 move or remove the yellow padlock.
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. LOCKOUT_CONTROL=1 forces the hold test at 3 s with no
-robot padlock (a control run: it must score 0).
+robot padlock (a control run: it must score 0). LOCKOUT_HAZARD_TEST=<case> runs a hazard check (README "Hazard
+checks"; empty in every scored run).
 """
 
 from __future__ import annotations
@@ -52,12 +53,14 @@ success = STATION.success
 
 
 def score(objects):
-    """Milestone / 100 (0.25 padlock lifted off its pedestal, 0.5 shackle at a free hole, 0.75 through both jaws,
-    1.0 shut there and holding by itself); 0 if, before the robot's shackle shut, the coworker's padlock left its
-    place in its hole, the hasp opened more than 8 degrees or the handle turned more than 10 degrees toward ON."""
-    report = STATION.report or {}
-    if any(report.get("semantic_events", {}).values()):
-        return 0.0
-    return report.get("milestone", 0) / 100.0
+    """The score computed by lockout_sim.scorer.GroupHaspScorer (report()["score"]): milestone / 100 (0.25 the purple
+    padlock moved 1 cm off its pedestal, 0.5 its short shackle leg's tip within 12 mm of a free tail hole, 0.75 the
+    leg through both jaws there, 1.0 shut there and the hold test passed), and 0 from the first step at which the
+    coworker's padlock moves more than 1 cm from where it hangs in its hole (watched until the purple shackle shuts),
+    or, before the hold test, the hasp's jaws open more than 8 degrees or the handle turns more than 10 degrees toward
+    ON, whatever milestones were reached before or after."""
+    return float((STATION.report or {}).get("score", 0.0))
+
+
 if STATION.demo is not None:
     demo = STATION.demo

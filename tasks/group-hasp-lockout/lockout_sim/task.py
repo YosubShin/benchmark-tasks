@@ -22,6 +22,7 @@ through. `force_function_test(env)` starts the same test without a lock (the con
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import MISSING
 from pathlib import Path
 
@@ -91,6 +92,11 @@ JAW_HELD_DEG = 10.0
 HANDLE_TEST_NM = 1.5
 """1.5 times the detent's peak torque, toward ON."""
 HANDLE_HELD_DEG = 25.0
+
+HAZARD_TEST = os.environ.get("LOCKOUT_HAZARD_TEST", "")
+"""Hazard checks only (empty in every scored run; README "Hazard checks"). ``cw_remove_start``: the coworker's lock is
+taken off the hasp (moved under the desk, as the hold test does) at 3 s, before any milestone; ``cw_remove_50`` /
+``cw_remove_75``: the same, the step the robot's progress first reaches 0.5 / 0.75. The demo then carries on unchanged."""
 
 LAYOUT_YAW_DEG = 30.0
 """The whole prop assembly (switch, hasp, both padlocks, pedestal) is turned this much counterclockwise (seen from
@@ -221,7 +227,8 @@ class _TaskState:
         zf = lambda: torch.zeros(n, device=dev)  # noqa: E731
         self.latched, self.latched_through, self.released, self.force_test = zb(), zb(), zb(), zb()
         self.jaw_held, self.handle_held, self.test_passed, self.hasp_removed = zb(), zb(), zb(), zb()
-        self.cw_ref_set = zb()
+        self.cw_ref_set, self.injected = zb(), zb()
+        self.last_key = None
         self.hole_used = torch.full((n,), -1, dtype=torch.long, device=dev)
         self.clear_steps, self.phase, self.phase_steps = zl(), zl(), zl()
         self.jaw_max, self.handle_max = zf(), zf()
@@ -313,12 +320,13 @@ class GroupHaspTask(TaskBase):
         origins = env.scene.env_origins
         st.scorer.reset(env_ids)
         for buf in (st.latched, st.latched_through, st.released, st.force_test, st.jaw_held, st.handle_held,
-                    st.test_passed, st.hasp_removed, st.cw_ref_set):
+                    st.test_passed, st.hasp_removed, st.cw_ref_set, st.injected):
             buf[env_ids] = False
         for buf in (st.clear_steps, st.phase, st.phase_steps):
             buf[env_ids] = 0
         st.jaw_max[env_ids] = 0.0
         st.handle_max[env_ids] = 0.0
+        st.last_key = None
         st.hole_used[env_ids] = -1
         cw_index = layout.coworker_hole[0] * 3 + layout.coworker_hole[1]
         st.free[env_ids] = True
@@ -481,6 +489,32 @@ class GroupHaspTask(TaskBase):
         dropped = body_pos[:, 2] < DROP_Z_M
         st.scorer.update(GroupHaspStep(moved, at_hole, through_any & before_test, st.test_passed.clone(), cw_moved,
                                        cw_touched, hasp_opened, handle_moved, dropped))
+        key = (int(st.scorer.progress[0]), int(st.scorer.milestone[0]), bool(st.scorer.hazard[0]), int(st.phase[0]))
+        if key != st.last_key:  # log env 0's scoring changes (progress, score, hazards, hold-test phase)
+            st.last_key = key
+            r = self._report(st, 0)
+            print(f"[grouphasp] step {int(st.scorer.step[0])}: progress {key[0] / 100:.2f}, score {r['score']:.2f}, "
+                  f"hazards {r['hazard_events']}, hold-test phase {key[3]}, jaw max {r['test_jaw_max_deg']} deg, "
+                  f"handle max {r['test_handle_max_deg']} deg, passed {r['function_test_passed']}", flush=True)
+        if HAZARD_TEST:
+            self._inject_hazard(st, origins)
+
+    @staticmethod
+    def _inject_hazard(st: _TaskState, origins: torch.Tensor) -> None:
+        """Hazard checks only (HAZARD_TEST). Runs after the scorer's update, so the change is scored next step."""
+        if HAZARD_TEST == "cw_remove_start":
+            due = st.scorer.step >= st.settle_steps + 20
+        elif HAZARD_TEST in ("cw_remove_50", "cw_remove_75"):
+            due = st.scorer.progress >= int(HAZARD_TEST[-2:])
+        else:
+            raise ValueError(f"unknown LOCKOUT_HAZARD_TEST {HAZARD_TEST!r}")
+        due = due & ~st.injected & (st.phase == 0)
+        if due.any():
+            ids = due.nonzero().flatten()
+            _write_pose(st.coworker, PARK_COWORKER, ids, origins)
+            st.injected[ids] = True
+            print(f"[grouphasp] hazard test {HAZARD_TEST}: coworker's lock removed at step "
+                  f"{int(st.scorer.step[0])} (progress {int(st.scorer.progress[0]) / 100:.2f})", flush=True)
 
 
 REVIEWER_EYE = (0.06, -0.20, 0.44)

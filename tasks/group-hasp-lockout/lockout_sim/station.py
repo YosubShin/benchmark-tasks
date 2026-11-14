@@ -46,7 +46,7 @@ grasp point 0.1347 m along -z is their TCP 0.134 m along +z), and finger joints 
 -0.04695 open; ours: 0 closed, +0.04695 open). Finger links are the same frames in both URDFs.
 
 Scoring: after each control step the harness reads ``task.episode_report(view)`` (every task of ours has it):
-``score()`` = milestone / 100, ``success()`` = report["success"]; ``--scorer task_score`` reports it.
+``score()`` = report["score"] (the task scorer's score), ``success()`` = report["success"]; ``--scorer task_score`` reports it.
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ class Station:
         return bool(self.report and self.report.get("success"))
 
     def score(self, objects) -> float:
-        return (self.report or {}).get("milestone", 0) / 100.0
+        return float((self.report or {}).get("score", 0.0))
 
     @property
     def demo(self):
