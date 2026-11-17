@@ -123,18 +123,21 @@ The wall times are long because the GPU was shared; the demo's own cost is two a
 
 ## Checking a real trial
 
-Everything is measured with simple tools. The tube is fixed and the cutter's knob carries a mark, so the overhead video
-is enough to count the feed and the revolutions.
+A real trial is scored from measurements on the tube after the run, not from the knob count. The simulator's
+knob-feed proxies (groove depth = feed; dented = feed more than 0.70 mm past the groove) are inferred and uncalibrated,
+so they are used only in simulation.
 
-| Condition | Simulator rule | Real check |
+| Condition | Real check (scores the trial) | Simulator proxy (uncertain) |
 |---|---|---|
-| Feed | knob turns since finger-snug x 1.81 mm | count the knob mark's clockwise turns on the video |
-| Groove depth | each wheel pass cuts the groove there to the feed | the feed at the last full revolution of the cutter; a dial depth gauge on the groove if in doubt |
-| Dented (score 0) | bite (feed past the groove under the wheel) over 0.70 mm at any time | on the video: the knob turned more than 3/8 turn since the cutter last went fully round; after the run: calipers across the tube beside the cut in three directions, max - min over 0.3 mm |
-| Spiral (cap 0.5) | the wheel's position along the tube over all cutting passes spreads over 1.0 mm | try square against the tube and the cut end: gap over 1 mm (feeler gauge) |
-| Off the mark (cap 0.5) | groove centre over 1.5 mm from the mark | ruler from the remaining edge of the pen line |
-| Cut through (0.75) | groove at least 1.02 mm (the wall) all round | the offcut lifts off by hand |
-| Let go (1.0) | both grippers 5 cm or more from the cutter's body and knob for 1 s without a break | from the video |
+| Dented (score 0) | calipers across the outside diameter within 5 mm of the cut, four directions 45 deg apart: max - min over 0.3 mm | feed more than 0.70 mm past the groove under the wheel at any time (threshold inferred; not calibrated on real tube) |
+| Groove depth (0.25 / 0.5) | blade micrometer across the groove bottom at eight points 45 deg apart; depth = (OD - groove-bottom diameter) / 2; the smallest of the eight counts | each wheel pass cuts the groove there to the knob feed (turns x 1.81 mm, inferred pitch) |
+| Cut through (0.75) | the offcut lifts off by hand | groove at least 1.02 mm (the wall) all round |
+| Out of square (cap 0.5) | try square against the tube and the cut end: gap over 1 mm (feeler gauge) | the wheel's position along the tube spreads over 1.0 mm |
+| Off the mark (cap 0.5) | ruler from the remaining edge of the pen line: over 1.5 mm | groove centre over 1.5 mm from the mark |
+| Let go (1.0) | both grippers 5 cm or more from the cutter's body and knob for 1 s without a break, from the video | same |
+
+The overhead video (the knob carries a mark) is still useful to explain a result, e.g. a dent after a large feed,
+but it does not set the score.
 
 ## Layout
 
