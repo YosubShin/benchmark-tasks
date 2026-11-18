@@ -2,10 +2,11 @@
 with a DIN rail across it. Three grey Eaton Bussmann CHM1DU modular fuse holders (F1, F2, F3 from the robot's left,
 red grip tabs on top, one blank module between neighbours) clip on the rail, each with a legend plate above it
 (tag, circuit and rating, the rating on a colour-coded field: F1 2 A pink, F2 6 A green, F3 10 A red). F2 holds a blown
-10 x 38 mm fuse marked with a black X. To the right of the holders two spare fuses lie on a dark-grey stand with
-rating labels in front of their cradles (10 A red nearer the middle, 6 A green further right); a blue parts tray
-sits on the table further right and nearer the robot. Open F2's carrier (it hinges at the bottom and swings forward
-and down), lift the blown fuse out and drop it in the tray, lay the 6 A spare into the open carrier, and push the
+10 x 38 mm fuse marked with a black X. To the right of the holders two opened Bussmann 10-pack fuse cartons stand on a
+dark-grey bench-top box, lids open toward the robot, each lid printed with its rating on a colour-coded field (KTK-10,
+10 A red, nearer the middle; KTK-6, 6 A green, further right); one fuse is left in each, in the middle slot behind a
+finger cut-out in the front wall. A blue parts tray sits on the table further right and nearer the robot. Open F2's carrier (it hinges at the bottom and swings forward
+and down), lift the blown fuse out and drop it in the tray, take the 6 A spare out of its carton and lay it into the open carrier, and push the
 carrier shut until it latches. Do not open F1 or F3.
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. FUSE_CONTROL=1 with ``--policy fuse-demo`` stops

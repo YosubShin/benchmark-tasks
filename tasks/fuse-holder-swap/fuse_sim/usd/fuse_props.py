@@ -20,7 +20,14 @@ published drawing (Bussmann Technical Data 720147 p.3, side view with the carrie
   Schurter ASO 10.3x38 drawing). 9 g (P, Weidmueller 10x38). The rating is printed on the
   tube ("BUSSMANN KTK-6"), black on the grey-white body, along the axis, as on the KTK-10 photo.
   Collision: three 16-gon prisms.
-- Spares stand, tray, back pan and the circuit legends: ours.
+- Spare cartons: one opened 10-pack carton per rating, as the fuses ship (Bussmann sells KTK fuses 10 to a carton,
+  P). The carton's size is not published, so it is inferred (I) from the fuse: two layers of five 10 x 38 mm fuses
+  side by side, 0.6 mm board, 56 x 42 x 23 mm outside, a finger cut-out in the front wall, a lid hinged at the far
+  top edge and standing open; one fuse left, in the middle slot of the bottom layer. The lid's inside carries the
+  maker, the catalogue number and the rating, the rating on a field of its colour code (lettering as thin shapes).
+  The cartons stand on a closed steel bench-top box (ours) that brings them to the old stand's height.
+- Tray, back pan and the circuit legends: ours. Legend lettering is geometry, not a texture (the renderer was seen
+  to show textured labels blank or with another scene's image).
 
 Holder frame: d = depth behind the carrier's front face (world +x), y across, z above the holder's bottom.
 Usage: python -m fuse_sim.usd.fuse_props [<out dir>]   (default: fuse_sim/assets)
@@ -97,15 +104,22 @@ UPPER_CONTACT_D = (AXIS_D + FUSE_R + GAP, AXIS_D + FUSE_R + 1.2 * MM)
 
 LATCH_DEG = 6.0
 OPEN_DETENT_DEG = 8.0
-SPARE_SUPPORT_X0 = 0.248
+CARTON_T = 0.6 * MM
+CARTON_W = 56.0 * MM
+"""Outside width (y): five fuses side by side (I)."""
+CARTON_H = 23.0 * MM
+"""Outside height: two layers (I)."""
+CARTON_NOTCH = 22.0 * MM
+"""Half-width of the finger cut-out in the front wall, down to the floor (I)."""
+LID_OPEN_DEG = 100.0
+"""The lid stands open, leaning 10 deg back past vertical; its inside faces the robot."""
+BENCH_BOX_X = (0.215, 0.285)
 LEGEND_W, LEGEND_H = 0.030, 0.025
 """Legend plate (ours): 30 x 25 mm, the rating's colour field on its lower half."""
 LEGEND_Z0 = H + 0.008
 """Height of the legend plate's lower edge above the holders' bottom."""
 LEGEND_TILT_DEG = 45.0
 """The plate leans back 45 deg from vertical (face up toward the robot) on its bracket."""
-CRADLE_LABEL = (0.022, 0.028)
-"""Cradle rating label on the stand's foot (x depth, y width)."""
 FUSE_FRICTION = 0.6
 
 COLORS = {
@@ -121,6 +135,12 @@ COLORS = {
     "fuse_cap": (0.78, 0.79, 0.81),
     "tray": (0.20, 0.35, 0.65),
     "dark": (0.15, 0.15, 0.16),
+    "carton": (0.40, 0.24, 0.10),
+    "ink": (0.03, 0.03, 0.03),
+    "paper": (0.95, 0.95, 0.91),
+    "white_ink": (0.98, 0.98, 0.98),
+    "bench_box": (0.16, 0.17, 0.19),
+    "buss_red": (0.75, 0.10, 0.12),
 }
 FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
@@ -140,6 +160,17 @@ def _mats(stage, root, names):
         material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
         out[name] = material
     return out
+
+
+def _plain_material(stage, root, name, rgb):
+    path = f"{root}/Looks/{name}"
+    material = UsdShade.Material.Define(stage, path)
+    shader = UsdShade.Shader.Define(stage, f"{path}/Shader")
+    shader.CreateIdAttr("UsdPreviewSurface")
+    shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(*rgb))
+    shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.6)
+    material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
+    return material
 
 
 def _tex(stage, root, name, file_rel):
@@ -174,6 +205,64 @@ def _quad(stage, path, corners, material):
     st.Set(Vt.Vec2fArray([Gf.Vec2f(0, 0), Gf.Vec2f(1, 0), Gf.Vec2f(1, 1), Gf.Vec2f(0, 1)]))
     UsdShade.MaterialBindingAPI.Apply(mesh.GetPrim()).Bind(material)
     return mesh
+
+
+def _plain_quad(stage, path, corners, material):
+    """A flat visual quad without texture coordinates."""
+    mesh = UsdGeom.Mesh.Define(stage, path)
+    mesh.CreatePointsAttr([Gf.Vec3f(*c) for c in corners])
+    mesh.CreateFaceVertexCountsAttr([4])
+    mesh.CreateFaceVertexIndicesAttr([0, 1, 2, 3])
+    mesh.CreateDoubleSidedAttr(True)
+    UsdShade.MaterialBindingAPI.Apply(mesh.GetPrim()).Bind(material)
+    return mesh
+
+
+def _text_runs(text: str, bold: bool = True, px: int = 24) -> tuple[list, int, int]:
+    """The text as runs of set pixels: [(row, col0, col1)], image width, height (PIL, 1 bit)."""
+    font = _font(bold, px)
+    l, t, r, bt = font.getbbox(text)
+    w, h = r - l + 2, bt - t + 2
+    img = Image.new("1", (w, h), 0)
+    ImageDraw.Draw(img).text((1 - l, 1 - t), text, fill=1, font=font)
+    runs = []
+    for row in range(h):
+        col = 0
+        while col < w:
+            if img.getpixel((col, row)):
+                c0 = col
+                while col < w and img.getpixel((col, row)):
+                    col += 1
+                runs.append((row, c0, col))
+            else:
+                col += 1
+    return runs, w, h
+
+
+def plane_point(origin, u, v, a, b, lift=0.0):
+    """origin + a*u + b*v (+ lift along u x v)."""
+    n = (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
+    return tuple(origin[i] + a * u[i] + b * v[i] + lift * n[i] for i in range(3))
+
+
+def plane_rect(stage, path, origin, u, v, a, b, material, lift=0.0):
+    """A visual rectangle on the plane (origin, u right, v up), spanning a = (a0, a1), b = (b0, b1)."""
+    c = [plane_point(origin, u, v, a[0], b[0], lift), plane_point(origin, u, v, a[1], b[0], lift),
+         plane_point(origin, u, v, a[1], b[1], lift), plane_point(origin, u, v, a[0], b[1], lift)]
+    return _plain_quad(stage, path, c, material)
+
+
+def plane_text(stage, path, text, origin, u, v, centre, height, max_width, material, bold=True, lift=0.0003):
+    """Lettering as thin visual quads on the plane (origin, u right, v up), centred at ``centre`` = (a, b),
+    ``height`` tall (narrowed to ``max_width``). Geometry, so it cannot be dropped or swapped by the renderer."""
+    runs, w, h = _text_runs(text, bold)
+    pix = min(height / h, max_width / w)
+    UsdGeom.Xform.Define(stage, path)
+    for i, (row, c0, c1) in enumerate(runs):
+        a0 = centre[0] + (c0 - w / 2) * pix
+        a1 = centre[0] + (c1 - w / 2) * pix
+        b1 = centre[1] + (h / 2 - row) * pix
+        plane_rect(stage, f"{path}/r{i}", origin, u, v, (a0, a1), (b1 - pix, b1), material, lift)
 
 
 def _span(stage, path, xs, ys, zs, material, collide=True):
@@ -229,7 +318,7 @@ def joint_names():
 
 
 def spare_pose(k: int) -> tuple:
-    """A spare lying on the stand, axis along +x (local z -> world +x), centred between its ends."""
+    """A spare lying in its carton, axis along +x (local z -> world +x), centred between its ends."""
     x = 0.5 * (SPARE_X[0] + SPARE_X[1])
     s = math.sqrt(0.5)
     return (x, SPARE_Y[k], SPARE_AXIS_Z, 0.0, s, 0.0, s)
@@ -325,17 +414,24 @@ def make_holders(out_path: Path) -> None:
         kit.revolute(stage, f"{root}/joints/{name}_joint", base.GetPath(), body.GetPath(), "Y", pivot, -OPEN_DEG, 0.0)
     # Circuit legends: a plate per holder on a bracket off the pan above it, tilted LEGEND_TILT_DEG up toward the
     # robot (a vertical plate is seen almost edge-on from the overhead camera).
+    lm = _mats(stage, root, ("paper", "ink", "white_ink"))
     for s_, (tag, circuit, amps) in enumerate(CIRCUITS):
-        tm = _tex(stage, root, f"legend{s_}", f"./textures/legend_{tag}.png")
+        _, rgb = RATING_COLOURS[amps]
+        field = _plain_material(stage, root, f"legend_field{s_}", rgb)
         y0 = SLOT_Y[s_]
         x_back = FRONT_X + pan_d[0]
         zb = BASE_Z + LEGEND_Z0
         t = math.radians(LEGEND_TILT_DEG)
-        bot = (x_back - LEGEND_H * math.sin(t), zb)          # lower front edge
-        top = (x_back - 0.0005, zb + LEGEND_H * math.cos(t))  # upper back edge, at the pan
+        origin = (x_back - LEGEND_H * math.sin(t), y0, zb)  # middle of the lower front edge
+        u = (0.0, -1.0, 0.0)  # the text's right, seen from the robot
+        v = (math.sin(t), 0.0, math.cos(t))  # up the plate
         w = LEGEND_W / 2
-        _quad(stage, f"{b}/legend{s_}", [(bot[0], y0 + w, bot[1]), (bot[0], y0 - w, bot[1]),
-                                         (top[0], y0 - w, top[1]), (top[0], y0 + w, top[1])], tm)
+        plane_rect(stage, f"{b}/legend{s_}", origin, u, v, (-w, w), (0.0, LEGEND_H), lm["paper"])
+        plane_rect(stage, f"{b}/legend{s_}_field", origin, u, v, (-w, w), (0.0, LEGEND_H / 2), field, lift=0.0002)
+        plane_text(stage, f"{b}/legend{s_}_tag", tag, origin, u, v, (0.0, 0.0205), 0.0055, 0.024, lm["ink"])
+        plane_text(stage, f"{b}/legend{s_}_circuit", circuit, origin, u, v, (0.0, 0.0150), 0.0026, 0.026, lm["ink"])
+        plane_text(stage, f"{b}/legend{s_}_rating", f"{amps} A", origin, u, v, (0.0, 0.0062), 0.0072, 0.024,
+                   lm["white_ink"], lift=0.0005)
         # Its bracket to the pan (visual).
         hb(f"legend_bracket{s_}", s_, (pan_d[0] - 0.012, pan_d[0]), (-0.003, 0.003), (LEGEND_Z0, LEGEND_Z0 + 0.004),
            m["dark"], collide=False)
@@ -352,25 +448,6 @@ def _font(bold, size):
 
 def _textures(tex: Path) -> None:
     tex.mkdir(parents=True, exist_ok=True)
-    # Legends: white engraved-style plate, tag and circuit in black, the rating on a field of its colour code.
-    for tag, circuit, amps in CIRCUITS:
-        _, rgb = RATING_COLOURS[amps]
-        col = tuple(int(255 * c) for c in rgb)
-        img = Image.new("RGB", (300, 250), (250, 250, 244))
-        d = ImageDraw.Draw(img)
-        d.text((150, 42), tag, fill=(0, 0, 0), font=_font(True, 64), anchor="mm")
-        d.text((150, 98), circuit, fill=(0, 0, 0), font=_font(True, 30 if len(circuit) < 12 else 25), anchor="mm")
-        d.rectangle([0, 125, 300, 250], fill=col)
-        d.text((150, 188), f"{amps} A", fill=(255, 255, 255), font=_font(True, 84), anchor="mm")
-        d.rectangle([1, 1, 298, 248], outline=(20, 20, 20), width=3)
-        img.save(tex / f"legend_{tag}.png")
-    # Spare cradle labels: the rating on its colour.
-    for amps in SPARE_RATINGS:
-        _, rgb = RATING_COLOURS[amps]
-        img = Image.new("RGB", (300, 200), tuple(int(255 * c) for c in rgb))
-        d = ImageDraw.Draw(img)
-        d.text((150, 100), f"{amps} A", fill=(255, 255, 255), font=_font(True, 120), anchor="mm")
-        img.save(tex / f"cradle_{amps}.png")
     img = Image.new("RGB", (240, 120), (190, 25, 30))
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, 240, 40], fill=(225, 225, 225))
@@ -449,29 +526,69 @@ def make_fuse(out_path: Path, amps: int, blown: bool = False) -> None:
 
 
 # Spares stand and tray --------------------------------------------------------------------------------------------------
+def carton_frame(k: int) -> dict:
+    """Carton k's outside extents (desk frame) and its lid's plane: the lid's hinge (far top edge), u (the text's right,
+    seen from the robot) and v (up the open lid, from the hinge toward its free edge, which is the text's up)."""
+    y = SPARE_Y[k]
+    floor_top = SPARE_AXIS_Z - FUSE_R
+    x0 = SPARE_X[0] - 0.5 * MM - CARTON_T
+    x1 = SPARE_X[1] + 0.5 * MM + CARTON_T
+    z0, z1 = floor_top - CARTON_T, floor_top - CARTON_T + CARTON_H
+    a = math.radians(LID_OPEN_DEG)
+    v = (-math.cos(a), 0.0, math.sin(a))  # from the hinge toward the lid's free edge
+    return {"x": (x0, x1), "y": (y - CARTON_W / 2, y + CARTON_W / 2), "z": (z0, z1), "floor_top": floor_top,
+            "hinge": (x1, y, z1), "u": (0.0, -1.0, 0.0), "v": v, "lid_len": x1 - x0}
+
+
+def carton_label_point(k: int) -> tuple[float, float, float]:
+    """Middle of the rating's colour field on carton k's open lid (desk frame)."""
+    f = carton_frame(k)
+    return plane_point(f["hinge"], f["u"], f["v"], 0.0, 0.40 * f["lid_len"])
+
+
 def make_stands(out_path: Path) -> None:
     root = "/stands"
     stage, _ = kit.new_stage(out_path, root)
-    m = _mats(stage, root, ("stand", "tray", "dark"))
-    bottom = SPARE_AXIS_Z - FUSE_R - 0.3 * MM
-    x0, x1 = SPARE_SUPPORT_X0, SPARE_X[1] + 0.5 * MM
-    for k, y in enumerate(SPARE_Y):
-        _span(stage, f"{root}/post{k}", (x0, x1 + 3 * MM), (y - 7 * MM, y + 7 * MM), (0.0, bottom), m["stand"])
-        for j, sv in enumerate((-1, 1)):
-            _span(stage, f"{root}/lip{k}{j}", (x0, x1), tuple(sorted((y + sv * (FUSE_R + 0.6 * MM), y + sv * 7 * MM))),
-                  (bottom, SPARE_AXIS_Z), m["stand"])
-        _span(stage, f"{root}/end{k}", (x1, x1 + 3 * MM), (y - 7 * MM, y + 7 * MM), (bottom, SPARE_AXIS_Z + 2 * MM),
-              m["stand"])
-        # The cradle's rating label: a plate on the stand's foot in front of the post, facing up.
+    m = _mats(stage, root, ("stand", "tray", "dark", "carton", "ink", "white_ink", "paper", "bench_box", "buss_red"))
+    t = CARTON_T
+    fr = [carton_frame(k) for k in range(2)]
+    # The bench-top box the cartons stand on (closed steel parts box).
+    _span(stage, f"{root}/bench_box", BENCH_BOX_X, (fr[1]["y"][0] - 2 * MM, fr[0]["y"][1] + 2 * MM),
+          (0.0, fr[0]["z"][0]), m["bench_box"])
+    for k, f in enumerate(fr):
         amps = SPARE_RATINGS[k]
-        lx0, lx1 = x0 - CRADLE_LABEL[0] - 0.002, x0 - 0.002
-        _span(stage, f"{root}/label_foot{k}", (lx0, lx1), (y - CRADLE_LABEL[1] / 2, y + CRADLE_LABEL[1] / 2),
-              (0.0, 0.004), m["dark"])
-        tm = _tex(stage, root, f"cradle{k}", f"./textures/cradle_{amps}.png")
-        z = 0.0042
-        hw = CRADLE_LABEL[1] / 2 - 0.001
-        _quad(stage, f"{root}/label{k}", [(lx0 + 0.001, y + hw, z), (lx0 + 0.001, y - hw, z), (lx1 - 0.001, y - hw, z),
-                                          (lx1 - 0.001, y + hw, z)], tm)
+        (x0, x1), (y0, y1), (z0, z1) = f["x"], f["y"], f["z"]
+        y = SPARE_Y[k]
+        p = f"{root}/carton{k}"
+        _span(stage, f"{p}_floor", (x0, x1), (y0, y1), (z0, z0 + t), m["carton"])
+        _span(stage, f"{p}_back", (x1 - t, x1), (y0, y1), (z0, z1), m["carton"])
+        for j, (ya, yb) in enumerate(((y0, y0 + t), (y1 - t, y1))):
+            _span(stage, f"{p}_side{j}", (x0, x1), (ya, yb), (z0, z1), m["carton"])
+        # Front wall with the finger cut-out round the middle slot.
+        for j, (ya, yb) in enumerate(((y0, y - CARTON_NOTCH), (y + CARTON_NOTCH, y1))):
+            _span(stage, f"{p}_front{j}", (x0, x0 + t), (ya, yb), (z0, z1), m["carton"])
+        # Slot dividers of the bottom layer are not modelled (the other nine fuses are gone).
+        # The lid, standing open, its inside toward the robot (visual): maker, catalogue number, rating on its colour.
+        _, rgb = RATING_COLOURS[amps]
+        field = _plain_material(stage, root, f"carton_field{k}", rgb)
+        h, u, v, L = f["hinge"], f["u"], f["v"], f["lid_len"]
+        hw = CARTON_W / 2
+        plane_rect(stage, f"{p}_lid", h, u, v, (-hw, hw), (0.0, L), m["carton"])
+        plane_rect(stage, f"{p}_lid_print", h, u, v, (-hw + 2 * MM, hw - 2 * MM), (0.66 * L, L - 2 * MM), m["paper"],
+                   lift=0.0002)
+        plane_rect(stage, f"{p}_lid_field", h, u, v, (-hw + 2 * MM, hw - 2 * MM), (0.10 * L, 0.62 * L), field,
+                   lift=0.0002)
+        plane_text(stage, f"{p}_lid_maker", "BUSSMANN", h, u, v, (0.0, 0.90 * L), 0.0045, 0.040, m["buss_red"])
+        plane_text(stage, f"{p}_lid_cat", f"KTK-{amps}", h, u, v, (0.0, 0.76 * L), 0.0060, 0.040, m["ink"])
+        plane_text(stage, f"{p}_lid_rating", f"{amps} A", h, u, v, (0.0, 0.38 * L), 0.0110, 0.040, m["white_ink"],
+                   lift=0.0005)
+        plane_text(stage, f"{p}_lid_qty", "10 FUSES  600V", h, u, v, (0.0, 0.18 * L), 0.0022, 0.040, m["white_ink"],
+                   lift=0.0005)
+        # Its outside front: the rating band (visual).
+        _span(stage, f"{p}_band", (x0 - 0.2 * MM, x0), (y0, y - CARTON_NOTCH), (z0 + 6 * MM, z1 - 6 * MM), field,
+              collide=False)
+        _span(stage, f"{p}_band1", (x0 - 0.2 * MM, x0), (y + CARTON_NOTCH, y1), (z0 + 6 * MM, z1 - 6 * MM), field,
+              collide=False)
     tx, ty = TRAY_XY
     a, h = 0.09, 0.025
     _span(stage, f"{root}/tray_floor", (tx - a / 2, tx + a / 2), (ty - a / 2, ty + a / 2), (0.0, 0.003), m["tray"])

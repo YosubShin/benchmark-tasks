@@ -12,7 +12,7 @@ rating seated in the named carrier. The first hazard latches for the rest of the
 score is 0, whatever milestones were reached before or after it. ``progress`` keeps counting milestones only for
 diagnostics and to start the after-release check; it is never scored once a hazard has occurred.
 
-Reported but not scored: a decoy grip tab touched; a fuse dropped outside the tray and the spare stand.
+Reported but not scored: a decoy grip tab touched; a fuse dropped below 6 cm outside the tray.
 """
 
 from __future__ import annotations
