@@ -1,5 +1,5 @@
 """Generate the props (USD) for the fuse-puller task: back pan with three midget fuse blocks and labels, the fuses,
-the tong puller, the puller's rest and the parts tray.
+the tong puller, the puller's holder and the parts tray.
 
 Real parts; (P) published, (S) measured on the vendor's STEP model, (I) inferred, (TM) to measure on a bought part.
 
@@ -17,17 +17,22 @@ Real parts; (P) published, (S) measured on the vendor's STEP model, (I) inferred
 - Fuse: 10 x 38 mm midget (Bussmann KTK class; P: 10.3 x 38.1 mm, nickel-plated ferrules); ferrules 10 mm long,
   tube 8.8 mm across (I, Schurter ASO drawing); 9 g (P, Weidmueller). Collision: three convex 24-gon prisms.
 - Puller: Ideal 34-015, 5 in (127 mm), one-piece high-impact yellow nylon, for 1/4-1/2 in fuses (P, distributors).
-  Arms joined at a loop at the jaw end, free handle ends (P, photo). Jaw shape, opening and flex are inferred (I).
-  Modelled as a hinge body (the loop) and two arms on revolute joints with a spring drive (the nylon flex); each
-  arm carries a curved jaw shell 13-27 mm from the loop that wraps the fuse body from 81 deg above to 35 deg below
-  its equator. Squeezing the handles 85 mm from the loop closes the jaws with about 4x leverage. The puller is held
-  parallel to the fuse (as in the reference video), its arms above the block's housing and the jaws hanging down
-  round the fuse body between the clips.
+  A one-piece tong: two flat arms joined by a flexible loop at the handle end, notched handles next to the loop, and
+  curved jaws at the free tips whose grooves run ACROSS the tool, so the tong is used perpendicular to the fuse: it
+  points into the block, the jaws close from either side of the fuse body between the clips (where the block's
+  walls are cut down for them) and the barrel lies across the jaws (I: jaw shape, opening and flex; Ideal publishes
+  no drawing). Modelled as a hinge body (the loop) and two arms on revolute joints with a spring drive (the nylon
+  flex); each arm carries a curved jaw shell at its tip that wraps the fuse body from 81 deg on the loop side to
+  81 deg past its equator on the tip side. Squeezing the handles 40 mm from the loop closes the jaws (about 0.35x
+  leverage: the jaws are 114 mm from the loop).
+- Holder: the puller stands upright, jaws down, in a grey holder block's pocket beside the pan (a stand-in for the
+  clip or holster a puller is kept in), so it is picked up by its handles already pointing the way it is used.
 
 Frames (desk frame: table top z = 0, arm bases at (0, +-0.305, 0)). The blocks lie with the fuse axes along +x.
 The fuse's own frame: origin at its centre, axis +z (it is placed turned 90 deg about y). The puller's frame:
-origin at the hinge (loop end), +x along the tong toward the handle ends, +z up (the jaws hang down along -z), the
-arms part along y; in the scene it is turned 180 deg about z (handles toward the robot).
+origin at the hinge (loop end), +x along the tong toward the jaw tips, the arms part along y, the flat arms' width
+along z (the jaw grooves run along z); in the scene it is turned 90 deg about y (PULLER_QUAT: tips down, its z along
+the fuses' axes).
 
 Usage: python -m fuse_puller_sim.usd.puller_props <out dir> [--clip-k N/m] [--clip-damping Ns/m] [--clip-mu MU]
 """
@@ -41,7 +46,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from pxr import Gf, Sdf, UsdGeom, UsdPhysics, UsdShade
 
-from fuse_puller_sim.spec import (BLOCK_X, CIRCUITS, LABEL_RGB, PAN_TOP, PULLER_REST_Y, SLOT_Y, TRAY_IN, TRAY_XY)
+from fuse_puller_sim.spec import (BLOCK_X, CIRCUITS, LABEL_RGB, PAN_TOP, PULLER_HOLDER_XY, SLOT_Y, TRAY_IN, TRAY_XY)
 from fuse_puller_sim.usd import usd_kit as kit
 
 # Fuse block (BM6031B / BMM603 STEP) -----------------------------------------------------------------------------
@@ -75,53 +80,58 @@ FUSE_MASS = 0.009
 FUSE_SIDES = 24
 
 # Puller (Ideal 34-015 class), puller frame ----------------------------------------------------------------------
-ARM_Z = (0.0115, 0.0235)
-"""Arms' bottom and top above the fuse axis when the jaws hold a fuse (they clear the housing's 6 mm above the axis):
-12 mm strips, as the 34-015's flat handles (I)."""
+ARM_HW = 0.0060
+"""Half the flat arms' width (12 mm strips, as the 34-015's flat handles, I); along the fuse when in use."""
 ARM_Y = (0.0050, 0.0080)
 """Inner and outer face of an arm (|y|), closed on a fuse."""
 TOP_X = 0.121
-"""Free handle ends from the hinge: 127 mm overall (P) with the loop's 6 mm beyond the hinge."""
+"""Jaw tips from the hinge: 127 mm overall (P) with the loop's 6 mm beyond the hinge."""
 LOOP_X0 = -0.006
-JAW_X = 0.020
-"""Jaw centre from the hinge (I). The arms open like a V from the loop, so the jaw's end nearest the loop opens least:
-at 14 mm it opened 0.6 mm and its lower lip could not pass over the fuse body."""
+JAW_X = 0.114
+"""Jaw (groove) centre from the hinge (I), 7 mm short of the tips."""
 JAW_HALF = 0.0070
-"""Jaw length along the fuse: 14 mm (I; the body between the ferrules is 18.1 mm, between the clips 18.2 mm; a 16 mm
-jaw caught the clip fingers' tops when placed 1 mm off)."""
+"""Jaw width along the fuse: 14 mm (I; the body between the ferrules is 18.1 mm, between the clips 18.2 mm)."""
 JAW_R = TUBE_R + 0.0001
 JAW_T = 0.0012
-JAW_ANGLES = (-70.0, -50.0, -30.0, -10.0, 8.0, 24.0)
-"""Jaw facets, degrees below the horizontal through the fuse axis (negative: above the equator). Each covers
-+-JAW_SEG_HALF_DEG, so the shell wraps the body from 81 deg above to 35 deg below its equator (a hood over the top: turning the
-fuse in the jaws then meets the shell, not only friction)."""
+JAW_ANGLES = (-70.0, -50.0, -30.0, -10.0, 10.0, 30.0, 50.0, 70.0)
+"""Jaw facets, degrees past the plane through the fuse axis square to the tong (negative: toward the loop). Each
+covers +-JAW_SEG_HALF_DEG, so a shell wraps the body from 81 deg on the loop side to 81 deg past the equator on the
+tip side: closed, the two shells nearly enclose the body, and hood and lips lie across the tong, so the fuse pressing
+on them when the tong is tipped (a couple along the 14 mm jaw) does not wedge the jaws open. With 50 deg lips the
+jaws spread under the clamp and turned on the fuse (I)."""
 JAW_SEG_HALF_DEG = 11.0
 PIN_Y = 0.5 * (ARM_Y[0] + ARM_Y[1])
-OPEN_DEG = 8.0
-"""Free (spring) opening of each arm about its pin at the loop: the jaws part 2.8 mm each side, the handle ends 17 mm (I)."""
+OPEN_DEG = 4.0
+"""Free (spring) opening of each arm about its pin at the loop: the jaws part 8 mm each side (the lips need 3.3 mm
+to pass the body), the handles 5.6 mm at the grasp (I)."""
 ARM_MASS, HINGE_MASS = 0.012, 0.010
-"""34 g (the real puller is about 20 g): light enough that a pinch which leaves the jaws open carries it level by the
-handle ends (at 90 g it swung 25 deg in the fingers)."""
-GRASP_X = 0.085
-"""Where the demo grips the handles (from the hinge): the 50 N squeeze there clamps the jaws with about 140 N, and a
-light pinch there carries the 34 g puller level (by the handle ends, 108 mm, it tipped in the fingers)."""
+"""34 g (the real puller is about 20 g; lighter articulations broke under the 50 N pinch in an earlier build)."""
+GRASP_X = 0.040
+"""Where the demo grips the handles (from the hinge), 74 mm from the jaws: the 50 N squeeze there clamps the jaws
+with about 13 N each (the closed shells hold the fuse by shape; the clamp only keeps them shut)."""
 PULLER_FRICTION = 0.6
 """Moulded nylon of the loop and jaws (the jaws' grip on the fuse body is set by the tube's material, TUBE_MU)."""
-NOTCH_FROM = 0.050
-"""The handles are notched ("notched handle", P: distributor listing) from here to their ends; the arms between the
-loop and here are smooth moulded nylon."""
+NOTCH_FROM, NOTCH_TO = 0.012, 0.062
+"""The handles are notched ("notched handle", P: distributor listing) over this stretch next to the loop; the arms
+from there to the jaws are smooth moulded nylon."""
 NOTCHED_FRICTION, SMOOTH_FRICTION = 0.8, 0.25
 """Friction of the gripper's fingers on the notched handles (combined as the larger) and on the smooth part of the
-arms near the jaws (combined as the smaller) (I). Gripped over the jaws, the 50 N squeeze holds the puller against
-about 25 N of pull, well under the 70 N a straight pull on the fuse needs."""
-REST_HINGE_X = BLOCK_X + JAW_X
-"""World x of the puller's hinge on its rest (as when its jaws hold a fuse in the middle block)."""
+arms next to the jaws (combined as the smaller) (I). Gripped there, the 50 N squeeze holds the puller against about
+25 N of pull, well under the 70 N a straight pull on the fuse needs."""
 
-# Pan, rest, tray ---------------------------------------------------------------------------------------------------
+# Holder ------------------------------------------------------------------------------------------------------------
+HOLDER_XY = PULLER_HOLDER_XY
+"""Desk-frame centre of the puller's holder block (right of the pan)."""
+HOLDER_FLOOR = 0.040
+HOLDER_TOP = 0.060
+"""The pocket's floor and rim above the table: the puller stands on its jaw tips in a 20 mm deep pocket."""
+HOLDER_POCKET = (0.0080, 0.0175)
+"""Half the pocket's inside length (x, across the arms' width) and width (y, the arms' parting direction)."""
+HOLDER_OUT = (0.020, 0.028)
+
+# Pan, tray ---------------------------------------------------------------------------------------------------
 PAN_X = (0.215, 0.405)
 PAN_Y = (-0.075, 0.075)
-REST_TOP = AXIS_Z + ARM_Z[0]
-"""The rest's two pads hold the puller's arms at the height they have on a fuse."""
 LABEL = (0.034, 0.020)
 """Circuit label, along x and y (m)."""
 LABEL_X = BLOCK_X - BLOCK_L / 2 - 0.004 - LABEL[0] / 2
@@ -138,6 +148,8 @@ COLORS = {
     "board": (0.55, 0.42, 0.28),
     "stand": (0.40, 0.40, 0.42),
     "tray": (0.15, 0.30, 0.70),
+    "ink_dark": (0.05, 0.05, 0.05),
+    "ink_light": (0.97, 0.97, 0.97),
 }
 FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
@@ -248,8 +260,8 @@ def fuse_seat(slot: int) -> tuple[float, float, float]:
 
 FUSE_QUAT = (0.0, math.sqrt(0.5), 0.0, math.sqrt(0.5))
 """A seated fuse's orientation: its axis (+z) along +x."""
-PULLER_QUAT = (0.0, 0.0, 1.0, 0.0)
-"""The puller turned 180 deg about z: its +x (toward the handles) along -x, toward the robot."""
+PULLER_QUAT = (0.0, math.sqrt(0.5), 0.0, math.sqrt(0.5))
+"""The puller turned 90 deg about y: its +x (toward the jaw tips) pointing down, its z (the jaw grooves) along +x."""
 
 
 def clip_centre(slot: int, end: int) -> tuple[float, float, float]:
@@ -258,13 +270,13 @@ def clip_centre(slot: int, end: int) -> tuple[float, float, float]:
 
 
 def puller_rest_pose() -> tuple:
-    """The puller on its rest: hinge at REST_HINGE_X, arms on the rest's pads."""
-    return (REST_HINGE_X, PULLER_REST_Y, AXIS_Z) + PULLER_QUAT
+    """The puller standing in its holder: jaw tips on the pocket floor, hinge straight above."""
+    return (HOLDER_XY[0], HOLDER_XY[1], HOLDER_FLOOR + TOP_X + 0.0005) + PULLER_QUAT
 
 
 def puller_on_fuse_pose(slot: int) -> tuple:
-    """The puller with its jaws on the middle of fuse ``slot`` (closed)."""
-    return (BLOCK_X + JAW_X, SLOT_Y[slot], AXIS_Z) + PULLER_QUAT
+    """The puller pointing straight down at fuse ``slot``, its jaws (closed) round the middle of the fuse body."""
+    return (BLOCK_X, SLOT_Y[slot], AXIS_Z + JAW_X) + PULLER_QUAT
 
 
 # Back pan, blocks and labels ------------------------------------------------------------------------------------------
@@ -318,15 +330,70 @@ def make_blocks(out_path: Path, clip_k, clip_damping, clip_mu) -> None:
         for prim_path in [f"{p}_floor", f"{p}_notch0", f"{p}_notch1", f"{p}_seat0", f"{p}_seat1"] + \
                 [f"{p}_wall{k}{e}" for k in range(2) for e in range(2)]:
             _bind_physics(stage, prim_path, housing)
-    # Circuit labels on the pan in front of each block (colour-coded, tag and circuit printed).
-    tex_dir = out_path.parent / "textures"
+    # Circuit labels on the pan in front of each block: a colour-coded plate with the tag and circuit printed on it
+    # (letters as thin boxes: geometry, not a texture, which the renderer was seen to load late or not at all).
+    ink = {"white": "ink_dark", "orange": "ink_dark", "green": "ink_light"}
+    lm = _mats(stage, root, ("ink_dark", "ink_light"))
     for s, (tag, circuit, colour) in enumerate(CIRCUITS):
-        tm = _tex_material(stage, root, f"fprock14r_circuit_tag_{tag}", f"./textures/fprock14r_circuit_tag_{tag}.png")
-        _flat_quad(stage, f"{b}/label{s}", LABEL_X, SLOT_Y[s], PAN_TOP + 0.0004, LABEL[0], LABEL[1], tm)
+        pm = _plain_material(stage, root, f"label_{tag}", LABEL_RGB[colour])
+        z0 = PAN_TOP
+        _span(stage, f"{b}/label{s}", (LABEL_X - LABEL[0] / 2, LABEL_X + LABEL[0] / 2),
+              (SLOT_Y[s] - LABEL[1] / 2, SLOT_Y[s] + LABEL[1] / 2), (z0, z0 + 0.0004), pm, collide=False)
+        words = circuit.split()
+        lines = ((tag, 0.0075, 0.0070), (words[0], 0.0024, -0.0040), (" ".join(words[1:]), 0.0024, -0.0090))
+        for i, (text, height, dx) in enumerate(lines):
+            _flat_text(stage, f"{b}/label{s}_text{i}", text, (LABEL_X + dx, SLOT_Y[s], z0 + 0.0004), height,
+                       min(LABEL[1] - 0.003, 1.0), lm[ink[colour]])
     _contacts(stage)
     stage.GetRootLayer().Save()
-    _labels(tex_dir)
     print(f"wrote {out_path} (clip k {ks} N/m, damping {clip_damping}, mu {clip_mu})")
+
+
+def _plain_material(stage, root, name, rgb):
+    path = f"{root}/Looks/{name}"
+    material = UsdShade.Material.Define(stage, path)
+    shader = UsdShade.Shader.Define(stage, f"{path}/Shader")
+    shader.CreateIdAttr("UsdPreviewSurface")
+    shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(*rgb))
+    shader.CreateInput("roughness", Sdf.ValueTypeNames.Float).Set(0.7)
+    material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
+    return material
+
+
+def _text_runs(text: str, px: int = 24) -> tuple[list, int, int]:
+    """The text as runs of dark pixels: [(row, col0, col1)], image width, height (rendered with PIL, 1 bit)."""
+    font = ImageFont.truetype(FONT_B, px)
+    l, t, r, bt = font.getbbox(text)
+    w, h = r - l + 2, bt - t + 2
+    img = Image.new("1", (w, h), 0)
+    ImageDraw.Draw(img).text((1 - l, 1 - t), text, fill=1, font=font)
+    runs = []
+    for row in range(h):
+        col = 0
+        while col < w:
+            if img.getpixel((col, row)):
+                c0 = col
+                while col < w and img.getpixel((col, row)):
+                    col += 1
+                runs.append((row, c0, col))
+            else:
+                col += 1
+    return runs, w, h
+
+
+def _flat_text(stage, path, text, center, height, max_width, material):
+    """Letters as thin visual boxes lying flat at ``center``, readable from the robot's side (the text's top toward
+    +x, its left toward +y), ``height`` tall (narrowed to ``max_width``)."""
+    runs, w, h = _text_runs(text)
+    pix = min(height / h, max_width / w)
+    x, yc, z = center
+    UsdGeom.Xform.Define(stage, path)
+    for i, (row, c0, c1) in enumerate(runs):
+        y0 = yc + (w / 2 - c0) * pix
+        y1 = yc + (w / 2 - c1) * pix
+        xr = x + (h / 2 - row - 0.5) * pix
+        _span(stage, f"{path}/r{i}", (xr - pix / 2, xr + pix / 2), (y1, y0), (z, z + 0.0002), material,
+              collide=False)
 
 
 def _tex_material(stage, root, name, file_rel):
@@ -404,6 +471,19 @@ def make_fuse(out_path: Path, clip_mu) -> None:
 
 
 # Puller -------------------------------------------------------------------------------------------------------------
+def _zbox(stage, path, center, size, material, rot_z_deg=0.0, collide=True):
+    cube = UsdGeom.Cube.Define(stage, path)
+    cube.CreateSizeAttr(1.0)
+    xf = UsdGeom.Xformable(cube)
+    xf.AddTranslateOp().Set(Gf.Vec3d(*center))
+    xf.AddRotateZOp().Set(rot_z_deg)
+    xf.AddScaleOp().Set(Gf.Vec3f(*size))
+    UsdShade.MaterialBindingAPI.Apply(cube.GetPrim()).Bind(material)
+    if collide:
+        UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
+    return cube
+
+
 def make_puller(out_path: Path) -> None:
     root = "/puller"
     stage, root_prim = kit.new_stage(out_path, root)
@@ -412,33 +492,36 @@ def make_puller(out_path: Path) -> None:
     root_prim.CreateAttribute("physxArticulation:solverVelocityIterationCount", Sdf.ValueTypeNames.Int).Set(4)
     m = _mats(stage, root, ("nylon",))
     hinge = kit.rigid_body(stage, f"{root}/hinge", (0, 0, 0), HINGE_MASS)
-    _span(stage, f"{root}/hinge/loop", (LOOP_X0, 0.002), (-ARM_Y[1], ARM_Y[1]), ARM_Z, m["nylon"])
+    zs = (-ARM_HW, ARM_HW)
+    _span(stage, f"{root}/hinge/loop", (LOOP_X0, 0.002), (-ARM_Y[1], ARM_Y[1]), zs, m["nylon"])
     rc = JAW_R + JAW_T / 2
+    seg = 2 * rc * math.tan(math.radians(JAW_SEG_HALF_DEG))
     for k, name in enumerate(("arm_a", "arm_b")):
         sy = 1 if k == 0 else -1
         body = kit.rigid_body(stage, f"{root}/{name}", (0, 0, 0), ARM_MASS)
         _rigid_settings(body.GetPrim(), iterations=32)
         p = f"{root}/{name}"
-        # The arm: smooth moulded nylon from the loop to NOTCH_FROM, then the notched handle.
-        _span(stage, f"{p}/arm", (0.0025, NOTCH_FROM), (sy * ARM_Y[0], sy * ARM_Y[1]), ARM_Z, m["nylon"])
-        _span(stage, f"{p}/handle", (NOTCH_FROM, TOP_X), (sy * ARM_Y[0], sy * ARM_Y[1]), ARM_Z, m["nylon"])
-        # Finger guard ("wing") behind the jaws (visual).
-        _span(stage, f"{p}/wing", (0.040, 0.046), (sy * ARM_Y[0], sy * (ARM_Y[1] + 0.004)),
-              (ARM_Z[0], ARM_Z[1] + 0.005), m["nylon"], collide=False)
-        # Jaw: a web down from the arm to the curved shell.
-        a0 = math.radians(JAW_ANGLES[0])
-        web_y = (sy * (rc * math.cos(a0) + JAW_T / 2), sy * ARM_Y[1])
-        _span(stage, f"{p}/web", (JAW_X - JAW_HALF, JAW_X + JAW_HALF), web_y, (-rc * math.sin(a0), ARM_Z[0] + 0.001),
-              m["nylon"])
+        # The arm: a short smooth neck at the loop, the notched handle, then smooth moulded nylon to the jaw.
+        _span(stage, f"{p}/neck", (0.0025, NOTCH_FROM), (sy * ARM_Y[0], sy * ARM_Y[1]), zs, m["nylon"])
+        _span(stage, f"{p}/handle", (NOTCH_FROM, NOTCH_TO), (sy * ARM_Y[0], sy * ARM_Y[1]), zs, m["nylon"])
+        _span(stage, f"{p}/arm", (NOTCH_TO, TOP_X), (sy * ARM_Y[0], sy * ARM_Y[1]), zs, m["nylon"])
+        # Notch ribs on the handle (visual).
+        for i in range(8):
+            x0 = NOTCH_FROM + 0.004 + i * 0.008
+            _span(stage, f"{p}/rib{i}", (x0, x0 + 0.0025), (sy * ARM_Y[1], sy * (ARM_Y[1] + 0.0006)), zs,
+                  m["nylon"], collide=False)
+        # Jaw: a curved shell across the arm's tip (the groove runs along z, across the tong), joined to the arm
+        # by a web on the loop side (visual; the facets carry the load).
+        _span(stage, f"{p}/web", (JAW_X - rc - 0.004, JAW_X - rc), (sy * 0.0008, sy * ARM_Y[0]),
+              (-JAW_HALF, JAW_HALF), m["nylon"], collide=False)
         for i, a in enumerate(JAW_ANGLES):
             ar = math.radians(a)
-            c = (JAW_X, sy * rc * math.cos(ar), -rc * math.sin(ar))
-            seg = 2 * rc * math.tan(math.radians(JAW_SEG_HALF_DEG))
-            _rbox(stage, f"{p}/jaw{i}", c, (2 * JAW_HALF, JAW_T, seg), m["nylon"], rot_x_deg=-sy * a)
+            c = (JAW_X + rc * math.sin(ar), sy * rc * math.cos(ar), 0.0)
+            _zbox(stage, f"{p}/jaw{i}", c, (seg, JAW_T, 2 * JAW_HALF), m["nylon"], rot_z_deg=-sy * a)
         lo, hi = (-2.0, OPEN_DEG + 0.5) if k == 0 else (-OPEN_DEG - 0.5, 2.0)
-        # Each arm flexes about its own vertical line at the loop (two pivots, not one shared pin: a shared pin
+        # Each arm flexes about its own line (along z) at the loop (two pivots, not one shared pin: a shared pin
         # would leave the loop free to swing between the held arms).
-        pin = (0.0, sy * PIN_Y, 0.5 * (ARM_Z[0] + ARM_Z[1]))
+        pin = (0.0, sy * PIN_Y, 0.0)
         joint = kit.revolute(stage, f"{root}/joints/{name}_joint", hinge.GetPath(), body.GetPath(), "Z", pin, lo, hi)
         joint.CreateLocalPos1Attr(Gf.Vec3f(*pin))
     mat = _physics_material(stage, root, "nylon", PULLER_FRICTION, "average")
@@ -446,6 +529,7 @@ def make_puller(out_path: Path) -> None:
     smooth = _physics_material(stage, root, "smooth_nylon", SMOOTH_FRICTION, "min")
     notched = _physics_material(stage, root, "notched_handle", NOTCHED_FRICTION, "max")
     for name in ("arm_a", "arm_b"):
+        _bind_physics(stage, f"{root}/{name}/neck", smooth)
         _bind_physics(stage, f"{root}/{name}/arm", smooth)
         _bind_physics(stage, f"{root}/{name}/handle", notched)
     _contacts(stage)
@@ -458,19 +542,21 @@ def arm_open_sign(k: int) -> int:
     return 1 if k == 0 else -1
 
 
-# Stands: the puller's rest and the parts tray -------------------------------------------------------------------------
+# Stands: the puller's holder and the parts tray -------------------------------------------------------------------------
 def make_stands(out_path: Path) -> None:
     root = "/stands"
     stage, _ = kit.new_stage(out_path, root)
     m = _mats(stage, root, ("stand", "tray"))
-    y = PULLER_REST_Y
-    # Rest: two pads under the arms (puller frame x 32-45 mm and 97-112 mm from the hinge), on posts.
-    for i, (u0, u1) in enumerate(((0.032, 0.045), (0.097, 0.112))):
-        xs = (REST_HINGE_X - u1, REST_HINGE_X - u0)
-        _span(stage, f"{root}/rest_pad{i}", xs, (y - 0.022, y + 0.022), (REST_TOP - 0.004, REST_TOP), m["stand"])
-        _span(stage, f"{root}/rest_post{i}", xs, (y - 0.006, y + 0.006), (0.0, REST_TOP - 0.004), m["stand"])
-    _span(stage, f"{root}/rest_foot", (REST_HINGE_X - 0.115, REST_HINGE_X - 0.025), (y - 0.022, y + 0.022),
-          (0.0, 0.004), m["stand"])
+    # Holder: a block with a pocket the puller stands in on its jaw tips.
+    hx, hy = HOLDER_XY
+    ox, oy = HOLDER_OUT
+    px, py = HOLDER_POCKET
+    _span(stage, f"{root}/holder_base", (hx - ox, hx + ox), (hy - oy, hy + oy), (0.0, HOLDER_FLOOR), m["stand"])
+    for k, s in enumerate((-1, 1)):
+        _span(stage, f"{root}/holder_wx{k}", (hx + s * px, hx + s * ox), (hy - oy, hy + oy), (HOLDER_FLOOR, HOLDER_TOP),
+              m["stand"])
+        _span(stage, f"{root}/holder_wy{k}", (hx - px, hx + px), (hy + s * py, hy + s * oy), (HOLDER_FLOOR, HOLDER_TOP),
+              m["stand"])
     tx, ty = TRAY_XY
     a, bb, h = TRAY_IN
     t = 0.003

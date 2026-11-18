@@ -3,7 +3,7 @@ file's ``score()`` returns ``report()["score"]`` unchanged.
 
 Pure torch, no simulator imports.
 
-Progress milestones: 25 the puller lifted off its rest; 50 the puller's jaws closed on the named fuse's body; 75 the
+Progress milestones: 25 the puller lifted out of its holder; 50 the puller's jaws closed on the named fuse's body; 75 the
 named fuse out of both of its clips while held in the puller's jaws; 100 the named fuse lying in the parts tray.
 
 Zero gate. Hazard: a decoy fuse moved from its seat (its centre 2 mm or more from where it sat, or tilted 4 deg or

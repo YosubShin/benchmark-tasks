@@ -6,7 +6,8 @@ Mechanism (see fuse_puller_sim/usd/puller_props.py):
   friction hold the ferrule; no force is scripted on any fuse. A straight pull has to slide both ferrules out of
   their clips at once; levered out one end first (the far clip as the pivot) it only has to overcome one clip.
 - The puller is a free articulation: a hinge body (the loop) and two arms on revolute joints, sprung open (TONG_K).
-  The gripper squeezing the handle ends closes the curved jaw shells round the fuse body. Nothing attaches the fuse
+  It is used perpendicular to the fuse: the gripper squeezing the handles next to the loop closes the curved jaw
+  shells at the tips round the fuse body from either side. Nothing attaches the fuse
   to the jaws.
 
 Success (the function): the named fuse out of both clips while held in the puller's jaws (the circuit is open),
@@ -48,10 +49,10 @@ from fuse_puller_sim.usd import puller_props as props
 _ASSETS = Path(os.environ.get("FPR_ASSETS", Path(__file__).resolve().parent / "assets"))
 IDENTITY = (0.0, 0.0, 0.0, 1.0)
 
-TONG_K_NM = 5.0
-"""Nylon flex of each arm about its pin at the loop (N*m/rad, I). A light pinch 85 mm from the hinge that leaves the
-jaws about 1.5 mm open presses the handles with about 4 N; squeezed shut on a fuse, the spring takes 0.7 N*m of the
-gripper's 4.25 N*m, so the jaws clamp the fuse body with about 175 N each."""
+TONG_K_NM = 8.0
+"""Nylon flex of each arm about its pin at the loop (N*m/rad, I). A light pinch 40 mm from the hinge that leaves the
+jaws about 4.5 mm open presses the handles with about 6 N; squeezed shut on a fuse, the spring takes 0.56 N*m of the
+gripper's 2 N*m, so the jaws (114 mm from the hinge) clamp the fuse body with about 13 N each."""
 TONG_DAMPING = 0.004
 
 OUT_M = 0.007
@@ -59,7 +60,7 @@ OUT_M = 0.007
 finger tops after about 4.5 mm of lift)."""
 LIFT_M = 0.02
 JAWS_ON_M = 0.003
-JAWS_CLOSED_DEG = 3.0
+JAWS_CLOSED_DEG = 1.5
 DECOY_MOVED_M = 0.002
 DECOY_TILT_RAD = math.radians(4.0)
 TOUCH_MARGIN_M = 0.003

@@ -2,17 +2,18 @@
 
 A control sub-panel's back pan lies on the bench with three Eaton Bussmann BM6031B open midget fuse blocks
 (F1, F2, F3, colour-coded circuit labels). Each 10 x 38 mm fuse is held by two spring clips at its ferrules. The
-robot must pick up a one-piece nylon tong fuse puller (Ideal 34-015 class), close its jaws round F2's body, and
-take F2 out the way the puller makers describe: lever one end out of its clip first, with the other clip as the
-pivot, then the other end, and drop it in a parts tray, without disturbing F1 or F3. Disturbing F1 or F3 scores 0 for the whole trial; taking
-F2 out of its clips without the puller holding it caps the score at 0.5 for the rest of the trial.
+robot must pick up a one-piece nylon tong fuse puller (Ideal 34-015 class) standing in its holder, hold it as a tong
+puller is used, perpendicular to the fuse (pointing down into the block, its jaws closing across F2's body from
+either side between the clips), and take F2 out the way the puller makers describe: lever one end out of its clip
+first, with the other clip as the pivot, then the other end, and drop it in a parts tray, without disturbing F1 or
+F3. Disturbing F1 or F3 scores 0 for the whole trial; taking F2 out of its clips without the puller holding it caps
+the score at 0.5 for the rest of the trial.
 
-The clips grip hard enough that a straight pull (both ferrules at once) needs about 70 N, more than the robot delivers
-through the puller: gripping the puller over its jaws with the full 50 N and commanding the hand up to 16 cm straight
-up, the fingers slide off the puller's smooth arms at about 27 N of pull and the fuse does not move. Levered out one end first, with the puller held by its handles as a lever about the far clip,
-the near ferrule comes out with the hand lifting about 12-15 N (0.9-1.2 N m over the 78 mm from the far clip to
-the hand); the far ferrule then comes out as the puller swings
-up and the lift pulls on that one clip.
+The clips grip hard enough that a straight pull (both ferrules at once) needs about 70 N. With the puller's jaws
+closed across the body, tipping the handles away from the robot turns the puller and the fuse about the far clip:
+the near ferrule comes out of its clip first, then a lift draws the far ferrule out of its clip alone (about 33 N).
+Pulled straight up through the puller instead (the control), the fuse stays in: pinched on the smooth arms just
+above the jaws with the gripper's full 50 N, the fingers slide up the arms at about 20 N of pull.
 
 The task is a [yam-isaac-lab-arena](https://github.com/kairosiann/yam-isaac-lab-arena) task file
 (`fuse_puller_rock.py`) in Dream's `station` scene, with the `yam_arena` embodiment and the official `dream` policy.
@@ -36,12 +37,12 @@ Dream-1 (20 Hz, 320x176 frames, as in the walkthrough):
 ```bash
 inspect-robots run --embodiment yam_arena --policy dream -P record=false \
   -E task=tasks/fuse-puller-rock/fuse_puller_rock.py -E object_jitter=0 -E control_hz=20 -E cam_width=320 -E cam_height=176 \
-  --instruction "The panel is de-energized. Pick up the yellow fuse puller, grip fuse F2 (CONTROL XFMR, the fuse with the orange label) in its jaws, lift the puller's handles to lever the near end of the fuse out of its clip first, then the far end, and drop the fuse in the blue parts tray. Do not disturb fuses F1 and F3." \
+  --instruction "The panel is de-energized. Pick up the yellow fuse puller, grip fuse F2 (CONTROL XFMR, the fuse with the orange label) across its body in the puller's jaws, holding the puller perpendicular to the fuse, tip the puller's handles away from you to lever the near end of the fuse out of its clip first, then lift out the far end, and drop the fuse in the blue parts tray. Do not disturb fuses F1 and F3." \
   --scorer task_score --max-steps 3000 --store-frames --log-dir ~/yam-eval/fuse-puller-dream
 ```
 
-The scripted demo is closed loop. Like a scripted demo with privileged state, it reads the fuse's and the puller's
-poses from the simulator, and it sends the same 14-D joint action a policy does, through yam_arena's IK:
+The scripted demo, `fuse-puller-demo`, is closed loop on robot-observable inputs only (see "What the demo reads"
+below). It sends the same 14-D joint action a policy does, through yam_arena's IK:
 
 ```bash
 inspect-robots run --embodiment yam_arena --policy fuse-puller-demo \
@@ -65,43 +66,66 @@ put the top camera (2x) above the left and right wrist cameras.
   without the simulator; the simulator checks are under "Hazard checks". A trial with a hazard or the cap never
   reaches success, so it runs to `--max-steps`.
 - **Control run (a straight pull fails).** `FPR_CONTROL=1` with `--policy fuse-puller-demo`: the demo puts the
-  puller's jaws on F2 exactly as in the demo, then lets go of the handles, pinches the puller's arms directly
-  over the jaws with the gripper's full 50 N (which also clamps the jaws on the fuse) and pulls straight up,
-  commanding up to 16 cm above the start. It must score below 1.
+  puller's jaws across F2 exactly as in the demo, then lets go of the handles, pinches the puller's smooth arms
+  just above the jaws with the gripper's full 50 N and pulls straight up, without tipping, commanding up to 16 cm
+  above the start. It must score below 1.
 - **Seeds.** One fixed layout (`-E object_jitter=0`). Seeded jitter is not used.
 - **Runtime per trial.** See "Measured" below. Isaac Sim's first start on a new machine adds several minutes.
 
+## What the demo reads
+
+`fuse-puller-demo` (`fuse_puller_sim/policy.py`, `demo.py`, `vision.py`, `layout.py`) receives exactly what
+`yam_arena` gives any policy each step and nothing else: the RGB images `top_cam`, `left_cam`, `right_cam` (320x176)
+and the 14-D `joint_pos` state (6 joint angles and the gripper opening per arm). It does not read the simulator: no
+fuse or puller pose, no record of which fuse is named, no joint targets, no scorer state. Fixed knowledge it uses is
+what a real robot's script would have: the documented setup in task.json (`fuse_puller_sim/layout.py`: the blocks,
+the fuses' seats and clips, the labels, the puller's holder and its geometry, the tray), the station's published camera
+calibration (`yam_arena.station`) and the arm's URDF (`yam_arena.urdf`, `yam_arena.ik`).
+
+| Thing | How the demo gets it |
+|---|---|
+| Which fuse is F2 | first top-camera frame: the colour of the three circuit labels on the pan in front of the blocks (white, orange, green); the block with the orange label is F2's |
+| The puller | standing in its documented holder; the same frame checks the yellow puller is there |
+| The puller in the hand | where arm B's fingers closed on its handles (forward kinematics of arm B's measured joints) relative to its documented pose in the holder; from then on its pose follows arm B's joints |
+| Jaws across F2 | F2 in its documented clips; the puller pointing straight down over it; lowering, arm B's joint readings show when the jaws' hood stops on the fuse body, and it pushes a little further before squeezing |
+| How far the fuse has been levered | the puller and the fuse turn together about F2's far ferrule (documented), so the tip is the angle of the pinch point (arm B's joints) about that ferrule. The hand is moved along that arc, turning with the puller, a few degrees ahead of the measured angle, further while it stalls; past 16 degrees the near ferrule (28 mm from the pivot) is out of its clip, and the demo tips on to 40 degrees while lifting 30 mm |
+| Far end out, over the tray, dropping | lifting 40 mm more and turning the puller upright again on the way to the documented tray draws the far ferrule out; the jaws are placed over the tray from the puller's geometry; the squeeze is relaxed and the jaws open |
+| Control run's pulling force | arm B's joint readings and the joint targets the demo itself sent (as before, through the arm's Jacobian) |
+
+In the run below the top camera read the circuit labels as white, orange, white (the green one reads as white at
+this resolution; only the orange one has to be found) and saw the puller in its holder; the puller's hinge sat at
+(-34.3, -0.1, 21.3) mm in arm B's hand frame, and arm B's joints put it 113.6 mm above F2's centre when the jaws
+closed (114 mm wanted). The tip read from arm B's joints climbed slowly to about 15 degrees while the near ferrule
+held, then jumped to 19.1 degrees as it came out of its clip.
+
 ## Measured
 
-RTX-class GPU shared with three other Isaac Sim processes, shader cache warm, `-E object_jitter=0`, 20 Hz, 320x176
-frames, PhysX at 480 Hz:
+RTX-class GPU shared with up to five other Isaac Sim processes, shader cache warm, `-E object_jitter=0`, 20 Hz,
+320x176 frames, PhysX at 480 Hz:
 
 | Run | Score | Steps | Wall time per trial |
 |---|---|---|---|
-| `fuse-puller-demo` | `task_score: 1`. Puller picked up by its handles 85 mm from the loop (light pinch, jaws open), lowered over F2 and seated within 1 mm, squeezed; lifting the handles along an arc about the far clip levered the near ferrule out first (the fuse tilted 20 degrees when the demo checked, after lifting 10 mm above the arc); swinging on to 60 degrees and lifting freed the far ferrule; F2 carried in the jaws and dropped in the tray. F1 and F3 untouched | 828 (41.4 s) | about 16 minutes |
-| Control: `FPR_CONTROL=1`, `fuse-puller-demo` (straight pull over the jaws) | `task_score: 0.5`. Jaws seated and squeezed on F2 as in the demo; pinched over the jaws, the straight pull built up to about 27 N (estimated from the arm's joint torques, 8 cm behind its target) and then the fingers slid off the smooth arms; F2 never moved (0.0 mm) | 1,300 (step limit) | about 25 minutes |
-| `dream` (`dreamlabs/dream-1-beta`, `-P record=false`) | `task_score: 0` (the right hand reaches toward the puller's rest and the tray early on, then both arms stay near their start; the puller is never picked up and no fuse is touched) | 3,000 (step limit) | about 51 minutes (shared GPU; Dream reported an observation as expired and was asked again 61 times; mean inference latency 0.55 s) |
-
-The Dream-1 run was made before the handle friction was split (the arms' friction to the gripper was 0.55 everywhere
-then; scene, cameras, instruction and scoring unchanged); it never touched the puller.
+| `fuse-puller-demo` (cameras + joint states only) | `task_score: 1`. F2 found by its orange label; puller lifted out of its holder by its notched handles 40 mm from the loop (light pinch, jaws open), carried pointing straight down over F2, jaws lowered across F2's body between the clips and squeezed; tipping the handles away from the robot about the far clip levered the near ferrule out first (the tip, read from arm B's joints, jumped to 19.1 degrees as it came out); tipped on to 40 degrees and lifted, then turned upright on the way to the tray, which drew the far ferrule out; F2 carried in the jaws and dropped in the tray. F1 and F3 untouched | 1,106 (55.3 s) | about 41 minutes (five other simulations running) |
+| Control: `FPR_CONTROL=1`, `fuse-puller-demo` (straight pull, smooth arms) | `task_score: 0.5`. Jaws seated and squeezed across F2 as in the demo; pinched on the smooth arms just above the jaws, the straight pull slid the fingers up the arms (the hand rose 22 mm while commanded 12 cm, about 20 N estimated from the arm's joint torques); F2 stayed in its clips | 1,300 (step limit) | about 50 minutes (shared) |
+| `dream` (`dreamlabs/dream-1-beta`, `-P record=false`, the instruction above) | `task_score: 0` (the right hand reaches toward the panel early on, then both arms stay near their start, folded low; the puller is never picked up and no fuse is touched) | 3,000 (step limit) | about 90 minutes (GPU shared with up to five other simulations; Dream reported an observation as expired and was asked again 61 times; mean inference latency 0.58 s) |
 
 The demo's wall time is mostly the doubled physics rate, its Python IK every control step and the shared GPU. The
-demo is closed loop (it lifts further while the fuse does not turn) because the arm's soft gains leave the hand
-20-30 mm behind its target while it levers.
+demo is closed loop (it tips further ahead while the fuse does not turn) because the arm's soft gains leave the hand
+15-20 mm behind its target while it levers.
 
 ## Hazard checks
 
 Each check is the official command above with `--policy fuse-puller-demo`, seed 0 (`-E object_jitter=0`), and one
 environment variable, `FPR_HAZARD_TEST=<case>`, read by `fuse_puller_sim/task.py` (empty in every scored run). The
 test harness moves a fuse by writing its pose (a stand-in for a hand); the demo otherwise runs unchanged, so the
-later milestones are still reached physically and only the reported score shows the gate. `--max-steps 1100` (a trial
+later milestones are still reached physically and only the reported score shows the gate. `--max-steps 1300` (a trial
 with a hazard or the cap never ends on success).
 
 | Case | What happens | Progress reached | Reported `task_score` |
 |---|---|---|---|
 | none (the demo) | | 1.0 | 1 |
 | `decoy_move_start` | F1 slid 4 mm along its clips at 1 s, before any milestone | 1.0 (puller picked up, jaws on F2, F2 levered out and put in the tray) | 0 |
-| `decoy_move_75` | F3 slid 4 mm the step F2 is out of its clips in the jaws (after 0.75) | 1.0 | 0 |
+| `decoy_move_75` | F3 slid 4 mm the step F2 is out of its clips in the jaws (after 0.75); the demo then drops F2 in the tray | 1.0 | 0 |
 | `out_by_hand_25` | F2 lifted 25 mm out of both clips with no jaws on it the step the puller is picked up (after 0.25), put back in its clips on the next step; the demo then grips it with the puller, levers it out and puts it in the tray | 1.0 | 0.5 |
 
 `python -m fuse_puller_sim.check_scorer` (no simulator) checks the same gate for a decoy moved before any milestone
@@ -117,7 +141,7 @@ reaching 0.75 and 1.0; 0 if a decoy is moved afterwards).
 | `fuse_puller_sim/station.py` | the run-time extension of yam_arena (props, per-step task events, physics rate) |
 | `fuse_puller_sim/task.py`, `scorer.py`, `spec.py` | props, ferrule-out and decoy checks, milestones, zero gate and cap, layout and instruction |
 | `fuse_puller_sim/check_scorer.py` | the scorer's zero-gate and cap check without the simulator |
-| `fuse_puller_sim/assets/`, `fuse_puller_sim/usd/` | the props (`puller_props.py`: pan, BM6031B blocks with compliant clip fingers, fuses, puller, rest, tray), generated with `python -m fuse_puller_sim.usd.puller_props fuse_puller_sim/assets` |
+| `fuse_puller_sim/assets/`, `fuse_puller_sim/usd/` | the props (`puller_props.py`: pan, BM6031B blocks with compliant clip fingers, fuses, puller, holder, tray), generated with `python -m fuse_puller_sim.usd.puller_props fuse_puller_sim/assets` |
 | `fuse_puller_sim/demo.py`, `fuse_puller_sim/policy.py` | the scripted demo and its Inspect Robots policy `fuse-puller-demo` |
 
 ## References
@@ -162,32 +186,36 @@ a BM/BMM clip is not published; puller patents quote 90-180 N for cartridge fuse
 is weaker than many real ones (chosen so that the station arm can lever it out through the puller and cannot pull it
 straight).
 
-**The puller.** An Ideal 34-015 class one-piece tong: a hinge body (the loop) and two arms on revolute joints with a
-spring drive (5 N m/rad, 8 degrees free opening) standing in for the nylon's flex. Each arm carries a curved jaw shell
-(six flat facets) 13-27 mm from the loop that wraps the fuse body from 81 degrees above to 35 degrees below its
-equator; the arms run above the block's housing, parallel to the fuse, as in the reference video. Squeezed by the
-gripper's 50 N 85 mm from the loop, the jaws clamp the body with about 175 N. Inferred: jaw shape, length and
-position, flex and opening (Ideal publishes no drawing); 34 g against about 20 g real (lighter articulations broke
-under the 50 N pinch in an earlier build); arms 12 mm tall strips. The jaw-to-body friction is 1.0 (combined as the
-larger), standing in for a firm grip of the moulded jaws on the fibre tube: at 0.6 the jaws turned on the body when
-levering. The handles are notched from 50 mm behind the loop to their ends (the 34-015 is sold with a "notched
-handle"): the gripper's fingers grip them with friction 0.8; on the smooth moulded arms between the loop and the
-notches they grip with 0.25 (inferred). The puller is held by friction alone; nothing attaches it to the hand or the
-fuse.
+**The puller and how it is held.** An Ideal 34-015 class one-piece tong: a hinge body (the loop) and two flat arms
+on revolute joints with a spring drive (8 N m/rad, 4 degrees free opening) standing in for the nylon's flex. A tong
+fuse puller is used perpendicular to the fuse: its jaws close across the barrel from either side, and the block's
+walls are cut down between the clips to let them in (BMM603 STEP model). So the puller points straight down into
+the block, its arms parting left-right, and the jaws sit at the arms' tips: each is a curved shell (eight flat
+facets, 14 mm wide along the fuse) that wraps the body from 81 degrees on the loop side to 81 degrees past the
+equator on the tip side, so the two shells closed nearly enclose the body. The deep lips matter: with lips 50
+degrees past the equator, tipping the puller wedged the jaws apart under the clamp and the puller turned on the fuse
+instead of turning it. Squeezed by the gripper's 50 N 40 mm from the loop, the jaws (114 mm from the loop) clamp
+the body with about 13 N each; the shells hold the fuse by shape. Inferred: jaw shape, position, flex and opening
+(Ideal publishes no drawing); 34 g against about 20 g real; arms 12 mm wide strips. The jaw-to-body friction is 1.0
+(combined as the larger). The handles next to the loop are notched (the 34-015 is sold with a "notched handle"):
+the gripper's fingers grip them with friction 0.8; on the smooth moulded arms from there to the jaws they grip with
+0.25 (inferred). The puller stands upright, jaws down, in a 20 mm deep pocket of a grey holder block (a stand-in for
+the clip or holster a puller is kept in), so it is picked up already pointing the way it is used. It is held by
+friction alone; nothing attaches it to the hand or the fuse.
 
-**The rock.** Lifting the handles (the gripper's pinch acts as a pin) swings the puller and the fuse about the far
-ferrule, so the near ferrule leaves its clip first with a lever of about 78 mm from the far clip to the hand; the
-scripted demo then keeps swinging the puller up and lifting, and with the near end free the lift ends up pulling
-almost straight up on the far clip alone. A straight pull on both clips at once (the control) is beyond what the
-robot can transmit: gripping the puller over its jaws with the full 50 N and commanding the hand up to 16 cm up, the
-fingers slid off the smooth arms at about 27 N with the fuse unmoved. (Before the handle friction was split, the same
-pinch held to about 51 N and, commanded 9 cm up, pulled the fuse straight out; the smooth arms near the jaws are what
-keep a straight pull through this puller below the clips' 70 N.) Held by its handles, the puller cannot be pulled
-straight by the robot at all (the pinch is a pin, so any lift at the handles rocks the fuse), which is why the
-control grips over the jaws.
+**The rock.** With the jaws closed across the body, tipping the handles away from the robot (the hand moves along
+an arc about the far ferrule and turns with the puller) turns the puller and the fuse together about the far clip,
+so the near ferrule leaves its clip first; the lever is the 74 mm from the jaws to the hand. With the near end free,
+the far ferrule has to come out of its clip alone. Pulled straight up while the fuse is tipped 30 degrees it binds in
+the clip (the arm's lift stalled with the hand 46 mm behind its target); turned back toward level as it is lifted,
+it slides out. In the demo the tip read from arm B's joints climbed to about 15
+degrees with the hand 15-20 mm behind its target, then jumped to 19 degrees as the near ferrule came out. A
+straight pull on both clips at once (the control) is beyond what the robot transmits through the smooth arms by
+the jaws (the fingers slide at about 20 N); a straight pull by the notched handles was not tried as a control.
 
 **Layout and looks.** The back pan lies flat on a 25 mm board on the bench (a sub-panel serviced on the bench), so
-fingers-down grasps reach it and the circuit labels face the top camera. The blocks stand 1.5 mm apart (BM6031B
+the robot reaches down into the blocks and the circuit labels face the top camera. The blocks stand 1.5 mm apart (BM6031B
 blocks gang side by side). Label text is 2-3 px at 320x176, so each label carries a circuit colour (F1 white, F2
-orange, F3 green), a plant labelling choice, not a standard. Block terminals, screws and the fingers' curved roots
+orange, F3 green), a plant labelling choice, not a standard. Each label is a coloured plate with its text
+as thin dark (on green, light) geometry, not a texture: in one run the renderer showed the textured labels blank. Block terminals, screws and the fingers' curved roots
 and reinforcing springs are visual only. One layout.

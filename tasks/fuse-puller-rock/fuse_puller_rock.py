@@ -2,14 +2,15 @@
 them. Three black Eaton Bussmann BM6031B one-pole midget fuse blocks are fixed to it side by side, their fuses'
 axes pointing away from the robot, each with a 10 x 38 mm fuse held in two open spring clips. A colour-coded circuit
 label lies on the pan in front of each block (F1 PLC 24V DC white, F2 CONTROL XFMR orange, F3 CABINET LIGHT green,
-from the robot's left). A yellow nylon tong fuse puller lies on a grey rest to the right of the pan, its handle ends
-toward the robot; a blue parts tray sits further right, nearer the robot. Pick up the puller by its handles, close
-its jaws round F2's body between its clips, lever the near end of the fuse out of its clip first (lifting the puller's
-handles, the far clip as the pivot) and then the far end, carry the fuse in the jaws and drop it in the tray. Do not
-disturb F1 or F3. Pulled straight up, a fuse needs both clips' grip at once (about 70 N) and does not come out.
+from the robot's left). A yellow nylon tong fuse puller stands upright, jaws down, in a grey holder to the right of
+the pan; a blue parts tray sits further right, nearer the robot. Pick up the puller by its notched handles, hold it
+perpendicular to the fuse (pointing down into F2's block) and close its jaws across F2's body between the clips,
+tip the handles away from the robot so the far clip is the pivot and the near end of the fuse levers out of its clip
+first, then lift the far end out, carry the fuse in the jaws and drop it in the tray. Do not disturb F1 or F3.
+Pulled straight up, a fuse needs both clips' grip at once (about 70 N).
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. FPR_CONTROL=1 with ``--policy fuse-puller-demo``
-makes the demo let go of the handles, pinch the puller's arms directly over its jaws and pull the fuse straight up
+makes the demo let go of the handles, pinch the puller's smooth arms just above its jaws and pull the fuse straight up
 instead of rocking it (a control run: it must score below 1).
 """
 

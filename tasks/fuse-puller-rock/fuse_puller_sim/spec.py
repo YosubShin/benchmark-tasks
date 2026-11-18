@@ -4,12 +4,12 @@ The scene: a control sub-panel's back pan lies flat on the bench (as on a panel-
 Bussmann BM6031B one-pole midget fuse blocks are screwed to it side by side, fuse axes pointing away from the robot,
 each holding a 10 x 38 mm midget fuse in two open spring clips. Each block has a circuit label on the pan in front
 of it (F1, F2, F3 with the circuit name, on a colour-coded label: F1 white, F2 orange, F3 green). A one-piece nylon
-tong fuse puller (Ideal 34-015 class) lies on a grey rest to the right, handle ends toward the robot; a blue parts
-tray sits further right.
+tong fuse puller (Ideal 34-015 class) stands upright, jaws down, in a grey holder to the right; a blue parts tray
+sits further right.
 
 The clips hold a fuse by spring force and friction at its two ferrules. Pulled straight out (both ferrules at once)
-a fuse needs both clips' release force together, more than the robot can pull through the puller; rocked out one
-end first (the far clip as the pivot, the puller as a lever) it comes out one clip at a time.
+a fuse needs both clips' release force together; rocked out one end first (the puller held perpendicular to the
+fuse, its jaws across the body, tipped about the far clip as a lever) it comes out one clip at a time.
 
 Success (the function): the named fuse is out of both clips, carried in the puller's jaws, and lies in the tray,
 with neither other fuse disturbed. No simulator imports.
@@ -28,8 +28,8 @@ BLOCK_X = 0.320
 """Desk-frame x of the blocks' centres (the fuse centres)."""
 SLOT_Y = (0.0225, 0.0, -0.0225)
 """Desk-frame y of the fuses F1, F2, F3 (F1 on the robot's left). The 21.0 mm blocks stand 1.5 mm apart."""
-PULLER_REST_Y = -0.105
-"""y of the puller on its rest (its axis along x, handle ends toward the robot)."""
+PULLER_HOLDER_XY = (0.310, -0.115)
+"""Centre of the puller's holder (the puller stands upright in it, jaws down)."""
 TRAY_XY = (0.215, -0.190)
 """Centre of the parts tray."""
 TRAY_IN = (0.10, 0.10, 0.025)
@@ -45,8 +45,9 @@ def instruction(named: int = NAMED) -> str:
     tag, circuit, colour = CIRCUITS[named]
     others = " and ".join(c[0] for k, c in enumerate(CIRCUITS) if k != named)
     return (f"The panel is de-energized. Pick up the yellow fuse puller, grip fuse {tag} ({circuit}, the fuse with "
-            f"the {colour} label) in its jaws, lift the puller's handles to lever the near end of the fuse out of its "
-            f"clip first, then the far end, and drop the fuse in the blue parts tray. Do not disturb fuses {others}.")
+            f"the {colour} label) across its body in the puller's jaws, holding the puller perpendicular to the fuse, "
+            f"tip the puller's handles away from you to lever the near end of the fuse out of its clip first, then "
+            f"lift out the far end, and drop the fuse in the blue parts tray. Do not disturb fuses {others}.")
 
 
 @dataclass(frozen=True)
