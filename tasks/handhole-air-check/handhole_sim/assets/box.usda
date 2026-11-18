@@ -42,8 +42,8 @@ def Xform "box"
     {
         rel material:binding = </box/Looks/concrete_dark>
         double size = 1
-        float3 xformOp:scale = (0.339725, 0.51435, 0.008)
-        double3 xformOp:translate = (0.3, -0.02, 0.004)
+        float3 xformOp:scale = (0.339725, 0.51435, 0)
+        double3 xformOp:translate = (0.3, -0.02, 0)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -55,8 +55,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0494, 0.51435, 0.02255)
-        double3 xformOp:translate = (0.1548375, -0.020000000000000004, 0.019275)
+        float3 xformOp:scale = (0.0494, 0.51435, 0.04055)
+        double3 xformOp:translate = (0.1548375, -0.020000000000000004, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -68,8 +68,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.0494, 0.02255)
-        double3 xformOp:translate = (0.18341249999999998, -0.252475, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.0494, 0.04055)
+        double3 xformOp:translate = (0.18341249999999998, -0.252475, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -81,8 +81,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.44945, 0.02255)
-        double3 xformOp:translate = (0.18341249999999998, 0.012450000000000017, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.44945, 0.04055)
+        double3 xformOp:translate = (0.18341249999999998, 0.012450000000000017, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -94,8 +94,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.0494, 0.02255)
-        double3 xformOp:translate = (0.1911625, -0.252475, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.0494, 0.04055)
+        double3 xformOp:translate = (0.1911625, -0.252475, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -107,8 +107,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.05715, 0.02255)
-        double3 xformOp:translate = (0.1911625, 0.2086, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.05715, 0.04055)
+        double3 xformOp:translate = (0.1911625, 0.2086, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -120,8 +120,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.209925, 0.05715, 0.02255)
-        double3 xformOp:translate = (0.3, -0.2486, 0.019275)
+        float3 xformOp:scale = (0.209925, 0.05715, 0.04055)
+        double3 xformOp:translate = (0.3, -0.2486, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -133,8 +133,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.209925, 0.05715, 0.02255)
-        double3 xformOp:translate = (0.3, 0.2086, 0.019275)
+        float3 xformOp:scale = (0.209925, 0.05715, 0.04055)
+        double3 xformOp:translate = (0.3, 0.2086, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -146,8 +146,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.05715, 0.02255)
-        double3 xformOp:translate = (0.40883749999999996, -0.2486, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.05715, 0.04055)
+        double3 xformOp:translate = (0.40883749999999996, -0.2486, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -159,8 +159,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.0494, 0.02255)
-        double3 xformOp:translate = (0.40883749999999996, 0.212475, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.0494, 0.04055)
+        double3 xformOp:translate = (0.40883749999999996, 0.212475, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -172,8 +172,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.44945, 0.02255)
-        double3 xformOp:translate = (0.4165875, -0.05245000000000001, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.44945, 0.04055)
+        double3 xformOp:translate = (0.4165875, -0.05245000000000001, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -185,8 +185,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.00775, 0.0494, 0.02255)
-        double3 xformOp:translate = (0.4165875, 0.212475, 0.019275)
+        float3 xformOp:scale = (0.00775, 0.0494, 0.04055)
+        double3 xformOp:translate = (0.4165875, 0.212475, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -198,8 +198,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0494, 0.51435, 0.02255)
-        double3 xformOp:translate = (0.44516249999999996, -0.020000000000000004, 0.019275)
+        float3 xformOp:scale = (0.0494, 0.51435, 0.04055)
+        double3 xformOp:translate = (0.44516249999999996, -0.020000000000000004, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -210,7 +210,7 @@ def Xform "box"
         rel material:binding = </box/Looks/concrete>
         double size = 1
         float3 xformOp:scale = (0.0254, 0.51435, 0.04445)
-        double3 xformOp:translate = (0.1428375, -0.02, 0.052775)
+        double3 xformOp:translate = (0.1428375, -0.02, 0.06277500000000001)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -221,7 +221,7 @@ def Xform "box"
         rel material:binding = </box/Looks/concrete>
         double size = 1
         float3 xformOp:scale = (0.288925, 0.0254, 0.04445)
-        double3 xformOp:translate = (0.3, -0.264475, 0.052775)
+        double3 xformOp:translate = (0.3, -0.264475, 0.06277500000000001)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -232,7 +232,7 @@ def Xform "box"
         rel material:binding = </box/Looks/concrete>
         double size = 1
         float3 xformOp:scale = (0.0254, 0.51435, 0.04445)
-        double3 xformOp:translate = (0.45716249999999997, -0.02, 0.052775)
+        double3 xformOp:translate = (0.45716249999999997, -0.02, 0.06277500000000001)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -243,7 +243,7 @@ def Xform "box"
         rel material:binding = </box/Looks/concrete>
         double size = 1
         float3 xformOp:scale = (0.288925, 0.0254, 0.04445)
-        double3 xformOp:translate = (0.3, 0.224475, 0.052775)
+        double3 xformOp:translate = (0.3, 0.224475, 0.06277500000000001)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -255,8 +255,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.03225, 0.06, 0.02255)
-        double3 xformOp:translate = (0.3888375, 0.17002499999999998, 0.019275)
+        float3 xformOp:scale = (0.03225, 0.06, 0.04055)
+        double3 xformOp:translate = (0.3888375, 0.17002499999999998, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -268,8 +268,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0155, 0.03225, 0.02255)
-        double3 xformOp:translate = (0.4127125, 0.15614999999999998, 0.019275)
+        float3 xformOp:scale = (0.0155, 0.03225, 0.04055)
+        double3 xformOp:translate = (0.4127125, 0.15614999999999998, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -281,8 +281,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0155, 0.01225, 0.02255)
-        double3 xformOp:translate = (0.4127125, 0.1939, 0.019275)
+        float3 xformOp:scale = (0.0155, 0.01225, 0.04055)
+        double3 xformOp:translate = (0.4127125, 0.1939, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -294,8 +294,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.01225, 0.06, 0.02255)
-        double3 xformOp:translate = (0.42658749999999995, 0.17002499999999998, 0.019275)
+        float3 xformOp:scale = (0.01225, 0.06, 0.04055)
+        double3 xformOp:translate = (0.42658749999999995, 0.17002499999999998, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -307,8 +307,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.01225, 0.06, 0.02255)
-        double3 xformOp:translate = (0.1734125, -0.21002499999999996, 0.019275)
+        float3 xformOp:scale = (0.01225, 0.06, 0.04055)
+        double3 xformOp:translate = (0.1734125, -0.21002499999999996, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -320,8 +320,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0155, 0.01225, 0.02255)
-        double3 xformOp:translate = (0.1872875, -0.23389999999999997, 0.019275)
+        float3 xformOp:scale = (0.0155, 0.01225, 0.04055)
+        double3 xformOp:translate = (0.1872875, -0.23389999999999997, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -333,8 +333,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.0155, 0.03225, 0.02255)
-        double3 xformOp:translate = (0.1872875, -0.19614999999999996, 0.019275)
+        float3 xformOp:scale = (0.0155, 0.03225, 0.04055)
+        double3 xformOp:translate = (0.1872875, -0.19614999999999996, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
@@ -346,8 +346,8 @@ def Xform "box"
         custom float physxCollision:contactOffset = 0.002
         custom float physxCollision:restOffset = 0
         double size = 1
-        float3 xformOp:scale = (0.03225, 0.06, 0.02255)
-        double3 xformOp:translate = (0.2111625, -0.21002499999999996, 0.019275)
+        float3 xformOp:scale = (0.03225, 0.06, 0.04055)
+        double3 xformOp:translate = (0.2111625, -0.21002499999999996, 0.020275000000000005)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 }

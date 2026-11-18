@@ -131,6 +131,19 @@ def Xform "monitor" (
             }
         }
 
+        def Material "steel"
+        {
+            token outputs:surface.connect = </monitor/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.74, 0.75, 0.78)
+                float inputs:roughness = 0.7
+                token outputs:surface
+            }
+        }
+
         def Material "tape"
         {
             token outputs:surface.connect = </monitor/Looks/tape/Shader.outputs:surface>
@@ -167,7 +180,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.328
         quatf xformOp:orient = (1, 0, 0, 0)
-        double3 xformOp:translate = (0.5045000000000001, 0.28, 0.04)
+        double3 xformOp:translate = (0.5015000000000001, 0.28, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Cube "case" (
@@ -1518,7 +1531,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (1, 0, 0, 0)
-        double3 xformOp:translate = (0.5700000000000001, 0.28, 0.04)
+        double3 xformOp:translate = (0.5670000000000001, 0.28, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1543,7 +1556,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (1, 0, 0, 0)
-        double3 xformOp:translate = (0.6200000000000001, 0.28, 0.04)
+        double3 xformOp:translate = (0.6170000000000001, 0.28, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1568,7 +1581,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
-        double3 xformOp:translate = (0.6700000000000002, 0.28, 0.04)
+        double3 xformOp:translate = (0.6670000000000001, 0.28, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1593,7 +1606,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (0.70710677, 0, 0, 0.70710677)
-        double3 xformOp:translate = (0.6700000000000002, 0.33, 0.04)
+        double3 xformOp:translate = (0.6670000000000001, 0.33, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1618,7 +1631,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.6700000000000002, 0.38, 0.04)
+        double3 xformOp:translate = (0.6670000000000001, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1643,7 +1656,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.6200000000000001, 0.38, 0.04)
+        double3 xformOp:translate = (0.6170000000000001, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1668,7 +1681,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.5700000000000001, 0.38, 0.04)
+        double3 xformOp:translate = (0.5670000000000001, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1693,7 +1706,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.52, 0.38, 0.04)
+        double3 xformOp:translate = (0.517, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1718,7 +1731,7 @@ def Xform "monitor" (
         )
         float physics:mass = 0.004
         quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.47, 0.38, 0.04)
+        double3 xformOp:translate = (0.467, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1742,8 +1755,8 @@ def Xform "monitor" (
             bindMaterialAs = "weakerThanDescendants"
         )
         float physics:mass = 0.004
-        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.42, 0.38, 0.04)
+        quatf xformOp:orient = (5.3028762e-17, 0.5, -3.061617e-17, 0.8660254)
+        double3 xformOp:translate = (0.41700000000000004, 0.38, 0.04993351446696941)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
         def Capsule "tube" (
@@ -1751,97 +1764,129 @@ def Xform "monitor" (
         )
         {
             uniform token axis = "X"
-            double height = 0.05
+            double height = 0.044
             rel material:binding = </monitor/Looks/hose>
             double radius = 0.003175
-            double3 xformOp:translate = (0.025, 0, 0)
+            double3 xformOp:translate = (0.022, 0, 0)
             uniform token[] xformOpOrder = ["xformOp:translate"]
         }
     }
 
-    def Xform "filter" (
+    def Xform "hose_10" (
         prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
     )
     {
-        rel material:binding:physics = </monitor/PhysicsMaterials/grip> (
+        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
             bindMaterialAs = "weakerThanDescendants"
         )
-        float physics:mass = 0.015
-        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.37, 0.38, 0.04)
+        float physics:mass = 0.004
+        quatf xformOp:orient = (5.3028762e-17, 0.5, -3.061617e-17, 0.8660254)
+        double3 xformOp:translate = (0.395, 0.38, 0.08803863223348471)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
 
-        def Cube "can" (
+        def Capsule "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "X"
+            double height = 0.044
+            rel material:binding = </monitor/Looks/hose>
+            double radius = 0.003175
+            double3 xformOp:translate = (0.022, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "probe" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:mass = 0.035
+        quatf xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (0.355, 0.38, 0.085)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+
+        def Cylinder "tube" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.076
+            rel material:binding = </monitor/Looks/steel>
+            rel material:binding:physics = </monitor/PhysicsMaterials/probe_steel> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double radius = 0.003175
+            double3 xformOp:translate = (0, 0, -0.038)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "tip_band" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.01
+            rel material:binding = </monitor/Looks/tape>
+            double radius = 0.003575
+            double3 xformOp:translate = (0, 0, -0.071)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "collar" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.00714375
+            rel material:binding = </monitor/Looks/black>
+            rel material:binding:physics = </monitor/PhysicsMaterials/probe_steel> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double radius = 0.0079375
+            double3 xformOp:translate = (0, 0, 0.003571875)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "rod" (
+            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+        )
+        {
+            uniform token axis = "Z"
+            double height = 0.006
+            rel material:binding = </monitor/Looks/steel>
+            rel material:binding:physics = </monitor/PhysicsMaterials/probe_steel> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
+            double radius = 0.003175
+            double3 xformOp:translate = (0, 0, 0.01014375)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cube "handle" (
             prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
         )
         {
             rel material:binding = </monitor/Looks/filter>
+            rel material:binding:physics = </monitor/PhysicsMaterials/grip> (
+                bindMaterialAs = "weakerThanDescendants"
+            )
             double size = 1
-            float3 xformOp:scale = (0.04, 0.02, 0.02)
-            double3 xformOp:translate = (0.02, 0, 0)
+            float3 xformOp:scale = (0.02, 0.02, 0.036)
+            double3 xformOp:translate = (0, 0, 0.031143749999999998)
             uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
         }
 
-        def Capsule "stub" (
+        def Capsule "elbow" (
             prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
         )
         {
             uniform token axis = "X"
-            double height = 0.030000000000000006
+            double height = 0.007999999999999998
             rel material:binding = </monitor/Looks/hose>
             double radius = 0.003175
-            double3 xformOp:translate = (0.05500000000000001, 0, 0)
+            double3 xformOp:translate = (0.013999999999999999, 0, 0.04114375)
             uniform token[] xformOpOrder = ["xformOp:translate"]
-        }
-    }
-
-    def Xform "tail_gimbal" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
-    )
-    {
-        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
-            bindMaterialAs = "weakerThanDescendants"
-        )
-        float3 physics:diagonalInertia = (1e-7, 1e-7, 1e-7)
-        float physics:mass = 0.001
-        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.3, 0.38, 0.04)
-        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
-    }
-
-    def Xform "tail_0" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
-    )
-    {
-        rel material:binding:physics = </monitor/PhysicsMaterials/tygon> (
-            bindMaterialAs = "weakerThanDescendants"
-        )
-        float physics:mass = 0.003
-        quatf xformOp:orient = (6.123234e-17, 0, 0, 1)
-        double3 xformOp:translate = (0.3, 0.38, 0.04)
-        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
-
-        def Capsule "tube" (
-            prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
-        )
-        {
-            uniform token axis = "X"
-            double height = 0.1
-            rel material:binding = </monitor/Looks/hose>
-            double radius = 0.003175
-            double3 xformOp:translate = (0.05, 0, 0)
-            uniform token[] xformOpOrder = ["xformOp:translate"]
-        }
-
-        def Cube "depth_mark" (
-            prepend apiSchemas = ["MaterialBindingAPI"]
-        )
-        {
-            rel material:binding = </monitor/Looks/tape>
-            double size = 1
-            float3 xformOp:scale = (0.01, 0.00735, 0.00735)
-            double3 xformOp:translate = (0.04900000000000001, 0, 0)
-            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
         }
     }
 
@@ -1991,55 +2036,40 @@ def Xform "monitor" (
             rel physics:body1 = </monitor/hose_09>
             point3f physics:localPos0 = (0.05, 0, 0)
             point3f physics:localPos1 = (0, 0, 0)
-            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot0 = (0.8660254, 0, -0.5, 0)
             quatf physics:localRot1 = (1, 0, 0, 0)
-            float physics:lowerLimit = -110
-            float physics:upperLimit = 110
+            float physics:lowerLimit = -170
+            float physics:upperLimit = 170
         }
 
-        def PhysicsRevoluteJoint "filter_j" (
+        def PhysicsRevoluteJoint "hose_j10" (
             prepend apiSchemas = ["PhysicsDriveAPI:angular"]
         )
         {
             uniform token physics:axis = "Z"
             rel physics:body0 = </monitor/hose_09>
-            rel physics:body1 = </monitor/filter>
-            point3f physics:localPos0 = (0.05, 0, 0)
+            rel physics:body1 = </monitor/hose_10>
+            point3f physics:localPos0 = (0.044, 0, 0)
             point3f physics:localPos1 = (0, 0, 0)
-            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 6.162976e-33)
             quatf physics:localRot1 = (1, 0, 0, 0)
-            float physics:lowerLimit = -110
-            float physics:upperLimit = 110
+            float physics:lowerLimit = -170
+            float physics:upperLimit = 170
         }
 
-        def PhysicsRevoluteJoint "tail_j0" (
-            prepend apiSchemas = ["PhysicsDriveAPI:angular"]
-        )
-        {
-            uniform token physics:axis = "Y"
-            rel physics:body0 = </monitor/filter>
-            rel physics:body1 = </monitor/tail_gimbal>
-            point3f physics:localPos0 = (0.07, 0, 0)
-            point3f physics:localPos1 = (0, 0, 0)
-            quatf physics:localRot0 = (1, 0, 0, 0)
-            quatf physics:localRot1 = (1, 0, 0, 0)
-            float physics:lowerLimit = -175
-            float physics:upperLimit = 175
-        }
-
-        def PhysicsRevoluteJoint "tail_j1" (
+        def PhysicsRevoluteJoint "probe_j" (
             prepend apiSchemas = ["PhysicsDriveAPI:angular"]
         )
         {
             uniform token physics:axis = "Z"
-            rel physics:body0 = </monitor/tail_gimbal>
-            rel physics:body1 = </monitor/tail_0>
-            point3f physics:localPos0 = (0, 0, 0)
-            point3f physics:localPos1 = (0, 0, 0)
-            quatf physics:localRot0 = (1, 0, 0, 0)
+            rel physics:body0 = </monitor/hose_10>
+            rel physics:body1 = </monitor/probe>
+            point3f physics:localPos0 = (0.044, 0, 0)
+            point3f physics:localPos1 = (0.018, 0, 0.04114375)
+            quatf physics:localRot0 = (5.3028762e-17, -0.5, 3.061617e-17, -0.8660254)
             quatf physics:localRot1 = (1, 0, 0, 0)
-            float physics:lowerLimit = -175
-            float physics:upperLimit = 175
+            float physics:lowerLimit = -170
+            float physics:upperLimit = 170
         }
     }
 
@@ -2061,6 +2091,15 @@ def Xform "monitor" (
             float physics:dynamicFriction = 1
             float physics:staticFriction = 1.2
             custom token physxMaterial:frictionCombineMode = "max"
+        }
+
+        def Material "probe_steel" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.25
+            float physics:staticFriction = 0.3
+            custom token physxMaterial:frictionCombineMode = "min"
         }
 
         def Material "rubber" (

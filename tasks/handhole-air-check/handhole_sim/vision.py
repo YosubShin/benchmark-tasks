@@ -77,3 +77,46 @@ def red_lamp_pixels(img: np.ndarray, center_uv, half: int) -> int:
     win = np.asarray(img[max(0, v - half):min(h, v + half + 1), max(0, u - half):min(w, u + half + 1)], dtype=int)
     r, g, b = win[..., 0], win[..., 1], win[..., 2]
     return int(((r > 170) & (r - g > 75) & (r - b > 75)).sum())
+
+
+class WristCam:
+    """An arm's wrist camera (the station's calibration, in the arm's ``gripper`` link frame; OpenGL convention),
+    posed by forward kinematics of the arm's measured joints, at a given resolution."""
+
+    def __init__(self, side: str, width: int, height: int):
+        cam = station.wrist_camera(side)
+        lens = cam.lens.resized(width, height)
+        self.fx, self.fy, self.cx, self.cy = lens.fx, lens.fy, lens.cx, lens.cy
+        self.r_in = quat_xyzw_to_matrix(np.asarray(cam.rot_xyzw, dtype=float))
+        self.p_in = np.asarray(cam.pos, dtype=float)
+        self.side = side
+
+    def pose(self, q6) -> tuple[np.ndarray, np.ndarray]:
+        """(rotation, desk position) of the camera for the arm's joint angles."""
+        g = gripper_link(q6, self.side)
+        return g[:3, :3] @ self.r_in, g[:3, :3] @ self.p_in + g[:3, 3] - np.array([0.0, 0.0, DESK_Z])
+
+    def project(self, q6, pts) -> np.ndarray:
+        r, p = self.pose(q6)
+        c = (np.atleast_2d(pts) - p) @ r
+        z = -c[:, 2]
+        return np.stack([self.cx + self.fx * c[:, 0] / z, self.cy - self.fy * c[:, 1] / z], axis=1)
+
+    def ray_to_z(self, q6, uv, z_desk: float) -> np.ndarray:
+        """The desk point at height z_desk seen at pixel uv."""
+        r, p = self.pose(q6)
+        d = r @ np.array([(uv[0] - self.cx) / self.fx, -(uv[1] - self.cy) / self.fy, -1.0])
+        t = (z_desk - p[2]) / d[2]
+        return p + t * d
+
+
+def blue_blob(img: np.ndarray, min_px: int = 4):
+    """Centroid (u, v) and pixel count of the blue tape band on the probe's tip (B high, R low), or (None, n)."""
+    a = np.asarray(img[..., :3], dtype=int)
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    m = (b > 110) & (b - r > 70) & (b - g > 25)
+    n = int(m.sum())
+    if n < min_px:
+        return None, n
+    v, u = np.nonzero(m)
+    return np.array([u.mean(), v.mean()]), n

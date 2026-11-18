@@ -1,8 +1,9 @@
 """Inspect Robots policy ``handhole-demo``: the scripted demo (handhole_sim.demo), closed loop, one action per control
 step. ``act`` gets the observation every policy gets (three camera images and the 14-D joint state) and returns the
-14-D joint action. It also binds to the task file the ``yam_arena`` embodiment loaded (as yam_scripted does) for its
-one simulator read, the hose end's position during the insertion (see handhole_sim.demo), so it runs only in the
-same process as that embodiment."""
+14-D joint action; the demo decides from that observation alone. ``bind`` finds the task file the ``yam_arena``
+embodiment loaded (as yam_scripted does) only so that the control run can ask for the off-camera lift check and the
+optional developer log (HANDHOLE_DEMO_DEBUG=1) can print the task's report; no decision reads either. It therefore
+runs only in the same process as that embodiment."""
 
 from __future__ import annotations
 

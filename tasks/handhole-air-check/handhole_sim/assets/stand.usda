@@ -29,19 +29,52 @@ def Xform "stand"
     {
         rel material:binding = </stand/Looks/stand>
         double size = 1
-        float3 xformOp:scale = (0.12, 0.09, 0.014)
-        double3 xformOp:translate = (0.5045000000000001, 0.28, 0.007000000000000001)
+        float3 xformOp:scale = (0.12, 0.09, 0.023933515)
+        double3 xformOp:translate = (0.5015000000000001, 0.28, 0.011966757233484707)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 
-    def Cube "pad" (
+    def Cube "holster_0" (
         prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
     )
     {
         rel material:binding = </stand/Looks/stand>
         double size = 1
-        float3 xformOp:scale = (0.05, 0.05, 0.03)
-        double3 xformOp:translate = (0.35, 0.38, 0.015)
+        float3 xformOp:scale = (0.007, 0.024, 0.085)
+        double3 xformOp:translate = (0.3465, 0.38, 0.0425)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holster_1" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.01, 0.007, 0.085)
+        double3 xformOp:translate = (0.355, 0.3715, 0.0425)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holster_2" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.01, 0.007, 0.085)
+        double3 xformOp:translate = (0.355, 0.3885, 0.0425)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "holster_3" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI"]
+    )
+    {
+        rel material:binding = </stand/Looks/stand>
+        double size = 1
+        float3 xformOp:scale = (0.007, 0.024, 0.085)
+        double3 xformOp:translate = (0.3635, 0.38, 0.0425)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
     }
 }

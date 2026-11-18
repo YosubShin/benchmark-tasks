@@ -11,16 +11,20 @@ Mechanism (see handhole_sim/usd/handhole_props.py):
   middle at least BOLT_CLEAR_M outside the box's outer edge and no hand within HAND_OFF_BOLT_M of it.
 - A bolt counts as loosened once it has turned a quarter turn counter-clockwise, or been lifted 3 mm off its seat,
   or left its hole (latched for the episode).
-- The monitor (meter, hose links, inline filter, hose tail) is one floating articulation. The hose's open end (the
-  tail's end point) counts as inside the box only below the cover's underside within the box's opening, with the
-  cover still seated, so the hose can only get there through the 13 mm pull slot (geometry). The meter's LCD shows
-  room air until the end has been inside for RESPONSE_S, then the seeded box air (a rule on geometric state).
+- The monitor (meter, hose links, sample probe) is one floating articulation. The probe is rigid: a 1/4 in tube with
+  a stop collar PROBE_L above its tip, a handle above that, the hose joining the handle through an elbow. It samples
+  the box's air while it is "in": its tip is below the cover's top face (it went down into the slot), it stands
+  within PROBE_TILT_MAX_DEG of vertical, and its collar rests on the cover's top face (the lowest point of the collar's underside over solid cover is at most
+  COLLAR_GAP_M above it), with the cover still seated. This is the same check the reviewer makes on the real trial's
+  side-on video; with these dimensions it puts the tip at least 2.5 mm below the cover's underside at any tilt the slot
+  allows (README). The meter's LCD shows room air until the probe has been in for RESPONSE_S, then the seeded box
+  air (a rule on geometric state).
 - The meter's visual alarm bars flash (ALARM_BLINK_S on, ALARM_BLINK_S off) while it shows an alarm reading. The alarm
-  latches (the Max XT II's "Latching Alarms" option): it keeps showing the alarm after the hose is out.
+  latches (the Max XT II's "Latching Alarms" option): it keeps showing the alarm after the probe is out.
 - Function test (the success check, run off camera by the station harness). GO: once both bolts lie clear on the
-  table, the hose end is out of the box and both hands are clear, continuously for TEST_WAIT_S, the scorer lifts the
+  table, the probe is out of the slot and both hands are clear, continuously for TEST_WAIT_S, the scorer lifts the
   cover with a hook-like spring at its centre (up to 3 x its weight, aiming 50 mm up). Lifted 30 mm = the box is
-  open. NO-GO: WATCH_S after the hose is out with the bolts untouched, the same lift must fail (the cover is still
+  open. NO-GO: WATCH_S after the probe is out with the bolts untouched, the same lift must fail (the cover is still
   bolted). `force_lift_test(env)` starts the test now (control runs).
 """
 
@@ -63,8 +67,7 @@ With the washer's friction (WASHER_MU 0.15) it gives a running torque of a few h
 not published); it holds the 0.6 kg cover down against the 17.7 N lift check with margin."""
 HOSE_K = 0.003
 HOSE_D = 0.002
-TAIL_D = 0.004
-"""The tail hangs on free hinges (light damping stands in for the hose's own stiffness and friction)."""
+"""The hose's hinges: light stiffness and damping stand in for the Tygon's own stiffness and friction."""
 RELEASED_RAD = math.pi / 2
 """A bolt turned a quarter turn counts as the cover's fastening released."""
 LIFTED_M = 0.003
@@ -80,8 +83,8 @@ BOLT_ON_TABLE_Z = 0.045
 shank's end about 33 mm; not held up)..."""
 HAND_OFF_BOLT_M = 0.05
 """... and neither hand's grasp point is within this distance of it (it has been let go)."""
-INSIDE_MARGIN = 0.002
-"""The hose end's centreline must be this far below the cover's underside (through the slot, in the box's air)."""
+COLLAR_SAMPLES = (48, (0.25, 0.5, 0.75, 1.0))
+"""Points on the collar's underside checked against the cover's solid top: angles, and fractions of its radius."""
 COVER_SEATED_M = 0.003
 TEST_CLEAR_M = 0.10
 TEST_WAIT_S = 1.0
@@ -90,7 +93,8 @@ LIFT_TARGET_M = 0.05
 LIFT_MAX_G = 3.0
 LIFT_PASS_M = 0.03
 LIFT_HELD_M = 0.005
-PICKED_Z = props.Z_HOSE + 0.04
+PICKED_Z = props.Z_TOP + 0.04
+"""The probe counts as picked up once its collar is this high (out of its holster)."""
 DROP_Z = 0.03
 
 
@@ -129,8 +133,7 @@ class Monitor(Object):
     def _generate_articulation_cfg(self) -> ArticulationCfg:
         cfg = super()._generate_articulation_cfg()
         cfg.actuators = {
-            "hose": ImplicitActuatorCfg(joint_names_expr=["hose_j.*", "filter_j"], stiffness=HOSE_K, damping=HOSE_D),
-            "tail": ImplicitActuatorCfg(joint_names_expr=["tail_j.*"], stiffness=0.0, damping=TAIL_D),
+            "hose": ImplicitActuatorCfg(joint_names_expr=["hose_j.*", "probe_j"], stiffness=HOSE_K, damping=HOSE_D),
         }
         cfg.init_state.joint_pos = {".*": 0.0}
         return cfg
@@ -149,8 +152,12 @@ class _TaskState:
         self.cover = env.scene["cover"]
         self.mon = env.scene["monitor"]
         self.robot = env.scene["robot"]
-        self.tail_id = self.mon.find_bodies(props.TIP_BODY)[0][0]
-        self.filter_id = self.mon.find_bodies("filter")[0][0]
+        self.probe_id = self.mon.find_bodies(props.PROBE_BODY)[0][0]
+        k, rhos = COLLAR_SAMPLES
+        ang = torch.arange(k, device=dev, dtype=torch.float32) * (2 * math.pi / k)
+        rho = torch.tensor(rhos, device=dev) * props.COLLAR_R
+        self.collar_pts = torch.stack([(rho[:, None] * torch.cos(ang)).flatten(), (rho[:, None] * torch.sin(ang)).flatten(),
+                                       torch.zeros(k * len(rhos), device=dev)], dim=-1)  # probe frame, (K, 3)
         self.root_name = self.mon.body_names[0]
         self.flange_ids, _ = self.robot.find_bodies(["left_gripper", "right_gripper"], preserve_order=True)
         self.mon_paths = sim_utils.find_matching_prim_paths("/World/envs/env_.*/monitor")
@@ -168,6 +175,8 @@ class _TaskState:
         self.picked, self.force_test, self.lift_lifted, self.lift_held = zb(), zb(), zb(), zb()
         self.inside_steps, self.out_steps, self.clear_steps, self.phase, self.phase_steps = zl(), zl(), zl(), zl(), zl()
         self.max_inside_s, self.lift_max = zf(), zf()
+        self.tip_depth_min = torch.full((n,), 1.0, device=dev)
+        self.tip, self.probe_pos, self.probe_axis = zf(3), zf(3), zf(3)
         self.display = torch.full((n,), -1, dtype=torch.long, device=dev)
         self.alarm_lit = torch.zeros(n, dtype=torch.bool, device=dev)
         self.latched = torch.zeros(n, dtype=torch.bool, device=dev)
@@ -219,8 +228,14 @@ class HandholeTask(TaskBase):
         r.update(
             atmosphere=layout.atmosphere,
             display=props.DISPLAY_STATES[max(0, int(st.display[env_id]))],
-            hose_end_inside_s=round(float(st.inside_steps[env_id]) * st.dt, 1),
-            hose_end_inside_max_s=round(float(st.max_inside_s[env_id]), 1),
+            probe_in_s=round(float(st.inside_steps[env_id]) * st.dt, 1),
+            probe_in_max_s=round(float(st.max_inside_s[env_id]), 1),
+            tip_below_underside_min_mm=(None if float(st.tip_depth_min[env_id]) >= 1.0
+                                        else round(float(st.tip_depth_min[env_id]) * 1000, 1)),
+            probe_tip=[round(float(v), 4) for v in st.tip[env_id]],
+            probe_collar=[round(float(v), 4) for v in st.probe_pos[env_id]],
+            probe_tilt_deg=round(math.degrees(math.acos(max(-1.0, min(1.0, float(st.probe_axis[env_id, 2]))))), 1),
+            probe_axis=[round(float(v), 3) for v in st.probe_axis[env_id]],
             bolt_turns=[round(float(t) / (2 * math.pi), 2) for t in st.turn[env_id]],
             bolts_engaged=[bool(v) for v in st.engaged[env_id]], bolts_loosened=[bool(v) for v in st.loosened[env_id]],
             bolts_out=[bool(v) for v in st.out[env_id]], bolts_clear=[bool(v) for v in st.clear[env_id]],
@@ -273,13 +288,14 @@ class HandholeTask(TaskBase):
             buf[env_ids] = 0
         for buf in (st.turn, st.prev_yaw, st.bolt_rise, st.max_inside_s, st.lift_max):
             buf[env_ids] = 0.0
+        st.tip_depth_min[env_ids] = 1.0
         st.cover.permanent_wrench_composer.reset(env_ids=env_ids)
         # Bolts: seated in their holes, thread engaged.
         for k, bolt in enumerate(st.bolts):
             bolt.permanent_wrench_composer.reset(env_ids=env_ids)
             _write_pose(bolt, props.bolt_pose(k), env_ids, origins)
         _write_pose(st.cover, props.cover_pose(), env_ids, origins)
-        # Monitor: hose at rest, filter in its fork.
+        # Monitor: hose at rest, the probe standing in its holster.
         _write_pose(st.mon, _layout_pose(st.root_name), env_ids, origins)
         q = torch.zeros(n, st.mon.num_joints, device=dev)
         st.mon.write_joint_state_to_sim(q, q, env_ids=env_ids)
@@ -357,23 +373,39 @@ class HandholeTask(TaskBase):
         st.clear = st.out & ((ox * ox + oy * oy).sqrt() >= BOLT_CLEAR_M) & (mid[..., 2] < BOLT_ON_TABLE_Z) & hands_off
         released = st.loosened.any(dim=1)
 
-        # Hose end and the box's air.
-        tq = st.mon.data.body_quat_w.torch[:, st.tail_id]
-        tip = (st.mon.data.body_pos_w.torch[:, st.tail_id] - origins
-               + math_utils.quat_apply(tq, torch.tensor([[props.TAIL_L, 0.0, 0.0]], device=dev).expand(n, 3)))
+        # The probe and the box's air. In: tip below the cover's top face and the collar resting on the top face.
+        p_pos = st.mon.data.body_pos_w.torch[:, st.probe_id] - origins
+        p_quat = st.mon.data.body_quat_w.torch[:, st.probe_id]
+        tip = p_pos + math_utils.quat_apply(p_quat, torch.tensor([[0.0, 0.0, -props.PROBE_L]], device=dev).expand(n, 3))
+        st.tip = tip
         cover_pos = st.cover.data.root_pos_w.torch - origins
         seated = (cover_pos[:, 2] - st.cover_rest_z).abs() < COVER_SEATED_M
-        hx, hy, zf, zc = props.INTERIOR
-        m = INSIDE_MARGIN
-        inside = (((tip[:, 0] - props.BX).abs() < hx) & ((tip[:, 1] - props.BY).abs() < hy)
-                  & (tip[:, 2] < zc - m) & (tip[:, 2] > zf) & seated)
+        top = cover_pos[:, 2] + props.COVER[2] / 2
+        kp = st.collar_pts.shape[0]
+        pts = p_pos[:, None] + math_utils.quat_apply(p_quat[:, None].expand(n, kp, 4).reshape(-1, 4),
+                                                     st.collar_pts[None].expand(n, kp, 3).reshape(-1, 3)).view(n, kp, 3)
+        rel_x = pts[..., 0] - (cover_pos[:, None, 0] + props.SLOT_XY[0] - props.BX)
+        rel_y = pts[..., 1] - (cover_pos[:, None, 1] + props.SLOT_XY[1] - props.BY)
+        over_slot = (rel_x.abs() <= props.SLOT[0] / 2) & (rel_y.abs() <= props.SLOT[1] / 2)
+        on_cover = (((pts[..., 0] - cover_pos[:, None, 0]).abs() <= props.COVER[0] / 2)
+                    & ((pts[..., 1] - cover_pos[:, None, 1]).abs() <= props.COVER[1] / 2))
+        height = torch.where(over_slot | ~on_cover, torch.full_like(rel_x, 1.0), pts[..., 2] - top[:, None])
+        collar_rests = height.min(dim=1).values <= props.COLLAR_GAP_M
+        axis = math_utils.quat_apply(p_quat, torch.tensor([[0.0, 0.0, 1.0]], device=dev).expand(n, 3))
+        upright = axis[:, 2] >= math.cos(math.radians(props.PROBE_TILT_MAX_DEG))
+        tip_over = (((tip[:, 0] - cover_pos[:, 0]).abs() <= props.COVER[0] / 2)
+                    & ((tip[:, 1] - cover_pos[:, 1]).abs() <= props.COVER[1] / 2))
+        inside = collar_rests & upright & (tip[:, 2] < top) & tip_over & seated
+        st.probe_pos, st.probe_axis = p_pos, axis
+        depth = (top - props.COVER[2]) - tip[:, 2]
+        st.tip_depth_min = torch.where(inside, torch.minimum(st.tip_depth_min, depth), st.tip_depth_min)
         st.inside_steps = torch.where(inside, st.inside_steps + 1, torch.zeros_like(st.inside_steps))
         st.max_inside_s = torch.maximum(st.max_inside_s, st.inside_steps.float() * env.step_dt)
         sampled = st.inside_steps >= st.sample_steps
         box_air = torch.where(st.go, 1, 2)
         shown = torch.where(st.inside_steps >= st.response_steps, box_air, torch.zeros_like(box_air))
         # Latching alarm (BW Max XT II user option, manual p.52): once in alarm, the display keeps the peak reading
-        # and the alarm bars keep flashing after the hose is out, until acknowledged (not modelled: no one does).
+        # and the alarm bars keep flashing after the probe is out, until acknowledged (not modelled: no one does).
         st.latched |= shown == 2
         shown = torch.where(st.latched, torch.full_like(shown, 2), shown)
         self._show_display(st, shown)
@@ -384,9 +416,8 @@ class HandholeTask(TaskBase):
                     & ((tip[:, 1] - props.BY).abs() < props.BOX_OUT[1] / 2))
         withdrawn = (tip[:, 2] > props.Z_TOP - 0.002) | ~over_box  # out of the slot (lying on the cover counts)
         st.out_steps = torch.where(withdrawn & st.scorer.sample_ok, st.out_steps + 1, torch.zeros_like(st.out_steps))
-        filter_z = st.mon.data.body_pos_w.torch[:, st.filter_id, 2] - origins[:, 2]
-        st.picked |= filter_z > PICKED_Z
-        dropped = st.picked & ~st.scorer.sample_ok & (filter_z < DROP_Z)
+        st.picked |= p_pos[:, 2] > PICKED_Z
+        dropped = st.picked & ~st.scorer.sample_ok & (p_pos[:, 2] < DROP_Z)
 
         # Lift test (hook-like spring on the cover's centre).
         slot = torch.tensor([props.SLOT_XY[0], props.SLOT_XY[1], props.Z_TOP], device=dev)

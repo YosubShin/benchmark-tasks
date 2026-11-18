@@ -61,6 +61,18 @@ def _capsule(stage, path, p0, p1, radius, material):
     return cap
 
 
+def _cylinder(stage, path, center, radius, height, material):
+    """A collision cylinder along the body's local z."""
+    cyl = UsdGeom.Cylinder.Define(stage, path)
+    cyl.CreateAxisAttr("Z")
+    cyl.CreateRadiusAttr(radius)
+    cyl.CreateHeightAttr(height)
+    UsdGeom.Xformable(cyl).AddTranslateOp().Set(Gf.Vec3d(*center))
+    UsdShade.MaterialBindingAPI.Apply(cyl.GetPrim()).Bind(material)
+    UsdPhysics.CollisionAPI.Apply(cyl.GetPrim())
+    return cyl
+
+
 def _body(stage, path, pos, quat, mass):
     xform = UsdGeom.Xform.Define(stage, path)
     xform.AddTranslateOp().Set(Gf.Vec3d(*pos))
@@ -91,9 +103,11 @@ IN = 0.0254
 # Box and cover (Quazite PG1118) -------------------------------------------------------------------
 BX, BY = 0.30, -0.02
 """Box centre in the world. The long axis (18 in) runs along y."""
-Z_TOP = 0.075
-"""Cover top (flush with the box top). The box is cut to 75 mm so the hose carry stays inside the YAM's
-fingers-down reach (above about 0.21 m the station IK cannot hold fingers straight down near the arm base)."""
+Z_TOP = 0.085
+"""Cover top (flush with the box top). The box is cut to 85 mm (real 12 in, set in the ground): deep enough for the
+sample probe hanging straight down from a seated collar (its tip 32 mm below the cover's underside, 9 mm above the
+table), low enough that carrying the probe over the cover stays inside the YAM's fingers-down reach (above about
+0.21 m the station IK cannot hold the fingers straight down)."""
 COVER = (11.25 * IN, 18.125 * IN, 1.75 * IN)
 """x, y, thickness: 286 x 460 x 44 mm."""
 COVER_MASS = 0.6
@@ -101,7 +115,8 @@ Z_COVER_BOTTOM = Z_TOP - COVER[2]
 BOX_OUT = (13.375 * IN, 20.25 * IN)
 RECESS = (11.375 * IN, 18.25 * IN)
 OPENING = (8.875 * IN, 15.75 * IN)
-FLOOR_T = 0.008
+FLOOR_T = 0.0
+"""The box has an open bottom, as Quazite PG boxes do (they sit on gravel); here it stands on the table."""
 BOLT_DX, BOLT_DY = 8.875 * IN / 2, 15.75 * IN / 2
 BOLTS = ((BX + BOLT_DX, BY + BOLT_DY), (BX - BOLT_DX, BY - BOLT_DY))
 """Bolt 0 (far, +y: arm A) and bolt 1 (near, -y: arm B), at diagonal corners as on the drawing."""
@@ -135,38 +150,65 @@ BOLT_CENTRE_Z = (WASHER[1] + HEAD[1] - SHANK_LEN) / 2
 INTERIOR = (OPENING[0] / 2, OPENING[1] / 2, FLOOR_T, Z_COVER_BOTTOM)
 """Half x, half y, floor z, ceiling z of the box's air space (below the ledge)."""
 
-# Monitor and hose -----------------------------------------------------------------------------------
+# Monitor, hose and sample probe -------------------------------------------------------------------------------
 METER = (0.131, 0.070, 0.052)
 METER_MASS = 0.328
 HOSE_R = 0.25 * IN / 2
 LINK_L = 0.05
 LINK_MASS = 0.004
-FILTER = (0.040, 0.020, 0.020)
-FILTER_MASS = 0.015
-STUB_L = 0.030
-"""The hose's first 30 mm past the filter's outlet, rigid with the filter (it keeps the free end's pivot clear of the
-fingers that hold the filter)."""
-TAIL_L = 0.10
-TAIL_MASS = 0.003
-HOSE_HEADINGS = (0, 0, 90, 90, 180, 180, 180, 180, 180, 180)
-"""Heading (deg about z) of each hose link from the meter to the filter: a U lying at the hose height (the meter
-behind the box's far-left corner, in the top camera's view; the filter beside the box, pointing toward the robot)."""
-HOSE_AXES = ("Z", "Y", "Z", "Y", "Z", "Y", "Z", "Y", "Z", "Y")
-FILTER_XY = (0.37, 0.38)
-FILTER_DIR = math.cos(math.radians(HOSE_HEADINGS[-1]))
-"""+1 or -1: the filter (and the tail past it) lies along this x direction from FILTER_XY."""
-"""Where the filter starts (its hose end); it lies along the last link's heading, the tail sticking out past the pad."""
-TAIL_N = 1
-DEPTH_MARK = (0.046, 0.010)
-"""A blue tape band on the hose: its lower edge DEPTH_MARK[0] from the open end (the cover's 44 mm plus 2 mm), 10 mm
-wide. While the band's lower edge is at or below the cover's top face, the open end is inside the box (real-world
-check in the README)."""
-Z_HOSE = 0.040
-"""Height of the hose and the filter's axis at rest: the filter lies on a pad (top 30 mm), the meter on a low block."""
-PAD_TOP = Z_HOSE - FILTER[2] / 2
 LINK_LIMIT_DEG = 110.0
-TAIL_LIMIT_DEG = 175.0
-"""The tail's hinge at the filter: free enough to hang straight down whatever the filter's pitch in the fingers."""
+RISER_L = 0.044
+RISER_PITCH = 60.0
+"""Each of the two hose links that rise beside the holster to the probe's elbow."""
+HOSE_LINKS = ((0, 0, LINK_L), (0, 0, LINK_L), (90, 0, LINK_L), (90, 0, LINK_L)) + ((180, 0, LINK_L),) * 5 + (
+    (180, RISER_PITCH, RISER_L), (180, RISER_PITCH, RISER_L))
+"""(heading deg about z, pitch deg up, length) of each hose link from the meter's inlet: back, left, forward toward
+the robot along the table, then up at RISER_PITCH to the probe's elbow (the riser comes in from the far side, so as
+the probe goes down into the slot it swings out away from the probe instead of folding under its collar)."""
+HOSE_AXES = ("Z", "Y", "Z", "Y", "Z", "Y", "Z", "Y", "Z", "Y", "Z")
+"""Hinge axis of each link's joint to the one before it, in that link's frame. The riser's bottom hinge ("Y") lets it
+swing out along the hose; its middle one ("Z") lets it swing sideways."""
+RISER_LIMIT_DEG = 170.0
+
+# The probe: a rigid stainless sampling probe (1/4 in OD tube) on the end of the hose, the kind of rigid probe BW
+# sells for this monitor (GA-PROB1-1, 1 ft; shorter here, see PROBE_L), with a clamp-on shaft collar (Ruland CL-4-F:
+# 1/4 in bore, 5/8 in OD, 9/32 in wide) as its depth stop. Body frame: origin at the centre of the collar's underside,
+# +z along the probe toward the handle; the tip is at z = -PROBE_L.
+PROBE_R = 0.25 * IN / 2
+PROBE_L = 0.076
+"""Tip to the collar's underside. With the collar resting on the cover's top face the tip is at least 2.5 mm below the
+cover's underside at every tilt the 13 x 51 mm slot allows (README "Verifying the probe depth")."""
+COLLAR_R = 0.625 * IN / 2
+COLLAR_W = 0.28125 * IN
+ROD_ABOVE = 0.006
+"""Bare tube between the collar's top and the handle."""
+HANDLE = (0.020, 0.020, 0.036)
+"""The probe's handle (its filter housing), a square block the fingers close on; the hose enters near its top."""
+HANDLE_Z0 = COLLAR_W + ROD_ABOVE
+"""Probe frame z of the handle's bottom face."""
+GRASP_Z = HANDLE_Z0 + 0.014
+"""Probe frame z where the demo grasps the handle (14 mm above its bottom: the fingertips stay above the collar)."""
+ELBOW = (0.018, HANDLE_Z0 + HANDLE[2] - 0.008)
+"""The hose joins the handle through a 90-degree barbed elbow: (distance from the probe's axis toward the hose, z)."""
+TIP_BAND = 0.010
+"""One wrap of blue tape round the probe's last 10 mm: it marks the tip for the reviewer and for the robot's wrist
+camera."""
+PROBE_MASS = 0.035
+HOLSTER_XY = (0.355, 0.38)
+"""The probe stands in a holster beside the box (a block with a bore; the collar rests on its top, at Z_TOP)."""
+HOLSTER = (0.024, 0.024)
+HOLSTER_BORE = 0.010
+Z_HOSE = Z_TOP + ELBOW[1] - 2 * RISER_L * math.sin(math.radians(RISER_PITCH))
+"""Height of the hose's run along the table and of the meter's inlet at rest (the meter lies on a low block)."""
+SLOT_W, SLOT_L, COVER_T = SLOT[0], SLOT[1], COVER[2]
+COLLAR_GAP_M = 0.002
+"""The collar counts as resting on the cover while the lowest point of its underside over solid cover is at most this
+far above the top face (README; the same rule in the sim and in the real trial)."""
+PROBE_TILT_MAX_DEG = 60.0
+"""... and while the probe stands within this of vertical (it goes down into the slot, not lying across the cover)."""
+WARN_TAG = (0.080, 0.118, (BX, BY + 0.045))
+"""The yellow warning tag on the cover (x size, y size, centre): "TEST AIR / BEFORE / OPENING" in black block
+letters, reading from behind the robot, between the pull slot and the cover's centre."""
 
 
 COLORS = {
@@ -174,7 +216,7 @@ COLORS = {
     "meter_black": (0.08, 0.08, 0.09), "meter_yellow": (0.95, 0.75, 0.08), "hose": (0.80, 0.86, 0.88),
     "lcd_bg": (0.66, 0.72, 0.58), "lcd_alarm": (0.85, 0.30, 0.25), "lcd_seg": (0.03, 0.03, 0.03),
     "alarm_off": (0.22, 0.22, 0.24),
-    "filter": (0.92, 0.92, 0.90), "tape": (0.08, 0.25, 0.80), "stand": (0.40, 0.40, 0.42), "black": (0.05, 0.05, 0.05),
+    "filter": (0.92, 0.92, 0.90), "warn_yellow": (0.98, 0.82, 0.05), "tape": (0.08, 0.25, 0.80), "stand": (0.40, 0.40, 0.42), "black": (0.05, 0.05, 0.05),
 }
 
 DISPLAY_STATES = ("room", "go", "nogo")
@@ -313,10 +355,63 @@ def bolt_pose(k: int) -> tuple:
     return (x, y, Z_TOP, 0.0, 0.0, 0.0, 1.0)
 
 
+FONT = {
+    "T": ("#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."),
+    "E": ("#####", "#....", "#....", "####.", "#....", "#....", "#####"),
+    "S": (".####", "#....", "#....", ".###.", "....#", "....#", "####."),
+    "A": (".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"),
+    "I": ("#####", "..#..", "..#..", "..#..", "..#..", "..#..", "#####"),
+    "R": ("####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"),
+    "B": ("####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."),
+    "F": ("#####", "#....", "#....", "####.", "#....", "#....", "#...."),
+    "O": (".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."),
+    "P": ("####.", "#...#", "#...#", "####.", "#....", "#....", "#...."),
+    "N": ("#...#", "##..#", "#.#.#", "#..##", "#...#", "#...#", "#...#"),
+    "G": (".###.", "#...#", "#....", "#.###", "#...#", "#...#", ".###."),
+    " ": (".....",) * 7,
+}
+WARN_LINES = ("TEST AIR", "BEFORE", "OPENING")
+
+
+def _warning_tag(stage, root, top_z, m):
+    """The tag in the cover's frame: a yellow plate and block letters (5 x 7 cells, each row's runs merged into one
+    box). Text reads from behind the robot: left to right along -y, its top toward +x (away from the robot)."""
+    sx, sy, (wx, wy) = WARN_TAG
+    cx, cy = wx - BX, wy - BY
+    kit.box(stage, f"{root}/tag", (cx, cy, top_z + 0.0004), (sx, sy, 0.0008), m["warn_yellow"], collide=False)
+    kit.box(stage, f"{root}/tag_rim", (cx, cy, top_z + 0.0002), (sx + 0.004, sy + 0.004, 0.0004), m["black"],
+            collide=False)
+    cols = max(len(line) for line in WARN_LINES) * 6 - 1
+    rows = len(WARN_LINES) * 7 + (len(WARN_LINES) - 1) * 3
+    u = min((sy - 0.012) / cols, (sx - 0.012) / rows)
+    z = top_z + 0.0010
+    k = 0
+    for li, line in enumerate(WARN_LINES):
+        width = len(line) * 6 - 1
+        y_left = cy + width * u / 2
+        x_top = cx + rows * u / 2 - li * 10 * u
+        for ci, ch in enumerate(line):
+            for r, bits in enumerate(FONT[ch]):
+                c = 0
+                while c < 5:
+                    if bits[c] != "#":
+                        c += 1
+                        continue
+                    c1 = c
+                    while c1 < 5 and bits[c1] == "#":
+                        c1 += 1
+                    y0 = y_left - (ci * 6 + c) * u
+                    y1 = y_left - (ci * 6 + c1) * u
+                    kit.box(stage, f"{root}/tag_txt_{k}", (x_top - (r + 0.5) * u, (y0 + y1) / 2, z),
+                            (u, abs(y1 - y0), 0.0006), m["black"], collide=False)
+                    k += 1
+                    c = c1
+
+
 def make_cover(out_path: Path) -> None:
     root = "/cover"
     stage, root_prim = kit.new_stage(out_path, root)
-    m = _mats(stage, root, ("concrete", "concrete_dark", "steel"))
+    m = _mats(stage, root, ("concrete", "concrete_dark", "steel", "warn_yellow", "black"))
     UsdPhysics.RigidBodyAPI.Apply(root_prim)
     UsdPhysics.MassAPI.Apply(root_prim).CreateMassAttr(COVER_MASS)
     holes = [(x - BX, y - BY, BOLT_HOLE, BOLT_HOLE) for x, y in BOLTS]
@@ -325,9 +420,8 @@ def make_cover(out_path: Path) -> None:
     _plate_with_holes(stage, f"{root}/plate", (-hx, hx), (-hy, hy), (-t / 2, t / 2), holes, m["concrete"])
     sx, sy = SLOT_XY[0] - BX, SLOT_XY[1] - BY
     kit.box(stage, f"{root}/pin", (sx, sy, PIN_Z - (Z_TOP - t / 2)), (SLOT[0] + 0.002, PIN, PIN), m["steel"])
-    # Logo panel and tier stamp (visual).
-    kit.box(stage, f"{root}/logo", (0.0, -0.01, t / 2 + 0.0004), (0.07, 0.17, 0.0008), m["concrete_dark"],
-            collide=False)
+    # The warning tag (visual): a yellow plate with "TEST AIR / BEFORE / OPENING" in black block letters.
+    _warning_tag(stage, root, t / 2, m)
     _thin(stage, root)
     stage.GetRootLayer().Save()
     print(f"wrote {out_path}")
@@ -361,48 +455,52 @@ def _rot(q, v):
     return _qmul(_qmul(q, qv), c)[:3]
 
 
+def _link_q(heading_deg, pitch_deg):
+    """Link frame: local +x along the link, heading about z, pitched up by pitch_deg."""
+    return _qmul(_qz(heading_deg), _qy(-pitch_deg))
+
+
+def elbow_point():
+    """World position where the hose joins the probe's elbow (probe at rest in its holster)."""
+    return np.array([HOLSTER_XY[0] + ELBOW[0], HOLSTER_XY[1], Z_TOP + ELBOW[1]])
+
+
+def probe_rest_pose() -> tuple:
+    """The probe standing in its holster: collar on the holster's top (at Z_TOP), axis vertical."""
+    return (HOLSTER_XY[0], HOLSTER_XY[1], Z_TOP, 0.0, 0.0, 0.0, 1.0)
+
+
 def hose_layout():
-    """Rest poses (world pos, quat) of meter, hose links, filter and tail links; plus each joint's rest rotation
-    (in its parent body's frame) and axis. Built backwards from the filter in its fork."""
-    n = len(HOSE_HEADINGS)
-    top = np.array([FILTER_XY[0], FILTER_XY[1], Z_HOSE])
+    """Rest poses (world pos, quat) of meter, hose links and probe; plus each joint's rest rotation (in its parent
+    body's frame) and axis. Built backwards from the probe's elbow."""
+    n = len(HOSE_LINKS)
     starts = [None] * n
-    end = top.copy()
+    end = elbow_point()
     for k in range(n - 1, -1, -1):
-        h = math.radians(HOSE_HEADINGS[k])
-        starts[k] = end - LINK_L * np.array([math.cos(h), math.sin(h), 0.0])
+        h, pch, ln = HOSE_LINKS[k]
+        starts[k] = end - _rot(_link_q(h, pch), (ln, 0.0, 0.0))
         end = starts[k]
     inlet = starts[0]
-    h0 = HOSE_HEADINGS[0]
-    meter_q = _qz(h0)
+    meter_q = _qz(HOSE_LINKS[0][0])
     meter_pos = inlet - _rot(meter_q, (METER[0] / 2, 0, 0))
     bodies = [("meter", meter_pos, meter_q)]
     joints = []
-    prev_q, prev_h = meter_q, h0
+    prev_q = meter_q
+    conj = lambda q: np.array([-q[0], -q[1], -q[2], q[3]])  # noqa: E731
     for k in range(n):
-        q = _qz(HOSE_HEADINGS[k])
+        q = _link_q(*HOSE_LINKS[k][:2])
         bodies.append((f"hose_{k:02d}", starts[k], q))
-        joints.append((HOSE_AXES[k], _qz(HOSE_HEADINGS[k] - prev_h)))
-        prev_q, prev_h = q, HOSE_HEADINGS[k]
-    # Filter: lies flat, continuing the last link's heading; the tail continues straight past the pad's edge. It hangs
-    # from the filter on a gimbal (a free hinge about the filter's local y, then one about the gimbal's local z), so it
-    # hangs straight down whatever way the filter turns in the fingers.
+        joints.append((HOSE_AXES[k], _qmul(conj(prev_q), q)))
+        prev_q = q
     ident = np.array([0.0, 0.0, 0.0, 1.0])
-    bodies.append(("filter", top, prev_q))
-    joints.append(("Z", ident))
-    p = top + _rot(prev_q, (FILTER[0] + STUB_L, 0, 0))
-    bodies.append(("tail_gimbal", p.copy(), prev_q))
-    joints.append(("Y", ident))
-    for k in range(TAIL_N):
-        bodies.append((f"tail_{k}", p.copy(), prev_q))
-        joints.append(("Z", ident))
-        p = p + _rot(prev_q, (TAIL_L, 0, 0))
+    p = probe_rest_pose()
+    bodies.append(("probe", np.array(p[:3]), ident))
+    joints.append(("Z", _qmul(conj(prev_q), ident)))
     return bodies, joints
 
 
-JOINT_NAMES = tuple([f"hose_j{k:02d}" for k in range(len(HOSE_HEADINGS))] + ["filter_j"]
-                    + ["tail_j0"] + [f"tail_j{k + 1}" for k in range(TAIL_N)])
-TIP_BODY = f"tail_{TAIL_N - 1}"
+JOINT_NAMES = tuple([f"hose_j{k:02d}" for k in range(len(HOSE_LINKS))] + ["probe_j"])
+PROBE_BODY = "probe"
 
 
 def _quad_up(stage, path, center, size, material, u_range):
@@ -492,18 +590,13 @@ def make_monitor(out_dir: Path) -> None:
     kit.articulation_root(stage, root_prim)
     root_prim.CreateAttribute("physxArticulation:solverPositionIterationCount", Sdf.ValueTypeNames.Int).Set(32)
     m = _mats(stage, root, ("meter_black", "meter_yellow", "hose", "filter", "black", "lcd_bg", "lcd_alarm",
-                            "lcd_seg", "alarm_off", "tape"))
+                            "lcd_seg", "alarm_off", "steel", "tape"))
     m["alarm_on"] = _emissive(stage, root, "alarm_on", (1.0, 0.08, 0.05))
     bodies, joints = hose_layout()
     paths = {}
     for name, pos, q in bodies:
-        mass = {"meter": METER_MASS, "filter": FILTER_MASS, "tail_gimbal": 0.001}.get(
-            name, TAIL_MASS if name.startswith("tail") else LINK_MASS)
+        mass = {"meter": METER_MASS, "probe": PROBE_MASS}.get(name, LINK_MASS)
         body = _body(stage, f"{root}/{name}", pos, q, mass)
-        if name == "tail_gimbal":  # no collider: give it an inertia
-            UsdPhysics.MassAPI(body.GetPrim()).CreateDiagonalInertiaAttr(Gf.Vec3f(1e-7, 1e-7, 1e-7))
-            paths[name] = body.GetPath()
-            continue
         paths[name] = body.GetPath()
         b = f"{root}/{name}"
         if name == "meter":
@@ -520,34 +613,32 @@ def make_monitor(out_dir: Path) -> None:
             kit.box(stage, f"{b}/inlet", (lx / 2 + 0.004, 0, 0), (0.008, 0.012, 0.012), m["black"], collide=False)
             _lcd_geometry(stage, b, lz / 2, m)
         elif name.startswith("hose"):
-            _capsule(stage, f"{b}/tube", (0, 0, 0), (LINK_L, 0, 0), HOSE_R, m["hose"])
-        elif name == "filter":
-            kit.box(stage, f"{b}/can", (FILTER[0] / 2, 0, 0), FILTER, m["filter"])
-            _capsule(stage, f"{b}/stub", (FILTER[0], 0, 0), (FILTER[0] + STUB_L, 0, 0), HOSE_R, m["hose"])
-        else:
-            _capsule(stage, f"{b}/tube", (0, 0, 0), (TAIL_L, 0, 0), HOSE_R, m["hose"])
-            lo, w = DEPTH_MARK
-            kit.box(stage, f"{b}/depth_mark", (TAIL_L - lo - w / 2, 0, 0), (w, 2 * HOSE_R + 0.001, 2 * HOSE_R + 0.001),
-                    m["tape"], collide=False)
+            ln = HOSE_LINKS[int(name.split("_")[1])][2]
+            _capsule(stage, f"{b}/tube", (0, 0, 0), (ln, 0, 0), HOSE_R, m["hose"])
+        else:  # the probe: tube, depth-stop collar, bare tube, handle, elbow
+            _cylinder(stage, f"{b}/tube", (0, 0, -PROBE_L / 2), PROBE_R, PROBE_L, m["steel"])
+            kit.cylinder(stage, f"{b}/tip_band", (0, 0, -PROBE_L + TIP_BAND / 2), PROBE_R + 0.0004, TIP_BAND,
+                                m["tape"])
+            _cylinder(stage, f"{b}/collar", (0, 0, COLLAR_W / 2), COLLAR_R, COLLAR_W, m["black"])
+            _cylinder(stage, f"{b}/rod", (0, 0, COLLAR_W + ROD_ABOVE / 2), PROBE_R, ROD_ABOVE, m["steel"])
+            kit.box(stage, f"{b}/handle", (0, 0, HANDLE_Z0 + HANDLE[2] / 2), HANDLE, m["filter"])
+            _capsule(stage, f"{b}/elbow", (HANDLE[0] / 2, 0, ELBOW[1]), (ELBOW[0], 0, ELBOW[1]), HOSE_R, m["hose"])
     names = [b[0] for b in bodies]
     for k, (axis, rest) in enumerate(joints):
         parent, child = names[k], names[k + 1]
         if parent == "meter":
             pos0 = (METER[0] / 2, 0, 0)
-        elif parent == "filter":
-            pos0 = (FILTER[0] + STUB_L, 0, 0)
-        elif parent == "tail_gimbal":
-            pos0 = (0, 0, 0)
-        elif parent.startswith("tail"):
-            pos0 = (TAIL_L, 0, 0)
         else:
-            pos0 = (LINK_L, 0, 0)
-        lim = TAIL_LIMIT_DEG if JOINT_NAMES[k].startswith("tail") else LINK_LIMIT_DEG
+            pos0 = (HOSE_LINKS[int(parent.split("_")[1])][2], 0, 0)
+        pos1 = (ELBOW[0], 0, ELBOW[1]) if child == "probe" else (0, 0, 0)
+        lim = RISER_LIMIT_DEG if k >= len(HOSE_LINKS) - 2 else LINK_LIMIT_DEG
         _joint(stage, f"{root}/joints/{JOINT_NAMES[k]}", paths[parent], paths[child], axis, pos0, tuple(rest),
-               (0, 0, 0), -lim, lim)
-    kit.friction(stage, root, [f"{root}/{n}" for n in names if n.startswith(("hose", "tail"))], static=0.15,
+               pos1, -lim, lim)
+    kit.friction(stage, root, [f"{root}/{n}" for n in names if n.startswith("hose")], static=0.15,
                  dynamic=0.12, name="tygon", combine="min")
-    kit.friction(stage, root, [f"{root}/filter"], static=1.2, dynamic=1.0, name="grip")
+    kit.friction(stage, root, [f"{root}/probe/handle"], static=1.2, dynamic=1.0, name="grip")
+    kit.friction(stage, root, [f"{root}/probe/tube", f"{root}/probe/collar", f"{root}/probe/rod"], static=0.3,
+                 dynamic=0.25, name="probe_steel", combine="min")
     kit.friction(stage, root, [f"{root}/meter"], static=0.9, dynamic=0.8, name="rubber")
     stage.GetRootLayer().Save()
     print(f"wrote {out_path}")
@@ -561,9 +652,11 @@ def make_stand(out_path: Path) -> None:
     mpos = bodies[0][1]
     block_top = mpos[2] - METER[2] / 2
     kit.box(stage, f"{root}/meter_block", (mpos[0], mpos[1], block_top / 2), (0.12, 0.09, block_top), m["stand"])
-    # Pad under the filter (the tail sticks out past its edge).
-    fx, fy = FILTER_XY
-    kit.box(stage, f"{root}/pad", (fx + FILTER_DIR * FILTER[0] / 2, fy, PAD_TOP / 2), (0.05, 0.05, PAD_TOP), m["stand"])
+    # The probe's holster: a block bored for the probe's tube; the collar rests on its top, level with the cover.
+    hx, hy = HOLSTER_XY
+    _plate_with_holes(stage, f"{root}/holster", (hx - HOLSTER[0] / 2, hx + HOLSTER[0] / 2),
+                      (hy - HOLSTER[1] / 2, hy + HOLSTER[1] / 2), (0.0, Z_TOP),
+                      [(hx, hy, HOLSTER_BORE, HOLSTER_BORE)], m["stand"])
     stage.GetRootLayer().Save()
     print(f"wrote {out_path}")
 

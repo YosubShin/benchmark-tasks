@@ -3,36 +3,38 @@
 What it reads. Every control step it gets the observation Inspect Robots hands any policy: the three RGB images
 (``top_cam``, ``left_cam``, ``right_cam``) and the 14-D ``joint_pos`` state. Grasp points come from forward kinematics
 of the measured joints (``handhole_sim.vision``, the arm's URDF at the station's calibrated bases); the monitor's
-alarm is read from the top-camera image; bolt holding is felt through the measured gripper opening. Fixed knowledge:
-the documented layout (task.json ``setup``) and the station's published camera calibration.
-ONE simulator read remains: while it puts the hose's open end into the pull slot, the demo reads the end's position
-(the hose's last link) from the simulator to servo it into the 13 mm slot (the held filter turns in the fingers, so
-the hanging end must be measured; a camera estimate of the 6 mm tube end at 320 x 176 was not built). Nothing else
-comes from the simulator: no bolt pose, turn or thread state, no display state, no scorer state (the optional
-HANDHOLE_DEMO_DEBUG=1 log prints the task's report for the developer; no decision uses it).
+alarm is read from the top-camera image; whether the probe went down into the slot or stopped on the cover, and
+whether a bolt is held, are felt through the measured joints (the grasp point's measured height, the gripper's
+measured opening). Fixed knowledge: the documented layout (task.json ``setup``) and the station's published camera
+calibration. Nothing comes from the simulator: no prop pose, no probe or bolt state, no display state, no scorer
+state (the optional HANDHOLE_DEMO_DEBUG=1 log prints the task's report for the developer; no decision uses it).
 
-Arm A (left) picks the sample hose's inline filter off its pad (fingers down, closing across it), lifts it so the
-hose's last 100 mm hangs below on its gimbal, servos the hanging end over the free half of the pull slot and lowers
-it so the end hangs in the box's air under the cover. It holds there for the sampling time, then, with the end still
-inside, watches the monitor's alarm lenses in the top-camera image for 1.5 s; then it lifts the hose out and lays the
-filter on the table.
+Arm A (left) grasps the sampling probe's handle where it stands in its holster (fingers down, closing across the
+handle along x, so any tilt of the probe in the fingers swings its tip along the slot's length), lifts it out,
+carries it over the free half of the pull slot and lowers it at 6 mm/s until the stop collar rests on the cover. If
+the measured grasp height stops falling above the seated height (the tip landed on the cover beside the slot), it
+lifts 15 mm and tries again a few mm to the side. Before descending, it finds the probe's blue tip band in the left
+wrist camera and corrects the grasp so the tip is over the slot. It holds the probe seated for the sampling time,
+lifts it out, moves it aside (READ_AT, where arm A no longer hides the monitor from the top camera) and watches the
+monitor's alarm lenses in the top-camera image for 1.5 s (the alarm latches); then it stands the probe down on the
+table left of the box.
 Clean (no red flashes): arm A takes the far bolt and arm B the near bolt. Each pinches its hex head and turns it
 counter-clockwise in N_TURN_CYCLES regrasps of 180 degrees, then pinches it and lifts it straight up out of its hole.
 If the measured gripper opening shows the fingers closed on nothing (the bolt stayed), it turns once more and tries
-again. Each arm carries its bolt to the table beside the box (documented spots BOLT_DROP, 9 cm outside the box's
+again. Each arm carries its bolt to the table beside the box (documented spots BOLT_DROP, 8-9 cm outside the box's
 edge), lowers it until the shank's end is just above the table and lets go. Both arms back away; the task's
 (off-camera) lift check then lifts the cover. Alarm (red flashes seen): both arms back away and wait.
 
-HANDHOLE_CONTROL=1 is the control run: the hose's end is held 35 mm beside the slot, 20 mm above the cover (never
-inside) for 20 s; the meter keeps reading room air (20.9 % O2, zeros: it looks clean), and the bolts are taken out
+HANDHOLE_CONTROL=1 is the control run: the probe's tip is held 35 mm beside the slot, 20 mm above the cover (never
+in) for 20 s; the meter keeps reading room air (20.9 % O2, zeros: it looks clean), and the bolts are taken out
 anyway. It must score 0. Since no valid sample exists the task never starts its lift check by itself, so the demo
 asks for it once the arms have backed away.
 
 HANDHOLE_HAZARD=<case> plays a hazard check (scoring tests, not demos): arm B gives the near bolt one 180-degree
 counter-clockwise turn at a chosen moment, and the demo otherwise carries on:
-- ``sampling``: 10 s after the hose's end went in (milestone 25 reached, sample not yet valid);
-- ``alarm_in``: (seed 1) once the 60 s sample is valid and the monitor is in alarm, hose still in (milestone 50);
-- ``alarm_out``: (seed 1) as soon as the hose's end is out of the slot, alarm showing (milestone 75).
+- ``sampling``: 10 s after the probe was seated (milestone 25 reached, sample not yet valid);
+- ``alarm_in``: (seed 1) once the 60 s sample is valid and the monitor is in alarm, probe still in (milestone 50);
+- ``alarm_out``: (seed 1) as soon as the probe's tip is out of the slot, alarm showing (milestone 75).
 Each must end with task_score 0.
 
 Grasp-point targets become yam_arena's 14-D joint action through yam_arena's own IK every control step;
@@ -52,29 +54,33 @@ CONTROL = os.environ.get("HANDHOLE_CONTROL") == "1"
 HAZARD = os.environ.get("HANDHOLE_HAZARD", "")
 DEBUG = os.environ.get("HANDHOLE_DEMO_DEBUG") == "1"
 
-PAD_ABOVE_GRASP = 0.006
-"""The finger pads' centre is 6 mm below the grasp point: pads on the filter's axis keep the finger ends above the
-pad it lies on."""
 L_WAIT = (0.22, 0.26, 0.22)
 R_WAIT = (0.22, -0.26, 0.22)
 R_RETREAT = (0.20, -0.14, 0.24)
-TIP_DEPTH = 0.060
-"""How far below the cover's top face the hose end is aimed (it stops on the box's air side, under the cover)."""
+PROBE_YAW = 90.0
+"""Fingers close along x on the probe's square handle: a tilt in the fingers then swings the tip along the slot's
+51 mm length, not across its 13 mm width."""
+PRESS_M = 0.0015
+"""The grasp is commanded this far below the seated height, so the collar stays down on the cover."""
+SEATED_TOL = 0.004
+"""Measured grasp height within this of the seated height: the collar is on the cover."""
+DESCEND_SPEED = 0.006
+STALL_S = 1.0
+"""No measured descent (under 1 mm) for this long above the seated height: the tip is on the cover, not in the slot."""
+SEARCH = ((0.0, 0.0), (0.0, -0.004), (0.0, 0.004), (-0.002, 0.0), (0.002, 0.0), (0.0, -0.007), (0.0, 0.007))
+"""Grasp offsets (x, y) tried in turn after a stall."""
 YAW0, YAW1 = -90.0, 90.0
 """Each regrasp turns the head 180 deg (more is past the wrist joint's range with the fingers down)."""
 N_TURN_CYCLES = 4
 """Regrasps before the first pull: 4 x 180 deg = 2 turns commanded for the 1.5 turns of thread (the pinch slips
 some of each turn)."""
-SERVO_DT = 0.1
-SERVO_GAIN = 0.15
-SERVO_GAIN_SLOT = 0.05
-SERVO_MAX = 0.003
-DESCEND_SPEED = 0.006
-LAY_DOWN = (0.30, 0.45, 0.05)
-"""Where the filter is laid down after sampling: left of the box, outboard of where arm A sets its bolt."""
-GRASP_ALONG = 0.013
-"""Grasp the filter 13 mm from its hose end (7 mm short of its middle), so the fingers stay clear of the tail's hinge."""
-CARRY_Z = 0.155
+READ_AT = (0.30, 0.30)
+"""Where arm A holds the probe (just lifted out of the slot) while it reads the monitor: from here its links leave the
+monitor in the top camera's view (with the probe seated over the slot they hide it)."""
+LAY_DOWN = (0.30, 0.45)
+"""Where the probe is stood down after sampling (it falls over there): left of the box, outboard of where arm A sets
+its bolt; farther from the box than the probe is long."""
+CARRY_Z = 0.165
 """Grasp height while lifting a bolt out and carrying it: its shank's end 13 mm above the cover."""
 BOLT_DROP = {0: (0.20, 0.32), 1: (0.20, -0.37)}
 """Where each bolt is set down (desk x, y): 8.3 cm left of / 9.3 cm right of the box's outer edge."""
@@ -98,13 +104,10 @@ class Demo:
         self.obs = None
         view = STATION.env
         task = STATION.task
-        mon = view.scene["monitor"]
-        origin = view.scene.env_origins[0].cpu().numpy()
         dt = 1.0 / control_hz
         hk = lambda s: max(1, round(s / dt))  # noqa: E731
         state_k = [0]
         self.state_k = state_k
-        tail_id = mon.find_bodies(props.TIP_BODY)[0][0]
         head_grasp_z = props.Z_TOP + props.WASHER[1] + props.HEAD[1] - 0.010 + 0.012
         tip_below_grasp = head_grasp_z - (props.Z_TOP - props.SHANK_LEN)
         demo = self
@@ -115,11 +118,19 @@ class Demo:
                                                sgn * (props.ALARM_BAR[1] / 2 + 0.002), lz / 2)) for sgn in (-1, 1)], 0)
         self.lens_uv = None
         self.lens_world = lenses
+        self.wrist = None
 
         def q_yaw(deg):
             return qmul(q_axis((0, 0, 1), math.radians(deg)), DOWN)
 
         QA = q_yaw(0)
+        QP = q_yaw(PROBE_YAW)
+        hx, hy = props.HOLSTER_XY
+        grasp_rest = np.array([hx, hy, props.Z_TOP + props.GRASP_Z])
+        """Where the handle is grasped with the probe in its holster (collar on the holster's top, at Z_TOP)."""
+        tip_below_grasp_p = props.GRASP_Z + props.PROBE_L
+        seated_z = props.Z_TOP + props.GRASP_Z
+        """Grasp height with the collar resting on the cover's top face (the cover's top is at Z_TOP too)."""
 
         def note(msg):
             log(msg, flush=True)
@@ -133,12 +144,6 @@ class Demo:
 
         def grip(side):
             return state(side)[1]
-
-        def tip():
-            """The hose's open end (desk frame). The demo's one simulator read (see the module docstring)."""
-            pos = mon.data.body_pos_w.torch[0, tail_id].cpu().numpy() - origin
-            quat = mon.data.body_quat_w.torch[0, tail_id].cpu().numpy()
-            return pos + rotate(quat, (props.TAIL_L, 0.0, 0.0))
 
         def red_pixels():
             img = np.asarray(demo.obs.images["top_cam"])
@@ -189,132 +194,132 @@ class Demo:
                 check.tries, check.prev = tries, None
                 self.at(self.sync(), check)
 
-            # Arm A: the hose ---------------------------------------------------------------------
+            # Arm A: the sampling probe ----------------------------------------------------------------
             def plan_pick(self):
-                fx, fy = props.FILTER_XY
-                g = np.array([fx + props.FILTER_DIR * GRASP_ALONG, fy, props.Z_HOSE + PAD_ABOVE_GRASP])
-                self.pick_g = g
                 L = self.L
                 L.grip_to(OPEN, hk(0.2))
-                L.move(g + np.array([0.0, 0.0, 0.08]), QA, min_steps=hk(3.0))
+                L.move(grasp_rest + np.array([0.0, 0.0, 0.06]), QP, min_steps=hk(3.0))
                 L.hold(hk(0.5))
                 self.sync()
                 self.when_settled("left", self.descend)
 
             def descend(self):
-                g = self.pick_g
                 L = self.L
-                L.move(g + np.array([0.0, 0.0, 0.01]), speed=0.04)
-                L.move(g, speed=0.02)
+                L.move(grasp_rest + np.array([0.0, 0.0, 0.01]), speed=0.04)
+                L.move(grasp_rest, speed=0.02)
                 L.hold(hk(0.5))
                 self.sync()
                 self.when_settled("left", self.close)
 
             def close(self):
-                e = grasp_point("left")[0] - self.pick_g
+                e = grasp_point("left")[0] - grasp_rest
                 note(f"PICK: grasp error before closing (mm) {np.round(e * 1000, 1)}")
                 L = self.L
                 L.grip_to(CLOSED, hk(1.0))
-                L.move(self.pick_g + np.array([0.0, 0.0, 0.03]), speed=0.02)
-                L.move(self.pick_g + np.array([-0.04, -0.08, 0.15]), speed=0.04)
-                L.hold(hk(1.5))
-                self.sync()
-                self.when_still(self.carry)
-
-            def when_still(self, then):
-                """Once arm A has settled, wait (up to 6 s) until the hanging end moves less than 1 mm in 0.4 s."""
-                self.when_settled("left", lambda: self._tail_still(None, 0, then))
-
-            def _tail_still(self, prev, n, then):
-                now = tip()
-                if prev is not None and (np.linalg.norm(now - prev) < 0.001 or n >= 15):
-                    then()
-                    return
-                self.L.hold(hk(0.4))
-                self.at(self.sync(), lambda: self._tail_still(now, n + 1, then))
-
-            def carry(self):
-                g = grasp_point("left")[0]
-                self.hang = g - tip()
-                note(f"HOSE picked: grasp {np.round(g, 4)} tip {np.round(tip(), 4)} hang {np.round(self.hang, 4)}")
-                self.tip_goal = np.array([props.SLOT_XY[0], props.SLOT_OPENING_Y, props.Z_TOP + 0.012])
+                L.move(grasp_rest + np.array([0.0, 0.0, 0.09]), speed=0.03)  # the tip clears the holster's top
+                self.over = np.array([props.SLOT_XY[0], props.SLOT_OPENING_Y, 0.0])
                 if CONTROL:
-                    self.tip_goal = np.array([props.SLOT_XY[0] - 0.035, props.SLOT_OPENING_Y, props.Z_TOP + 0.02])
-                L = self.L
-                L.move(self.tip_goal + self.hang + np.array([0.0, 0.0, 0.010]), speed=0.06)
-                L.move(self.tip_goal + self.hang, speed=0.03)
+                    self.over[0] -= 0.035
+                self.over[2] = props.Z_TOP + tip_below_grasp_p + (0.020 if CONTROL else 0.012)
+                self.tip_goal = self.over[:2].copy()
+                L.move(self.over, speed=0.06)
                 L.hold(hk(1.0))
                 self.sync()
                 self.tries = 0
-                self.when_still(lambda: self.servo_start("center"))
+                self.aligns = 0
+                self.when_settled("left", self.align)
 
-            # Closed-loop servo on the hanging end: every SERVO_DT, nudge the grasp target by a fraction of the end's
-            # measured error (the held filter turns a little in the fingers as the hose drags, so a one-off
-            # correction does not hold).
-            def servo_start(self, mode):
-                self.mode, self.good, self.ticks, self.low = mode, 0, 0, []
-                self.target = self.L.pos + ROOT_OFFSET
-                note(f"SERVO {mode}: tip error (mm) {np.round((tip() - self.tip_goal) * 1000, 1)}")
-                self.at(self.sync(), self.servo_tick)
-
-            def servo_tick(self):
-                e = tip() - self.tip_goal
-                self.ticks += 1
-                inside_slot = tip()[2] < props.Z_TOP - 0.004
-                gain = SERVO_GAIN_SLOT if inside_slot else SERVO_GAIN
-                step = np.clip(gain * e[:2], -SERVO_MAX, SERVO_MAX)
-                self.target[:2] -= step
-                done = False
-                if self.mode == "center":
-                    self.good = self.good + 1 if np.abs(e[:2]).max() < 0.001 else 0
-                    if self.good >= 6 or self.ticks > 300:
-                        note(f"CENTRED after {self.ticks} ticks: tip error (mm) {np.round(e * 1000, 1)}")
-                        if CONTROL:
-                            note("CONTROL: holding the hose's end beside the slot for 20 s")
-                            self.L.hold(hk(20.0))
-                            self.reds = []
-                            self.at(self.sync(), self.look)
-                            return
-                        self.mode, self.ticks = "descend", 0
-                else:
-                    z_min = props.Z_TOP - TIP_DEPTH + self.hang[2]
-                    self.target[2] = max(z_min, self.target[2] - DESCEND_SPEED * SERVO_DT)
-                    self.low.append(tip()[2])
-                    if tip()[2] < props.Z_COVER_BOTTOM - 0.006:
-                        done = True
-                    elif len(self.low) > 30 and self.low[-30] - self.low[-1] < 0.002:
-                        # The end has stopped going down: it caught on the slot's edge. Lift and centre again.
-                        self.tries += 1
-                        note(f"RETRY insertion {self.tries}: tip {np.round(tip(), 4)}")
-                        if self.tries > 4:
-                            done = True
-                        else:
-                            self.L.move(self.target + np.array([0.0, 0.0, 0.02]), speed=0.01)
-                            self.L.hold(hk(0.5))
-                            self.sync()
-                            self.when_still(lambda: self.servo_start("center"))
-                            return
-                self.L.move(self.target, min_steps=hk(SERVO_DT))
-                if done:
-                    self.L.hold(hk(1.0))
-                    self.at(self.sync(), self.sampling)
+            def align(self):
+                """Find the probe's blue tip band in the left wrist camera, place it at its known height (from the
+                measured grasp height) and move the grasp so the tip is over the slot's free half."""
+                g, _ = grasp_point("left")
+                img = np.asarray(demo.obs.images["left_cam"])
+                if demo.wrist is None:
+                    h, w = img.shape[:2]
+                    demo.wrist = V.WristCam("left", w, h)
+                uv, npx = V.blue_blob(img)
+                if uv is None:
+                    note(f"ALIGN: tip band not seen ({npx} px); inserting from the documented position")
+                    self.insert()
                     return
-                self.at(self.sync(), self.servo_tick)
+                z_band = g[2] - tip_below_grasp_p + props.TIP_BAND / 2
+                tip = demo.wrist.ray_to_z(state("left")[0], uv, z_band)
+                e = tip[:2] - self.tip_goal
+                note(f"ALIGN {self.aligns}: band at px {np.round(uv, 1)} ({npx} px) -> tip (desk) {np.round(tip, 4)}, "
+                     f"off the slot target by (mm) {np.round(e * 1000, 1)}")
+                self.aligns += 1
+                if np.abs(e).max() < 0.0008 or self.aligns > 6:
+                    self.insert()
+                    return
+                self.over[:2] -= 0.9 * e
+                self.L.move(self.over, speed=0.02)
+                self.L.hold(hk(0.6))
+                self.sync()
+                self.when_settled("left", self.align)
+
+            def insert(self):
+                """Lower the probe at DESCEND_SPEED, watching the measured grasp height (joint states, FK)."""
+                if CONTROL:
+                    note("CONTROL: holding the probe's tip beside the slot for 20 s")
+                    self.L.hold(hk(20.0))
+                    self.alarm = False
+                    self.at(self.sync(), self.after_sample)
+                    return
+                dx, dy = SEARCH[self.tries % len(SEARCH)]
+                start = self.over + np.array([dx, dy, 0.0])
+                note(f"INSERT try {self.tries}: offset (mm) {dx * 1000:.0f}, {dy * 1000:.0f}")
+                L = self.L
+                L.move(start, speed=0.03)
+                L.hold(hk(0.5))
+                n0 = self.sync()
+                L.move(np.r_[start[:2], seated_z - PRESS_M], speed=DESCEND_SPEED)
+                self.descent_end = self.sync()
+                self.zs = []
+                self.at(n0, self.watch_descent)
+
+            def watch_descent(self):
+                z = grasp_point("left")[0][2]
+                self.zs.append(z)
+                if z < seated_z + SEATED_TOL:
+                    note(f"SEATED: grasp z {z:.4f} (seated {seated_z:.4f}); holding {SAMPLE_S + 0.2:.1f} s, then "
+                         "reading the monitor")
+                    del self.L.steps[self.k + 1:]
+                    self.L.pos = self.L.steps[-1][0].copy()
+                    self.L.move(np.r_[self.L.pos[:2] + ROOT_OFFSET[:2], seated_z - PRESS_M], min_steps=hk(0.5))
+                    self.sampling()
+                    return
+                w = hk(STALL_S)
+                if len(self.zs) > w and self.zs[-w] - z < 0.001 or self.k >= self.descent_end + hk(2.0):
+                    self.tries += 1
+                    note(f"STALL: grasp z {z:.4f}, {1000 * (z - seated_z):.1f} mm above seated (the tip is on the "
+                         f"cover); retry {self.tries}")
+                    del self.L.steps[self.k + 1:]
+                    self.L.pos = self.L.steps[-1][0].copy()
+                    if self.tries > 2 * len(SEARCH):
+                        note("INSERT: giving up")
+                        return
+                    self.L.move(self.L.pos + ROOT_OFFSET + np.array([0.0, 0.0, 0.015]), speed=0.02)
+                    self.sync()
+                    self.when_settled("left", self.insert)
+                    return
+                self.L.pad_to(self.k + 2)
+                self.at(self.k + 1, self.watch_descent)
 
             def sampling(self):
-                note(f"IN: tip {np.round(tip(), 4)}; holding {SAMPLE_S + 0.2:.1f} s, then reading the monitor")
                 n = self.sync()
-                self.L.hold(hk(SAMPLE_S + 0.2))
+                # (hazard check alarm_in only: keep the probe seated 12 s longer, so arm B's half turn lands while
+                # the probe is still in)
+                self.L.hold(hk(SAMPLE_S + 0.2 + (12.0 if HAZARD == "alarm_in" else 0.0)))
                 if HAZARD == "sampling":
                     self.at(n + hk(10.0), lambda: self.hazard_turn("10 s into the sample"))
                 elif HAZARD == "alarm_in":
-                    self.at(n + hk(SAMPLE_S + 0.5), lambda: self.hazard_turn("sample valid, alarm on, hose in"))
-                self.reds = []
-                self.at(self.sync(), self.look)
+                    self.at(n + hk(SAMPLE_S + 0.5), lambda: self.hazard_turn("sample valid, alarm on, probe in"))
+                self.at(self.sync(), self.after_sample)
 
             def look(self):
-                """With the end still in the box, watch the monitor's alarm lenses in the top camera for 1.5 s (they
-                flash 0.25 s on, 0.25 s off; arm A hides part of them, enough stays in view)."""
+                """With the probe just out of the slot and arm A moved aside (READ_AT), watch the monitor's alarm lenses
+                in the top camera for 1.5 s (they flash 0.25 s on, 0.25 s off, and latch). While the probe is seated,
+                arm A's upper link hides the monitor from the top camera."""
                 self.reds.append(red_pixels())
                 if len(self.reds) < hk(1.5):
                     self.L.hold(1)
@@ -324,22 +329,30 @@ class Demo:
                 self.alarm = max(self.reds) >= ALARM_PX
                 note(f"READ monitor (top camera at {np.round(demo.lens_uv, 1)}): red pixels max {max(self.reds)} "
                      f"over {len(self.reds)} frames -> {'ALARM' if self.alarm else 'no alarm'}")
-                self.after_sample()
+                self.stand_down()
 
             def after_sample(self):
-                note("SAMPLE done: lifting the hose out and laying it down")
+                note("SAMPLE done: lifting the probe out, moving aside to read the monitor")
                 L = self.L
                 up = L.pos + ROOT_OFFSET
-                up[2] = min(up[2] + 0.12, 0.20)  # the end clears the slot; higher is outside the fingers-down reach
+                up[2] = props.Z_TOP + tip_below_grasp_p + 0.015  # the tip clears the cover
                 L.move(up, speed=0.03)
                 if HAZARD == "alarm_out":
-                    self.at(self.sync(), lambda: self.hazard_turn("hose just out of the slot, alarm showing"))
-                L.move(np.array(LAY_DOWN) + np.array([0.0, 0.0, 0.08]), speed=0.08)
-                L.move(LAY_DOWN, speed=0.05)
+                    self.at(self.sync(), lambda: self.hazard_turn("probe just out of the slot, alarm showing"))
+                L.move(np.r_[READ_AT, up[2]], speed=0.08)
+                L.hold(hk(0.3))
+                self.reds = []
+                self.at(self.sync(), self.look)
+
+            def stand_down(self):
+                L = self.L
+                down = np.array([LAY_DOWN[0], LAY_DOWN[1], tip_below_grasp_p + 0.006])
+                L.move(down + np.array([0.0, 0.0, 0.08]), speed=0.08)
+                L.move(down, speed=0.04)
                 L.grip_to(OPEN, hk(0.8))
-                L.move(np.array(LAY_DOWN) + np.array([0.0, 0.0, 0.10]), speed=0.06)
+                L.move(down + np.array([0.0, 0.0, 0.08]), speed=0.06)
                 if self.alarm:
-                    L.move(L_WAIT, speed=0.08)
+                    L.move(L_WAIT, QA, speed=0.08)
                     self.sync()
                     note("ALARM: leaving both bolts in place")
                     return
@@ -500,8 +513,11 @@ class Demo:
 
         def debug(k):
             r = task.episode_report(view, 0)  # developer log only (HANDHOLE_DEMO_DEBUG=1); no decision reads it
-            return (f"DBG k={k} t={k * dt:.1f} ms={r['milestone']} hazard={r.get('hazard')} tip={np.round(tip(), 4)} "
-                    f"disp={r['display']} in={r['hose_end_inside_s']} turns={r['bolt_turns']} "
+            return (f"DBG k={k} t={k * dt:.1f} ms={r['milestone']} hazard={r.get('hazard')} tip={r['probe_tip']} "
+                    f"collar={r['probe_collar']} tilt={r['probe_tilt_deg']} axis={r['probe_axis']} "
+                    f"graspL={np.round(grasp_point('left')[0], 4)} "
+                    f"depth_min={r['tip_below_underside_min_mm']} disp={r['display']} in={r['probe_in_s']} "
+                    f"turns={r['bolt_turns']} "
                     f"eng={r['bolts_engaged']} loose={r['bolts_loosened']} rise={r['bolt_rise_mm']} "
                     f"out={r['bolts_out']} clear={r['bolts_clear']} phase={r['lift_test_phase']} "
                     f"grip=({grip('left'):.2f},{grip('right'):.2f}) ev={r['semantic_events']} {r['contact_events']}")
