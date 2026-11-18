@@ -4,13 +4,13 @@ at ready).
 What it reads, every control step: the observation Inspect Robots hands any policy, i.e. the three RGB images
 (``top_cam``, ``left_cam``, ``right_cam``) and the 14-D ``joint_pos`` state. Nothing else comes from the simulator:
 no fuse or puller pose, no record of which fuse is named, no joint targets, no scorer state. Fixed knowledge it uses:
-the documented layout (task.json ``setup``; ``fuse_puller_sim.layout``: the blocks, the fuses' seats and clips, the
+the documented layout (task.json ``setup``; ``fuse_puller_sim.layout``: the enclosure's walls, the blocks, the fuses' seats and clips, the
 labels, the puller's holder and its geometry, the tray), the station's published camera calibration and the arm's URDF
 (``yam_arena.station``, ``yam_arena.urdf``), as a real robot's script would.
 
 How it perceives each thing:
-- Which fuse is F2: in the first top-camera frames, the colour of the three circuit labels on the pan in front of
-  the blocks (white, orange, green); the block with the orange label is F2's. The same frame checks that the yellow
+- Which fuse is F2: in the first top-camera frames, the colour of the three circuit labels on the far wire duct's
+  cover above the blocks (white, orange, green); the block with the orange label is F2's. The same frame checks that the yellow
   puller stands in its holder.
 - The puller in the hand: arm B pinches the handles of the puller standing in its documented holder; how it sits in
   the hand follows from forward kinematics of arm B's joints at that moment, and from then on its pose follows the
@@ -24,22 +24,26 @@ How it perceives each thing:
   the puller upright again, moving it toward the tray, which draws the far ferrule out of its clip.
 - Over the tray and dropping: the documented tray; the puller turned upright again and its jaws placed over the tray
   from the puller's geometry; the squeeze is relaxed and the jaws open.
+- The enclosure: its documented walls (rim height); the puller, and later the fuse in its jaws, are carried in and
+  out over the right wall at a fixed height above the rim.
 
-1. Fingers forward and 30 deg down, arm B pinches the handles of the puller standing in its holder lightly (the jaws
-   stay open), lifts it out and carries it, pointing straight down (perpendicular to the fuses), over F2, and lowers
-   the open jaws across F2's body between its clips.
+1. Fingers forward and 30 deg down, arm B pinches the handles of the puller standing in its holder (on the bench right
+   of the enclosure) lightly (the jaws stay open), lifts it until its jaw tips are 25 mm above the enclosure's rim,
+   carries it over the right wall, pointing straight down (perpendicular to the fuses), to above F2, and lowers the
+   open jaws across F2's body between its clips.
 2. It squeezes the handles fully (the station gripper's 50 N): the jaw shells close round the fuse body.
 3. Rock: it tips the handles away from the robot along an arc about F2's far ferrule, turning the hand with the
    puller (the fuse turns with the jaws, the far clip is the pivot), a few degrees ahead of the measured tip,
    further ahead whenever it stalls, until the near ferrule is out of its clip; then it tips on and lifts.
-4. It lifts further and turns the puller upright again on the way to the tray, which draws the far ferrule out of
-   its clip, carries the fuse over the tray and relaxes the squeeze: the jaws open and the fuse drops.
+4. It turns the puller upright again while moving it up and a third of the way toward the tray, which draws the far
+   ferrule out of its clip, lifts the fuse in the jaws clear of the rim, carries it over the right wall to above the
+   tray, lowers it and relaxes the squeeze: the jaws open and the fuse drops.
 
 ``--policy fuse-puller-demo`` (fuse_puller_sim.policy) plays it; grasp-point targets become yam_arena's 14-D joint
 action through yam_arena's own IK every control step.
 
 Control (``FPR_CONTROL=1``): steps 1-2 as above, then arm B lets go of the handles (the open jaws stay round the
-fuse), pinches the puller's smooth arms just above the jaws with the full 50 N, which closes the jaws on the fuse,
+fuse), pinches the puller's smooth arms just above the jaws with the full 50 N (fingers 50 deg down), which closes the jaws on the fuse,
 and pulls straight up without tipping (commanding up to 16 cm above the start). A straight pull needs both clips' grip at
 once. The arm's lifting force is estimated from its joint readings and the joint targets the demo itself sent.
 """
@@ -102,6 +106,10 @@ class Demo:
         HOVER = 0.030
         cap_off = props.FUSE_L / 2 - props.CAP_L / 2
         named_box = [None]
+        CARRY_HINGE_Z = props.WALL_TOP + 0.025 + props.TOP_X
+        """Carried over the enclosure's walls with the puller upright, its hinge this high: the jaw tips (and a fuse
+        in the jaws) 25 mm above the rim."""
+        DRAW_FRACTION = 0.35
         NEAR_OUT_DEG = 16.0
         """The near ferrule is 28 mm from the far one: tipped 16 deg about it, it is 8 mm from its clip's centre."""
         TIP_MAX_DEG = 40.0
@@ -225,10 +233,16 @@ class Demo:
                 log(f"HELD: hinge in the hand {np.round(self.model.rel_pos * 1000, 1)} mm; gripper "
                     f"{V.split_state(obs_box[0].state['joint_pos'])['right'][1]:.3f}", flush=True)
                 named = self.named
-                R.move(R.pos + ROOT_OFFSET + np.array([0.0, 0.0, 0.075]), speed=0.03)
+                # Lift the puller until its jaw tips clear the enclosure's rim, carry it over the right wall at that
+                # height to above F2, then lower it into the enclosure.
+                here = R.pos + ROOT_OFFSET
+                lift = CARRY_HINGE_Z - self.rest[2]
+                R.move(here + np.array([0.0, 0.0, lift]), speed=0.03)
                 target = np.array(props.puller_on_fuse_pose(named)[:3])
-                g, q = self.grasp_for(target + np.array([0.0, 0.0, HOVER + 0.03]), PUQ)
+                g, q = self.grasp_for(np.array([target[0], target[1], CARRY_HINGE_Z]), PUQ)
                 R.move(g, q, speed=0.04)
+                g, q = self.grasp_for(target + np.array([0.0, 0.0, HOVER + 0.03]), PUQ)
+                R.move(g, q, speed=0.03)
                 g, q = self.grasp_for(target + np.array([0.0, 0.0, HOVER]), PUQ)
                 R.move(g, q, speed=0.02)
                 R.hold(n(4))
@@ -335,7 +349,15 @@ class Demo:
                 R.move(np.array([here[0], here[1], min(here[2] + 0.04, 0.17)]), speed=0.04)
                 tx, ty = TRAY_XY
                 g, q = self.grasp_for(np.array([tx, ty, 0.065 + props.JAW_X]), PUQ)
-                R.move(np.array([g[0], g[1], max(g[2], here[2] + 0.04)]), q, speed=0.05)
+                # Turn the puller upright while moving up and toward the tray, but only a third of the way (the
+                # enclosure's right wall is in the way): this draws the far ferrule out of its clip. Then lift the
+                # fuse over the wall, carry it over the tray and lower it.
+                hz = max(g[2], here[2] + 0.04)
+                mid = here[:2] + DRAW_FRACTION * (g[:2] - here[:2])
+                R.move(np.array([mid[0], mid[1], hz]), q, speed=0.02)
+                over = CARRY_HINGE_Z + g[2] - (0.065 + props.JAW_X)  # the grasp with the hinge at CARRY_HINGE_Z
+                R.move(np.array([mid[0], mid[1], over]), speed=0.03)
+                R.move(np.array([g[0], g[1], over]), speed=0.05)
                 R.move(g, speed=0.04)
                 R.hold(n(6))
                 self.when_settled(self.drop, tries=10, tol=0.006)
@@ -357,13 +379,17 @@ class Demo:
                 R = self.R
                 h_pos, h_quat = self.puller_est()
                 R.grip_to(G_OPEN, n(8))
-                q = R.quat.copy()
-                d = finger_dir(q)
+                d = finger_dir(R.quat.copy())
                 here = R.pos + ROOT_OFFSET
                 R.move(here - 0.04 * d, speed=0.03)
                 g = h_pos + rotate(h_quat, SMOOTH_IN_PULLER)
+                # Fingers 50 deg down for this low grasp: at 30 deg the gripper's housing would sit below the rim,
+                # against the enclosure's near wall.
+                q = hand_quat(20.0)
+                d = finger_dir(q)
                 log(f"CONTROL: regrip the smooth arms over the jaws at {np.round(g, 4)}", flush=True)
-                R.move(g - 0.04 * d, q, speed=0.05)
+                R.move(g - 0.05 * d + np.array([0.0, 0.0, 0.02]), q, speed=0.03)
+                R.move(g - 0.03 * d, speed=0.02)
                 R.move(g, speed=0.01)
                 R.hold(n(4))
                 self.when_settled(self.control_pinch)

@@ -1,13 +1,16 @@
-"""On the station table, a control sub-panel's light-grey back pan lies flat in front of the arms, midway between
-them. Three black Eaton Bussmann BM6031B one-pole midget fuse blocks are fixed to it side by side, their fuses'
-axes pointing away from the robot, each with a 10 x 38 mm fuse held in two open spring clips. A colour-coded circuit
-label lies on the pan in front of each block (F1 PLC 24V DC white, F2 CONTROL XFMR orange, F3 CABINET LIGHT green,
-from the robot's left). A yellow nylon tong fuse puller stands upright, jaws down, in a grey holder to the right of
-the pan; a blue parts tray sits further right, nearer the robot. Pick up the puller by its notched handles, hold it
-perpendicular to the fuse (pointing down into F2's block) and close its jaws across F2's body between the clips,
-tip the handles away from the robot so the far clip is the pivot and the near end of the fuse levers out of its clip
-first, then lift the far end out, carry the fuse in the jaws and drop it in the tray. Do not disturb F1 or F3.
-Pulled straight up, a fuse needs both clips' grip at once (about 70 N).
+"""On the station table, a small wall-mount control enclosure (Rittal AE 1036.500, 300 x 300 x 155 mm) lies on its back
+in front of the arms, opening up, its bottom end toward the robot and its door swung open to the left. Inside, three
+black Eaton Bussmann BM6031B one-pole midget fuse blocks are snapped side by side on a DIN rail on the mounting plate,
+their fuses' axes pointing away from the robot, each with a 10 x 38 mm fuse held in two open spring clips and a 14 AWG
+wire landed on each end's box lug (black line wires into a wire duct beyond the blocks, red load wires into a duct
+between the blocks and the robot). A colour-coded circuit label on the far duct's cover above each block names it
+(F1 PLC 24V DC white, F2 CONTROL XFMR orange, F3 CABINET LIGHT green, from the robot's left). A yellow nylon tong fuse
+puller stands upright, jaws down, in a grey holder on the bench right of the enclosure; a blue parts tray sits on the
+bench further right, nearer the robot. Pick up the puller by its notched handles, lift it over the enclosure's wall,
+hold it perpendicular to the fuse (pointing down into F2's block) and close its jaws across F2's body between the
+clips, tip the handles away from the robot so the far clip is the pivot and the near end of the fuse levers out of
+its clip first, then lift the far end out, carry the fuse in the jaws out of the enclosure and drop it in the tray.
+Do not disturb F1, F3 or the wiring. Pulled straight up, a fuse needs both clips' grip at once (about 70 N).
 
 Task file for yam-isaac-lab-arena (commit 0059d02); see README.md. FPR_CONTROL=1 with ``--policy fuse-puller-demo``
 makes the demo let go of the handles, pinch the puller's smooth arms just above its jaws and pull the fuse straight up

@@ -11,7 +11,8 @@ from __future__ import annotations
 
 import math
 
-from fuse_puller_sim.spec import BLOCK_X, CIRCUITS, LABEL_RGB, NAMED, PAN_TOP, PULLER_HOLDER_XY, SLOT_Y, TRAY_XY
+from fuse_puller_sim.spec import (BLOCK_X, CIRCUITS, DUCT_FAR_X, DUCT_TOP, LABEL_RGB, NAMED, PAN_TOP, PULLER_HOLDER_XY,
+                                  SLOT_Y, TRAY_XY, WALL_TOP)
 
 AXIS_Z = PAN_TOP + 0.0247
 """The fuses' axes, 5.3 cm above the table."""
@@ -34,8 +35,8 @@ PULLER_QUAT = (0.0, math.sqrt(0.5), 0.0, math.sqrt(0.5))
 HOLDER_FLOOR, HOLDER_TOP = 0.040, 0.060
 """The holder's pocket floor (the puller stands on its jaw tips) and rim, above the table."""
 LABEL = (0.034, 0.020)
-LABEL_X = BLOCK_X - BLOCK_L / 2 - 0.004 - LABEL[0] / 2
-"""The circuit labels on the pan in front of each block (34 x 20 mm)."""
+LABEL_X = 0.5 * (DUCT_FAR_X[0] + DUCT_FAR_X[1])
+"""The circuit labels (34 x 20 mm) on the far wire duct's cover, one above each block."""
 
 
 def fuse_seat(slot: int) -> tuple[float, float, float]:
@@ -58,7 +59,7 @@ def puller_on_fuse_pose(slot: int) -> tuple:
 
 
 def label_world(slot: int) -> tuple[float, float, float]:
-    return (LABEL_X, SLOT_Y[slot], PAN_TOP + 0.0005)
+    return (LABEL_X, SLOT_Y[slot], DUCT_TOP + 0.0005)
 
 
-__all__ = ["CIRCUITS", "LABEL_RGB", "NAMED", "TRAY_XY", "math"]
+__all__ = ["CIRCUITS", "LABEL_RGB", "NAMED", "TRAY_XY", "WALL_TOP", "math"]

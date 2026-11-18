@@ -1,4 +1,5 @@
-"""Generate the props (USD) for the fuse-puller task: back pan with three midget fuse blocks and labels, the fuses,
+"""Generate the props (USD) for the fuse-puller task: the control enclosure (door, mounting plate, DIN rail, wire
+ducts, wires) with three midget fuse blocks and labels, the fuses,
 the tong puller, the puller's holder and the parts tray.
 
 Real parts; (P) published, (S) measured on the vendor's STEP model, (I) inferred, (TM) to measure on a bought part.
@@ -25,7 +26,7 @@ Real parts; (P) published, (S) measured on the vendor's STEP model, (I) inferred
   flex); each arm carries a curved jaw shell at its tip that wraps the fuse body from 81 deg on the loop side to
   81 deg past its equator on the tip side. Squeezing the handles 40 mm from the loop closes the jaws (about 0.35x
   leverage: the jaws are 114 mm from the loop).
-- Holder: the puller stands upright, jaws down, in a grey holder block's pocket beside the pan (a stand-in for the
+- Holder: the puller stands upright, jaws down, in a grey holder block's pocket on the bench beside the enclosure (a stand-in for the
   clip or holster a puller is kept in), so it is picked up by its handles already pointing the way it is used.
 
 Frames (desk frame: table top z = 0, arm bases at (0, +-0.305, 0)). The blocks lie with the fuse axes along +x.
@@ -46,7 +47,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from pxr import Gf, Sdf, UsdGeom, UsdPhysics, UsdShade
 
-from fuse_puller_sim.spec import (BLOCK_X, CIRCUITS, LABEL_RGB, PAN_TOP, PULLER_HOLDER_XY, SLOT_Y, TRAY_IN, TRAY_XY)
+from fuse_puller_sim.spec import (BLOCK_X, CIRCUITS, DOOR_OPEN_DEG, DUCT_FAR_X, DUCT_NEAR_X, DUCT_TOP, ENC_X, ENC_Y,
+                                  LABEL_RGB, PAN_TOP, PULLER_HOLDER_XY, SLOT_Y, TRAY_IN, TRAY_XY, WALL_TOP)
 from fuse_puller_sim.usd import usd_kit as kit
 
 # Fuse block (BM6031B / BMM603 STEP) -----------------------------------------------------------------------------
@@ -121,7 +123,7 @@ arms next to the jaws (combined as the smaller) (I). Gripped there, the 50 N squ
 
 # Holder ------------------------------------------------------------------------------------------------------------
 HOLDER_XY = PULLER_HOLDER_XY
-"""Desk-frame centre of the puller's holder block (right of the pan)."""
+"""Desk-frame centre of the puller's holder block (on the bench right of the enclosure)."""
 HOLDER_FLOOR = 0.040
 HOLDER_TOP = 0.060
 """The pocket's floor and rim above the table: the puller stands on its jaw tips in a 20 mm deep pocket."""
@@ -129,12 +131,27 @@ HOLDER_POCKET = (0.0080, 0.0175)
 """Half the pocket's inside length (x, across the arms' width) and width (y, the arms' parting direction)."""
 HOLDER_OUT = (0.020, 0.028)
 
-# Pan, tray ---------------------------------------------------------------------------------------------------
-PAN_X = (0.215, 0.405)
-PAN_Y = (-0.075, 0.075)
+# Enclosure, rail, wire ducts, wires, labels ----------------------------------------------------------------------
+ENC_T = 0.0015
+"""Rittal AE 1036.500 (P, Rittal data sheet): 300 x 300 x 155 mm, 1.38 mm steel body, 1.5 mm door, RAL 7035."""
+ENC_FLANGE = 0.012
+"""The opening's inward-folded rim (I; where the door seal lands)."""
+PLATE_Z = (0.0185, 0.0205)
+"""Zinc-plated 2 mm mounting plate, 254 x 275 mm (P), on studs 17 mm above the back (I)."""
+PLATE_X = (0.5 * (ENC_X[0] + ENC_X[1]) - 0.1375, 0.5 * (ENC_X[0] + ENC_X[1]) + 0.1375)
+PLATE_Y = (0.5 * (ENC_Y[0] + ENC_Y[1]) - 0.127, 0.5 * (ENC_Y[0] + ENC_Y[1]) + 0.127)
+RAIL_Y = (PLATE_Y[0] + 0.012, PLATE_Y[1] - 0.012)
+"""35 x 7.5 mm top-hat rail (EN 60715) across the plate, under the blocks."""
+DUCT_Y = (PLATE_Y[0] + 0.006, PLATE_Y[1] - 0.006)
+WIRE_W = 0.0028
+"""14 AWG THHN outside diameter (P: 0.111 in); square colliders this wide."""
+WIRE_Z = PAN_TOP + 0.0160
+"""Wires enter the box lugs horizontally at the clamp, 16 mm above the block's base."""
+LUG_END = 0.0345
+"""The box lugs' outer ends from the block's centre."""
 LABEL = (0.034, 0.020)
 """Circuit label, along x and y (m)."""
-LABEL_X = BLOCK_X - BLOCK_L / 2 - 0.004 - LABEL[0] / 2
+LABEL_X = 0.5 * (DUCT_FAR_X[0] + DUCT_FAR_X[1])
 
 COLORS = {
     "block": (0.06, 0.06, 0.07),
@@ -145,7 +162,11 @@ COLORS = {
     "fuse_cap": (0.78, 0.79, 0.81),
     "nylon": (0.96, 0.82, 0.10),
     "pan": (0.84, 0.85, 0.83),
-    "board": (0.55, 0.42, 0.28),
+    "zinc": (0.70, 0.72, 0.74),
+    "duct": (0.66, 0.67, 0.66),
+    "wire_line": (0.04, 0.04, 0.04),
+    "wire_load": (0.80, 0.07, 0.05),
+    "seal": (0.12, 0.12, 0.12),
     "stand": (0.40, 0.40, 0.42),
     "tray": (0.15, 0.30, 0.70),
     "ink_dark": (0.05, 0.05, 0.05),
@@ -279,20 +300,19 @@ def puller_on_fuse_pose(slot: int) -> tuple:
     return (BLOCK_X, SLOT_Y[slot], AXIS_Z + JAW_X) + PULLER_QUAT
 
 
-# Back pan, blocks and labels ------------------------------------------------------------------------------------------
+# Enclosure, blocks and labels ------------------------------------------------------------------------------------------
 def make_blocks(out_path: Path, clip_k, clip_damping, clip_mu) -> None:
     """``clip_k`` may be one value or one per block (probe runs compare spring rates side by side)."""
     root = "/blocks"
     stage, root_prim = kit.new_stage(out_path, root)
-    m = _mats(stage, root, ("block", "tin", "copper", "steel", "pan", "board"))
+    m = _mats(stage, root, ("block", "tin", "copper", "steel", "pan", "zinc", "duct", "wire_line", "wire_load",
+                            "seal"))
     b = f"{root}/body"
     UsdGeom.Xform.Define(stage, b)
     ks = list(clip_k) if isinstance(clip_k, (list, tuple)) else [clip_k] * 3
     clip_mats = [_physics_material(stage, root, f"clip{s}", clip_mu, "min", (ks[s], clip_damping)) for s in range(3)]
     housing = _physics_material(stage, root, "housing", 0.4, "min")
-    _span(stage, f"{b}/pan", PAN_X, PAN_Y, (PAN_TOP - 0.003, PAN_TOP), m["pan"])
-    _span(stage, f"{b}/board", (PAN_X[0] + 0.005, PAN_X[1] - 0.005), (PAN_Y[0] + 0.005, PAN_Y[1] - 0.005),
-          (0.0, PAN_TOP - 0.003), m["board"])
+    _enclosure(stage, f"{root}/enclosure", m)
     for s, y0 in enumerate(SLOT_Y):
         p = f"{b}/block{s}"
         x0 = BLOCK_X
@@ -330,13 +350,13 @@ def make_blocks(out_path: Path, clip_k, clip_damping, clip_mu) -> None:
         for prim_path in [f"{p}_floor", f"{p}_notch0", f"{p}_notch1", f"{p}_seat0", f"{p}_seat1"] + \
                 [f"{p}_wall{k}{e}" for k in range(2) for e in range(2)]:
             _bind_physics(stage, prim_path, housing)
-    # Circuit labels on the pan in front of each block: a colour-coded plate with the tag and circuit printed on it
+    # Circuit labels on the far duct's cover above each block: a colour-coded plate with the tag and circuit printed on it
     # (letters as thin boxes: geometry, not a texture, which the renderer was seen to load late or not at all).
     ink = {"white": "ink_dark", "orange": "ink_dark", "green": "ink_light"}
     lm = _mats(stage, root, ("ink_dark", "ink_light"))
     for s, (tag, circuit, colour) in enumerate(CIRCUITS):
         pm = _plain_material(stage, root, f"label_{tag}", LABEL_RGB[colour])
-        z0 = PAN_TOP
+        z0 = DUCT_TOP
         _span(stage, f"{b}/label{s}", (LABEL_X - LABEL[0] / 2, LABEL_X + LABEL[0] / 2),
               (SLOT_Y[s] - LABEL[1] / 2, SLOT_Y[s] + LABEL[1] / 2), (z0, z0 + 0.0004), pm, collide=False)
         words = circuit.split()
@@ -347,6 +367,91 @@ def make_blocks(out_path: Path, clip_k, clip_damping, clip_mu) -> None:
     _contacts(stage)
     stage.GetRootLayer().Save()
     print(f"wrote {out_path} (clip k {ks} N/m, damping {clip_damping}, mu {clip_mu})")
+
+
+def _rbox_x(stage, path, center, size, material, rot_x_deg, collide=True):
+    """A box turned about x (degrees) about its own centre."""
+    cube = UsdGeom.Cube.Define(stage, path)
+    cube.CreateSizeAttr(1.0)
+    xf = UsdGeom.Xformable(cube)
+    xf.AddTranslateOp().Set(Gf.Vec3d(*center))
+    xf.AddRotateXOp().Set(rot_x_deg)
+    xf.AddScaleOp().Set(Gf.Vec3f(*size))
+    UsdShade.MaterialBindingAPI.Apply(cube.GetPrim()).Bind(material)
+    if collide:
+        UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
+    return cube
+
+
+def _enclosure(stage, e, m) -> None:
+    """The enclosure lying on its back (opening up), mounting plate, DIN rail, two wire ducts and the six wires landed
+    on the blocks' box lugs. Everything here is static and collides (walls, rim, door, rail, ducts, wires)."""
+    UsdGeom.Xform.Define(stage, e)
+    x0, x1 = ENC_X
+    y0, y1 = ENC_Y
+    t, top = ENC_T, WALL_TOP
+    _span(stage, f"{e}/back", (x0, x1), (y0, y1), (0.0, t), m["pan"])
+    _span(stage, f"{e}/wall_bottom", (x0, x0 + t), (y0, y1), (t, top), m["pan"])  # toward the robot (gland end)
+    _span(stage, f"{e}/wall_top", (x1 - t, x1), (y0, y1), (t, top), m["pan"])
+    _span(stage, f"{e}/wall_right", (x0 + t, x1 - t), (y0, y0 + t), (t, top), m["pan"])
+    _span(stage, f"{e}/wall_left", (x0 + t, x1 - t), (y1 - t, y1), (t, top), m["pan"])
+    f = ENC_FLANGE
+    for name, xs, ys in (("rim_bottom", (x0, x0 + f), (y0, y1)), ("rim_top", (x1 - f, x1), (y0, y1)),
+                         ("rim_right", (x0 + f, x1 - f), (y0, y0 + f)), ("rim_left", (x0 + f, x1 - f), (y1 - f, y1))):
+        _span(stage, f"{e}/{name}", xs, ys, (top - t, top), m["pan"])
+    # Gland plate in the bottom wall (visual: a darker plate inside it).
+    _span(stage, f"{e}/gland", (x0 + t, x0 + t + 0.001), (y0 + 0.05, y1 - 0.05), (0.03, 0.12), m["steel"], collide=False)
+    # Mounting plate on four studs.
+    _span(stage, f"{e}/plate", PLATE_X, PLATE_Y, PLATE_Z, m["zinc"])
+    for i, (sx, sy) in enumerate(((0, 0), (0, 1), (1, 0), (1, 1))):
+        kit.cylinder(stage, f"{e}/stud{i}", (PLATE_X[sx] + (0.010 if sx == 0 else -0.010),
+                                             PLATE_Y[sy] + (0.010 if sy == 0 else -0.010), 0.5 * (t + PLATE_Z[0])),
+                     0.004, PLATE_Z[0] - t, m["steel"])
+    # DIN rail (top hat): 27 mm base, 35 mm top flanges, 7.5 mm high.
+    _span(stage, f"{e}/rail", (BLOCK_X - 0.0135, BLOCK_X + 0.0135), RAIL_Y, (PLATE_Z[1], PAN_TOP - 0.001), m["steel"])
+    _span(stage, f"{e}/rail_top", (BLOCK_X - 0.0175, BLOCK_X + 0.0175), RAIL_Y, (PAN_TOP - 0.001, PAN_TOP), m["steel"])
+    # Slotted wire ducts (Panduit type G, 1.5 x 2 in nominal): solid colliders, slots drawn on the side walls.
+    for name, xs in (("duct_near", DUCT_NEAR_X), ("duct_far", DUCT_FAR_X)):
+        _span(stage, f"{e}/{name}", xs, DUCT_Y, (PLATE_Z[1], DUCT_TOP - 0.002), m["duct"])
+        _span(stage, f"{e}/{name}_cover", (xs[0] - 0.001, xs[1] + 0.001), DUCT_Y, (DUCT_TOP - 0.002, DUCT_TOP),
+              m["pan"])
+        for side, xw in enumerate(xs):
+            for k in range(int((DUCT_Y[1] - DUCT_Y[0]) / 0.0127)):
+                yk = DUCT_Y[0] + 0.004 + k * 0.0127
+                _span(stage, f"{e}/{name}_slot{side}_{k}", (xw - 0.0004, xw + 0.0004), (yk, yk + 0.0055),
+                      (PLATE_Z[1] + 0.012, DUCT_TOP - 0.004), m["seal"], collide=False)
+    # Wires: black line wires from the far (line) lugs into the far duct, red load wires from the near (load) lugs
+    # into the near duct; each a straight 14 AWG run fixed at both ends (a collider), its bare end in the lug.
+    for s_, y in enumerate(SLOT_Y):
+        for kind, xa, xb in (("load", DUCT_NEAR_X[1] - 0.004, BLOCK_X - LUG_END + 0.002),
+                             ("line", BLOCK_X + LUG_END - 0.002, DUCT_FAR_X[0] + 0.004)):
+            _span(stage, f"{e}/wire_{kind}{s_}", (xa, xb), (y - WIRE_W / 2, y + WIRE_W / 2),
+                  (WIRE_Z - WIRE_W / 2, WIRE_Z + WIRE_W / 2), m[f"wire_{kind}"])
+            xe = BLOCK_X + (-1 if kind == "load" else 1) * (LUG_END - 0.004)
+            _span(stage, f"{e}/wire_{kind}{s_}_bare", (xe - 0.003, xe + 0.003), (y - 0.0009, y + 0.0009),
+                  (WIRE_Z - 0.0009, WIRE_Z + 0.0009), m["copper"], collide=False)
+    # Door: hinged along the left wall's rim, swung open DOOR_OPEN_DEG (just past upright), its outer face to the
+    # left. A 1.5 mm panel with a 20 mm folded edge and the seal on its inner face.
+    a = math.radians(DOOR_OPEN_DEG)
+    d = (0.0, -math.cos(a), math.sin(a))  # from the hinge across the door (closed: -y)
+    nrm = (0.0, math.sin(a), math.cos(a))  # the door's outer face normal (closed: +z)
+    hinge = (0.5 * (x0 + x1), y1, top)
+    w = y1 - y0
+    c = tuple(hinge[i] + d[i] * w / 2 + nrm[i] * t / 2 for i in range(3))
+    rot = -(DOOR_OPEN_DEG)
+    _rbox_x(stage, f"{e}/door", c, (x1 - x0, w, t), m["pan"], rot)
+    for k, frac in enumerate((0.0, 1.0)):
+        cc = tuple(hinge[i] + d[i] * (w * frac + (0.006 if frac == 0 else -0.006)) - nrm[i] * 0.010 for i in range(3))
+        _rbox_x(stage, f"{e}/door_edge{k}", cc, (x1 - x0, 0.012, 0.020), m["pan"], rot)
+    for k, xe in enumerate((x0 + 0.006, x1 - 0.006)):
+        cc = tuple((xe if i == 0 else hinge[i] + d[i] * w / 2 - nrm[i] * 0.010) for i in range(3))
+        _rbox_x(stage, f"{e}/door_side{k}", cc, (0.012, w, 0.020), m["pan"], rot)
+    cc = tuple((hinge[0] if i == 0 else hinge[i] + d[i] * w / 2 - nrm[i] * (t + 0.001)) for i in range(3))
+    _rbox_x(stage, f"{e}/door_seal", cc, (x1 - x0 - 0.03, w - 0.03, 0.002), m["seal"], rot, collide=False)
+    lock = tuple((hinge[0] if i == 0 else hinge[i] + d[i] * (w - 0.025) + nrm[i] * 0.004) for i in range(3))
+    _rbox_x(stage, f"{e}/door_lock", lock, (0.016, 0.016, 0.008), m["seal"], rot, collide=False)
+    for k, xh in enumerate((x0 + 0.04, x1 - 0.04)):
+        kit.cylinder(stage, f"{e}/hinge{k}", (xh, y1 + 0.003, top + 0.003), 0.004, 0.03, m["steel"], axis="X")
 
 
 def _plain_material(stage, root, name, rgb):
