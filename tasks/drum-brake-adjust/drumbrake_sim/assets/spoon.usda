@@ -1,0 +1,263 @@
+#usda 1.0
+(
+    defaultPrim = "spoon"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "spoon" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+)
+{
+    rel material:binding:physics = </spoon/PhysicsMaterials/spoon_steel> (
+        bindMaterialAs = "weakerThanDescendants"
+    )
+    point3f physics:centerOfMass = (0, -0.15, 0)
+    float3 physics:diagonalInertia = (0.0005, 0.000004, 0.0005)
+    float physics:mass = 0.1
+    quatf physics:principalAxes = (1, 0, 0, 0)
+    custom float physxRigidBody:maxDepenetrationVelocity = 0.5
+    custom int physxRigidBody:solverPositionIterationCount = 32
+
+    def "Looks"
+    {
+        def Material "plate"
+        {
+            token outputs:surface.connect = </spoon/Looks/plate/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.1, 0.1, 0.11)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "drum"
+        {
+            token outputs:surface.connect = </spoon/Looks/drum/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.36, 0.34, 0.33)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "drum_face"
+        {
+            token outputs:surface.connect = </spoon/Looks/drum_face/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.28, 0.27, 0.27)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "zinc"
+        {
+            token outputs:surface.connect = </spoon/Looks/zinc/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.74, 0.76, 0.78)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "steel"
+        {
+            token outputs:surface.connect = </spoon/Looks/steel/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.62, 0.64, 0.66)
+                float inputs:metallic = 0.5
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "black_oxide"
+        {
+            token outputs:surface.connect = </spoon/Looks/black_oxide/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.08, 0.08, 0.09)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "grip"
+        {
+            token outputs:surface.connect = </spoon/Looks/grip/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.78, 0.05, 0.03)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "stand"
+        {
+            token outputs:surface.connect = </spoon/Looks/stand/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.2, 0.32, 0.55)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "rubber"
+        {
+            token outputs:surface.connect = </spoon/Looks/rubber/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.03, 0.03, 0.03)
+                float inputs:roughness = 0.9
+                token outputs:surface
+            }
+        }
+
+        def Material "wood"
+        {
+            token outputs:surface.connect = </spoon/Looks/wood/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.56, 0.36)
+                float inputs:roughness = 0.9
+                token outputs:surface
+            }
+        }
+
+        def Material "dark"
+        {
+            token outputs:surface.connect = </spoon/Looks/dark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.04, 0.04, 0.04)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+
+        def Material "shoe"
+        {
+            token outputs:surface.connect = </spoon/Looks/shoe/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.45, 0.4, 0.33)
+                float inputs:roughness = 0.5
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "handle" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </spoon/Looks/grip>
+        rel material:binding:physics = </spoon/PhysicsMaterials/dipped_grip> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        custom float physxCollision:contactOffset = 0.0003
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.0127, 0.12, 0.0127)
+        double3 xformOp:translate = (0, -0.1686, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "blade" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </spoon/Looks/black_oxide>
+        custom float physxCollision:contactOffset = 0.0003
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.008, 0.1041, 0.0018)
+        double3 xformOp:translate = (0, -0.05655, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Mesh "taper" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        uniform bool doubleSided = 1
+        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [3, 2, 1, 0, 0, 1, 5, 4, 1, 2, 6, 5, 2, 3, 7, 6, 3, 0, 4, 7, 4, 5, 6, 7]
+        rel material:binding = </spoon/Looks/black_oxide>
+        uniform token physics:approximation = "convexHull"
+        custom float physxCollision:contactOffset = 0.0003
+        custom float physxCollision:restOffset = 0
+        point3f[] points = [(-0.004, -0.0045, -0.0009), (-0.004, -0.0005, -0.0005), (-0.004, -0.0005, 0.0005), (-0.004, -0.0045, 0.0009), (0.004, -0.0045, -0.0009), (0.004, -0.0005, -0.0005), (0.004, -0.0005, 0.0005), (0.004, -0.0045, 0.0009)]
+        uniform token subdivisionScheme = "none"
+    }
+
+    def Cube "tip" (
+        prepend apiSchemas = ["MaterialBindingAPI", "PhysicsCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {
+        rel material:binding = </spoon/Looks/black_oxide>
+        custom float physxCollision:contactOffset = 0.0003
+        custom float physxCollision:restOffset = 0
+        double size = 1
+        float3 xformOp:scale = (0.008, 0.0005, 0.001)
+        double3 xformOp:translate = (0, -0.00025, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def "PhysicsMaterials"
+    {
+        def Material "spoon_steel" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.5
+            float physics:staticFriction = 0.5
+            custom token physxMaterial:frictionCombineMode = "average"
+        }
+
+        def Material "dipped_grip" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.9
+            float physics:staticFriction = 0.9
+            custom token physxMaterial:frictionCombineMode = "average"
+        }
+    }
+}
+
