@@ -42,10 +42,7 @@ CRADLE_BACK = 0.03
 """The detector starts this far back along the stick from its proving pose (tip short of the end plate)."""
 
 INSTRUCTION = (
-    "Test the bare metal bar on the two grey posts with the red detector on the yellow stick, by touching the side "
-    "of the bar with the detector's top end. The test only counts if the detector flashes its red lights on the "
-    "black tester both before and after it touches the bar. Do not bring the detector near the bar before it has "
-    "flashed on the tester. If it does not flash on the tester, keep it away from the bar and stop."
+    "Check whether the bare metal bar on the two grey posts is dead, using the red voltage detector on the yellow stick and the black proof tester."
 )
 
 
