@@ -1,0 +1,23 @@
+{
+  "title": "Slide an insulation shield in between a hanging pipe and its clevis hanger: lift the pipe slightly, centre the shield",
+  "category": "Impact on jobs",
+  "keywords": [
+    "pipe hanger",
+    "clevis",
+    "insulation shield",
+    "bimanual",
+    "lift and hold",
+    "contact-rich",
+    "plumbers",
+    "HVAC"
+  ],
+  "instruction": "Fit the insulation shield into the pipe hanger under the pipe, centred on the hanger, so the pipe rests on it. Lift the pipe no more than 2 cm and do not shift it along its run, do not drop the shield, and let go when you are done.",
+  "context": "Fitting insulation protection shields between insulated pipe and its clevis hangers is routine for plumbers, pipefitters and steamfitters (SOC 47-2152, 510,600 jobs in 2025, BLS Occupational Outlook Handbook) and HVAC mechanics and installers (49-9021, 440,900), and for mechanical insulation workers (47-2132, 26,700). Without the shield the 1 in strap crushes the insulation and cuts its vapour jacket; B-Line rates its B3100 clevis for insulated pipe only with a B3151 shield, and missing shields are fitted on existing runs with the pipe in the hangers. The usual way (not given to the robot): raise the pipe a little near the hanger with one hand, slide the shield in along the pipe with the other, centre it on the hanger, lower the pipe onto it. Real sizes and loads: 1/2 in copper full of water in 1 in insulation, 10 N on the hanger.",
+  "setup": "Positions are measured forward from the line joining the two arm bases (61 cm apart), left or right of their midline as seen from behind the robot, and up from the table top. Both arms start at the ready pose, grippers open. One fixed layout, as in the screenshot. Pipe: 1.24 m of 1/2 in Type L copper tube, full of water and capped, in Johns Manville Micro-Lok HP 1 in fiberglass pipe insulation (2.83 in OD, white jacket), running left-right 42.0 cm in front of the bases, from 58 cm left to 66 cm right of the midline, its axis 44.1 cm up. Hangers: two Eaton B-Line B3100-2-1/2 clevis hangers on 1/2 in rod from an overhead strut 85 cm up: A on the midline (the insulation directly on its 1 in strap, strap top 40.5 cm up), B 58 cm right of it with its B3151-3X shield already in. Shield for A: B-Line B3151-3X (18 ga galvanized, 12 in long, 2.88 in ID, half-round, 0.34 kg), open side up, balanced on a wooden post (2x2, 38 mm square, 30.3 cm tall) 33.0 cm in front of the bases and 6.0 cm right of the midline, its underside 30.3 cm up; 12 mm red tape round its middle (its centre mark).",
+  "scoring": "Score 0 for the whole trial, from the moment it happens, whatever was reached before or after: the pipe raised more than 20 mm at hanger A, the pipe shifted more than 15 mm along its run (or sideways at A), or the shield dropped (its underside below 23 cm: off the blocks and out of the hand). Otherwise the highest level reached: 0.33 the shield under the pipe in hanger A (open side up within 15 degrees, under the pipe within 6 mm sideways, across the strap, between strap and pipe); 0.67 also centred: its middle within 10 mm of the strap's centre line along the pipe; 1.0 both hands clear of the pipe and the shield (3 cm) for 1 s without a break while the shield sits on the strap (within 2 mm) and the pipe rests on it (its height at A within 2 mm of resting on a seated shield, not on the strap). Checked with a ruler and photos (see README).",
+  "run_limit": "3,000 steps (150 s at 20 Hz); the scripted demo finishes in 2,028 steps (101 s)",
+  "reset_notes": "Lift the pipe at hanger A, slide the shield out, balance it open side up on its post with its tape mark 6 cm right of the midline, lower the pipe onto A's strap. Check the pipe's tape mark is at hanger A. About 1 minute.",
+  "fidelity": "PhysX 480 Hz, i2rt arm gains. Real sizes: B3100-2-1/2 clevis (1 in strap), B3151-3X shield (18 ga half-round, 12 in, 2.88 in ID, 0.34 kg), 1/2 in copper full of water in 2.83 in OD insulation; pipe is a rigid 1.24 m section on two hangers putting 10.2 N on hanger A (a run at 3.8 ft spacing). No rules or welds: contact and gravity only. Rigid insulation, fixed hangers, strap radius and thickness inferred. Details in README.",
+  "scores": "Dream-1 run: 0.0 (arms move about in front of the pipe, never touch it or the shield); demo (cameras and joint states only): 1.0; control (shield left in the hanger 12 cm off centre): 0.33",
+  "media": "M-YCALHA"
+}
